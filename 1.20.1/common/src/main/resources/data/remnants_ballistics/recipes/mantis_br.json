@@ -1,0 +1,40 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "equipment",
+  "group": "remnants_ballistics_weapons",
+  "pattern": [
+    "SSY",
+    "XQY",
+    "Y Y"
+  ],
+  "key": {
+    "S": {
+      "tag": "remnants_ballistics:ingots/steel"
+    },
+    "X": {
+      "item": "remnants_ballistics:blueprint_advanced"
+    },
+    "Q": {
+      "item": "remnants_ballistics:precision_parts"
+    },
+    "Y": {
+      "item": "remnants_ballistics:polymer_sheet"
+    }
+  },
+  "result": {
+    "item": "remnants_ballistics:mantis_br",
+    "count": 1
+  },
+  "conditions": [
+    {
+      "type": "remnants_ballistics:config",
+      "option": "weapon_crafting"
+    }
+  ],
+  "fabric:load_conditions": [
+    {
+      "condition": "remnants_ballistics:config",
+      "option": "weapon_crafting"
+    }
+  ]
+}

@@ -1,0 +1,13 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "misc",
+  "ingredients": [
+    {
+      "tag": "remnants_ballistics:ingots/brass"
+    }
+  ],
+  "result": {
+    "item": "remnants_ballistics:casing",
+    "count": 8
+  }
+}

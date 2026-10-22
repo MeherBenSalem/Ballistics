@@ -1,4 +1,4 @@
-// Root helper for the version workspaces. Each workspace (currently 1.21.1/) is an independent Gradle project;
+// Root helper for the version workspaces. Each workspace (1.20.1/, 1.21.1/) is an independent Gradle project;
 // these tasks drive it through its own wrapper and collect the release jars.
 
 String wrapperCmd(String rootDirName) {
@@ -13,30 +13,42 @@ String pythonCmd() {
     return System.getProperty('os.name').toLowerCase().contains('win') ? 'python' : 'python3'
 }
 
-tasks.register('build1211', Exec) {
-    group = 'build'
-    description = 'Build the 1.21.1 NeoForge and Fabric jars and run the unit tests.'
-    workingDir = file('1.21.1')
-    commandLine wrapperCmd('1.21.1'), 'build'
-}
+// Minecraft version -> loader modules (each module's GameTest task follows its loader).
+def WORKSPACES = [
+        '1.20.1': ['forge', 'fabric'],
+        '1.21.1': ['neoforge', 'fabric'],
+]
+def GAMETEST_TASKS = [neoforge: 'runGameTestServer', forge: 'runGameTestServer', fabric: 'runGametest']
 
-tasks.register('gameTest1211', Exec) {
-    group = 'verification'
-    description = 'Run the in-game GameTests on headless 1.21.1 NeoForge and Fabric servers.'
-    workingDir = file('1.21.1')
-    commandLine wrapperCmd('1.21.1'), ':neoforge:runGameTestServer', ':fabric:runGametest'
-}
+WORKSPACES.each { game, loaders ->
+    def suffix = game.replace('.', '')
+    def names = loaders.collect { it == 'neoforge' ? 'NeoForge' : it.capitalize() }.join(' and ')
 
-tasks.register('clean1211', Exec) {
-    group = 'build'
-    description = 'Clean the 1.21.1 workspace.'
-    workingDir = file('1.21.1')
-    commandLine wrapperCmd('1.21.1'), 'clean'
+    tasks.register("build${suffix}", Exec) {
+        group = 'build'
+        description = "Build the ${game} ${names} jars and run the unit tests."
+        workingDir = file(game)
+        commandLine wrapperCmd(game), 'build'
+    }
+
+    tasks.register("gameTest${suffix}", Exec) {
+        group = 'verification'
+        description = "Run the in-game GameTests on headless ${game} ${names} servers."
+        workingDir = file(game)
+        commandLine([wrapperCmd(game)] + loaders.collect { ":${it}:${GAMETEST_TASKS[it]}" })
+    }
+
+    tasks.register("clean${suffix}", Exec) {
+        group = 'build'
+        description = "Clean the ${game} workspace."
+        workingDir = file(game)
+        commandLine wrapperCmd(game), 'clean'
+    }
 }
 
 tasks.register('generateAssets', Exec) {
     group = 'assets'
-    description = 'Regenerate every model, texture, sound, animation, translation and data file from tools/assets.'
+    description = 'Regenerate every model, texture, sound, animation, translation and data file from tools/assets (and port them to the other workspaces).'
     commandLine pythonCmd(), 'tools/assets/generate.py'
 }
 
@@ -55,11 +67,11 @@ tasks.register('generateDocs', Exec) {
 tasks.register('dist') {
     group = 'build'
     description = 'Build every workspace and copy the loader jars into releases/.'
-    dependsOn 'checkAssets', 'build1211'
+    dependsOn(['checkAssets'] + WORKSPACES.keySet().collect { "build${it.replace('.', '')}" })
     doLast {
         def outDir = file('releases')
         outDir.mkdirs()
-        ['1.21.1/neoforge', '1.21.1/fabric'].each { modDir ->
+        WORKSPACES.collectMany { game, loaders -> loaders.collect { "${game}/${it}" } }.each { modDir ->
             def libsDir = file("${modDir}/build/libs")
             if (libsDir.exists()) {
                 fileTree(libsDir).matching {
@@ -92,7 +104,7 @@ tasks.register('build') {
 tasks.register('cleanAll') {
     group = 'build'
     description = 'Clean every workspace and releases/.'
-    dependsOn 'clean1211'
+    dependsOn(WORKSPACES.keySet().collect { "clean${it.replace('.', '')}" })
     doLast {
         def outDir = file('releases')
         if (outDir.exists()) {
@@ -110,7 +122,7 @@ tasks.register('syncVersion') {
         if (!v) {
             throw new GradleException('Pass -PmodVersion=x.y.z')
         }
-        ['1.21.1'].each { dir ->
+        WORKSPACES.keySet().each { dir ->
             def file = file("${dir}/gradle.properties")
             if (!file.exists()) {
                 throw new GradleException("Missing ${file}")

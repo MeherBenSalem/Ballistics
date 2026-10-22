@@ -6,7 +6,7 @@ import net.minecraft.world.item.Item;
 import org.jetbrains.annotations.Nullable;
 
 /**
- * Transient server-side shooting state for one player (NeoForge data attachment, never serialised).
+ * Transient server-side shooting state for one player (held in a per-player map by ServerWeaponHandler, never serialised).
  * All fields are only touched on the server thread.
  */
 public final class ShooterState {

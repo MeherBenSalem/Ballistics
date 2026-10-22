@@ -1,0 +1,88 @@
+{
+  "animations": "remnants_ballistics:titan_56",
+  "scale": 0.46,
+  "pivot": [
+    8.0,
+    3.074,
+    14.478
+  ],
+  "hip": [
+    0.3,
+    -0.37,
+    -0.55
+  ],
+  "hip_rotation": [
+    2,
+    -7,
+    0
+  ],
+  "ads_distance": 0.27,
+  "sight": [
+    8,
+    13.299999999999999,
+    11.6
+  ],
+  "muzzle": [
+    8,
+    9.0,
+    -15.9
+  ],
+  "eject": [
+    9.8,
+    7.5,
+    7.5
+  ],
+  "left_hand": [
+    8,
+    6.8,
+    -3.6
+  ],
+  "mounts": {
+    "optic": [
+      8,
+      12.2,
+      7.4
+    ],
+    "muzzle": [
+      8,
+      9.0,
+      -14.3
+    ],
+    "underbarrel": [
+      8,
+      6.8,
+      -8.0
+    ],
+    "stock": [
+      8,
+      8.3,
+      13.4
+    ]
+  },
+  "pivots": {
+    "action": [
+      8,
+      10.9,
+      12.6
+    ],
+    "magazine": [
+      8,
+      6.4,
+      5.5
+    ]
+  },
+  "sprint": {
+    "position": [
+      0.04,
+      -0.1,
+      0.06
+    ],
+    "rotation": [
+      -18,
+      42,
+      14
+    ]
+  },
+  "shell": "casing",
+  "flash_size": 1.0
+}

@@ -1,0 +1,14 @@
+{
+  "replace": false,
+  "values": [
+    "remnants_ballistics:steel_ingot",
+    {
+      "id": "#forge:ingots/steel",
+      "required": false
+    },
+    {
+      "id": "#c:steel_ingots",
+      "required": false
+    }
+  ]
+}

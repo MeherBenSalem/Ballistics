@@ -1,0 +1,30 @@
+{
+  "replace": false,
+  "values": [
+    "#minecraft:leaves",
+    "#minecraft:wool_carpets",
+    "#minecraft:wooden_doors",
+    "#minecraft:wooden_trapdoors",
+    "#minecraft:wooden_fences",
+    "minecraft:iron_bars",
+    "minecraft:glass_pane",
+    {
+      "id": "#forge:glass_panes",
+      "required": false
+    },
+    {
+      "id": "#c:glass_panes",
+      "required": false
+    },
+    "minecraft:cobweb",
+    "#minecraft:crops",
+    "#minecraft:saplings",
+    "minecraft:short_grass",
+    "minecraft:tall_grass",
+    "minecraft:fern",
+    "minecraft:large_fern",
+    "minecraft:sugar_cane",
+    "minecraft:bamboo",
+    "minecraft:scaffolding"
+  ]
+}

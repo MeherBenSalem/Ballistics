@@ -136,6 +136,9 @@ test("full-release and regular-file preflight stops before any upload", async (t
   assert.equal(calls, 0);
 });
 
+/** Fake CurseForge game version ids. */
+const CF_GAME_IDS = Object.freeze({ "1.20.1": 1201, "1.21.1": 1211 });
+
 function mockTransport(records, { modrinthFailure = false, modernLookupFails = false } = {}) {
   return async (url, options = {}) => {
     if (url === "https://api.modrinth.com/v2/version") {
@@ -152,10 +155,12 @@ function mockTransport(records, { modrinthFailure = false, modernLookupFails = f
       return new Response(modrinthFailure ? "test rejection" : "{}", { status: modrinthFailure ? 400 : 200 });
     }
     if (url === "https://minecraft.curseforge.com/api/game/versions") {
-      return Response.json([{ id: 1, name: "Client" }, { id: 2, name: "Server" }, { id: 1211, name: "1.21.1" }]);
+      return Response.json([{ id: 1, name: "Client" }, { id: 2, name: "Server" },
+        ...Object.entries(CF_GAME_IDS).map(([name, id]) => ({ id, name }))]);
     }
     if (url.startsWith("https://api.curseforge.com/v1/minecraft/version/")) {
-      return modernLookupFails ? new Response("unavailable", { status: 503 }) : Response.json({ data: { gameVersionId: 1211 } });
+      const game = decodeURIComponent(url.slice("https://api.curseforge.com/v1/minecraft/version/".length));
+      return modernLookupFails ? new Response("unavailable", { status: 503 }) : Response.json({ data: { gameVersionId: CF_GAME_IDS[game] } });
     }
     if (url === `https://minecraft.curseforge.com/api/projects/${ids.CURSEFORGE_ID}/upload-file`) {
       assert.equal(options.method, "POST");
@@ -164,7 +169,7 @@ function mockTransport(records, { modrinthFailure = false, modernLookupFails = f
       const file = options.body.get("file");
       const release = parseJar(file.name);
       assert.equal(await file.text(), "fixture jar");
-      assert.deepEqual(body.gameVersions, [1, 2, LOADER_IDS[release.loader], 1211]);
+      assert.deepEqual(body.gameVersions, [1, 2, LOADER_IDS[release.loader], CF_GAME_IDS[release.game]]);
       assert.equal(body.releaseType, "beta");
       assert.deepEqual(body.relations, curseforgeRelations(release.loader, release.game));
       records.push({ platform: "curseforge", body });

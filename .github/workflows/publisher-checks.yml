@@ -56,6 +56,11 @@ jobs:
           python-version: "3.12"
       - name: Cross-check generated assets against the Java registries
         run: python tools/assets/check_assets.py
+      - name: Ported resources match the 1.21.1 originals
+        run: |
+          python tools/assets/port_resources.py
+          git add -N .
+          git diff --exit-code --stat -- 1.20.1/common/src/main/resources
       - name: Reference docs are up to date
         run: |
           python tools/docs_gen.py
@@ -70,18 +75,23 @@ jobs:
       fail-fast: false
       matrix:
         include:
-          - { game: '1.21.1', loader: neoforge, java: '21', gametest: runGameTestServer }
-          - { game: '1.21.1', loader: fabric, java: '21', gametest: runGametest }
+          - { game: '1.20.1', loader: forge, gametest: runGameTestServer }
+          - { game: '1.20.1', loader: fabric, gametest: runGametest }
+          - { game: '1.21.1', loader: neoforge, gametest: runGameTestServer }
+          - { game: '1.21.1', loader: fabric, gametest: runGametest }
     env:
       WS: ${{ matrix.game }}
       LOADER: ${{ matrix.loader }}
       TARGET: ${{ matrix.game }}-${{ matrix.loader }}
     steps:
       - uses: actions/checkout@v4
+      # Gradle runs on the last JDK listed; each workspace compiles with the toolchain its gradle.properties names.
       - uses: actions/setup-java@v4
         with:
           distribution: temurin
-          java-version: ${{ matrix.java }}
+          java-version: |
+            17
+            21
       - uses: gradle/actions/setup-gradle@v4
       - name: Build and run unit tests
         id: build

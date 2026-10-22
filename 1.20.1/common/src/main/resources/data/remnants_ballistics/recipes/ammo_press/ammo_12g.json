@@ -1,0 +1,39 @@
+{
+  "type": "remnants_ballistics:ammo_press",
+  "ingredients": [
+    {
+      "ingredient": {
+        "item": "remnants_ballistics:shotgun_hull"
+      },
+      "count": 4
+    },
+    {
+      "ingredient": {
+        "item": "minecraft:gunpowder"
+      },
+      "count": 1
+    },
+    {
+      "ingredient": {
+        "item": "minecraft:iron_nugget"
+      },
+      "count": 4
+    }
+  ],
+  "result": {
+    "item": "remnants_ballistics:ammo_12g",
+    "count": 8
+  },
+  "conditions": [
+    {
+      "type": "remnants_ballistics:config",
+      "option": "ammo_crafting"
+    }
+  ],
+  "fabric:load_conditions": [
+    {
+      "condition": "remnants_ballistics:config",
+      "option": "ammo_crafting"
+    }
+  ]
+}

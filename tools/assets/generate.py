@@ -4,7 +4,8 @@
     python3 tools/assets/generate.py --no-sound # skip audio synthesis (fast iteration)
 
 Outputs go to 1.21.1/common/src/main/resources (assets and data) and tools/assets/blockbench (one editable Blockbench-compatible
-model per weapon with parts as outliner groups). Re-running is deterministic.
+model per weapon with parts as outliner groups); port_resources.py then mirrors them into the other Minecraft workspaces
+in each version's data format. Re-running is deterministic.
 """
 from __future__ import annotations
 
@@ -28,6 +29,7 @@ import data_gen  # noqa: E402
 import guns as gun_defs  # noqa: E402
 import items as item_defs  # noqa: E402
 import lang  # noqa: E402
+import port_resources  # noqa: E402
 from raster import Camera, Renderer, add_outline, model_quads, rotation_matrix  # noqa: E402
 from voxel import SKINS, build_texture, full_model_json, part_model_json, skin_texture  # noqa: E402
 
@@ -344,6 +346,8 @@ def main():
         write_json(os.path.join(ASSETS, "sounds.json"), sounds_json)
         report.append(f"audio: {len(sounds_json)} sound events")
     write_json(os.path.join(ASSETS, "lang", "en_us.json"), lang.build(JAVA_CONFIG, subtitles))
+    for game in port_resources.TARGETS:
+        port_resources.port(game)
     for line in report:
         print(line)
 

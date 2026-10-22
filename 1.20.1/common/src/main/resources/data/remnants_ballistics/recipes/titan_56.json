@@ -1,0 +1,43 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "equipment",
+  "group": "remnants_ballistics_weapons",
+  "pattern": [
+    "SSS",
+    "XQS",
+    "YPY"
+  ],
+  "key": {
+    "S": {
+      "tag": "remnants_ballistics:ingots/steel"
+    },
+    "X": {
+      "item": "remnants_ballistics:blueprint_advanced"
+    },
+    "Q": {
+      "item": "remnants_ballistics:precision_parts"
+    },
+    "P": {
+      "item": "remnants_ballistics:gun_parts"
+    },
+    "Y": {
+      "item": "remnants_ballistics:polymer_sheet"
+    }
+  },
+  "result": {
+    "item": "remnants_ballistics:titan_56",
+    "count": 1
+  },
+  "conditions": [
+    {
+      "type": "remnants_ballistics:config",
+      "option": "weapon_crafting"
+    }
+  ],
+  "fabric:load_conditions": [
+    {
+      "condition": "remnants_ballistics:config",
+      "option": "weapon_crafting"
+    }
+  ]
+}

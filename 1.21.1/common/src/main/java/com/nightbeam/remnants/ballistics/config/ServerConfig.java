@@ -10,7 +10,7 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 
 /**
- * Per-world gameplay balance ({@code <world>/serverconfig/remnants_ballistics-server.toml}). NeoForge syncs SERVER
+ * Per-world gameplay balance ({@code <world>/serverconfig/remnants_ballistics-server.toml}). The loader (or Forge Config API Port) syncs SERVER
  * configs to connecting clients, so client-side prediction uses the same numbers as the server.
  */
 public final class ServerConfig {

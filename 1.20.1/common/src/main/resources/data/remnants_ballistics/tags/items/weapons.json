@@ -1,0 +1,21 @@
+{
+  "replace": false,
+  "values": [
+    "remnants_ballistics:r9_sidearm",
+    "remnants_ballistics:ironfang_50",
+    "remnants_ballistics:warden_357",
+    "remnants_ballistics:viper_9",
+    "remnants_ballistics:spectre_pdw",
+    "remnants_ballistics:arx_16",
+    "remnants_ballistics:raven_ak",
+    "remnants_ballistics:mantis_br",
+    "remnants_ballistics:breacher_12",
+    "remnants_ballistics:thunderpump",
+    "remnants_ballistics:ghostline_m24",
+    "remnants_ballistics:longshot_50",
+    "remnants_ballistics:titan_56",
+    "remnants_ballistics:bulwark_762",
+    "remnants_ballistics:voidcaster",
+    "remnants_ballistics:eclipse_railgun"
+  ]
+}

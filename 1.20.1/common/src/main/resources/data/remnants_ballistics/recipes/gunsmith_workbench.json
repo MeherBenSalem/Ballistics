@@ -1,0 +1,24 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "pattern": [
+    "SSS",
+    "ICI",
+    "I I"
+  ],
+  "key": {
+    "S": {
+      "tag": "remnants_ballistics:ingots/steel"
+    },
+    "I": {
+      "item": "minecraft:iron_ingot"
+    },
+    "C": {
+      "item": "minecraft:crafting_table"
+    }
+  },
+  "result": {
+    "item": "remnants_ballistics:gunsmith_workbench",
+    "count": 1
+  }
+}

@@ -1,0 +1,37 @@
+{
+  "display": {
+    "icon": {
+      "item": "remnants_ballistics:blueprint_prototype"
+    },
+    "title": {
+      "translate": "advancements.remnants_ballistics.prototype.title"
+    },
+    "description": {
+      "translate": "advancements.remnants_ballistics.prototype.description"
+    },
+    "frame": "goal",
+    "show_toast": true,
+    "announce_to_chat": true,
+    "hidden": false
+  },
+  "criteria": {
+    "blueprint": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "items": [
+              "remnants_ballistics:blueprint_prototype"
+            ]
+          }
+        ]
+      }
+    }
+  },
+  "requirements": [
+    [
+      "blueprint"
+    ]
+  ],
+  "parent": "remnants_ballistics:blueprint"
+}

@@ -1,0 +1,48 @@
+plugins {
+    id 'multiloader-common'
+    id 'net.neoforged.moddev.legacyforge'
+}
+
+// Vanilla Minecraft only: common code may not reference a loader API. The loader modules compile these sources
+// together with their own (see buildSrc/src/main/groovy/multiloader-loader.gradle).
+legacyForge {
+    mcpVersion = minecraft_version
+    def at = file('src/main/resources/META-INF/accesstransformer.cfg')
+    if (at.exists()) {
+        accessTransformers.from(at.absolutePath)
+    }
+}
+
+dependencies {
+    // The config classes use Forge's ForgeConfigSpec API; Forge provides it at runtime, Forge Config API Port on Fabric.
+    compileOnly "fuzs.forgeconfigapiport:forgeconfigapiport-common:${fcap_version}"
+
+    // Pure-Java unit tests (com.nightbeam.remnants.ballistics.core) do not need the game.
+    testImplementation platform("org.junit:junit-bom:${junit_version}")
+    testImplementation 'org.junit.jupiter:junit-jupiter'
+    testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+}
+
+tasks.named('test', Test).configure {
+    useJUnitPlatform()
+    testLogging {
+        events 'passed', 'failed', 'skipped'
+        exceptionFormat = 'full'
+    }
+}
+
+configurations {
+    commonJava {
+        canBeResolved = false
+        canBeConsumed = true
+    }
+    commonResources {
+        canBeResolved = false
+        canBeConsumed = true
+    }
+}
+
+artifacts {
+    commonJava sourceSets.main.java.sourceDirectories.singleFile
+    commonResources sourceSets.main.resources.sourceDirectories.singleFile
+}

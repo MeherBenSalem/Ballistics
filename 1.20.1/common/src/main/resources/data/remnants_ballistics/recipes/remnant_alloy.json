@@ -1,0 +1,28 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "misc",
+  "ingredients": [
+    {
+      "item": "minecraft:netherite_scrap"
+    },
+    {
+      "tag": "remnants_ballistics:ingots/steel"
+    },
+    {
+      "tag": "remnants_ballistics:ingots/steel"
+    },
+    {
+      "tag": "remnants_ballistics:ingots/brass"
+    },
+    {
+      "tag": "remnants_ballistics:ingots/brass"
+    },
+    {
+      "item": "remnants_ballistics:precision_parts"
+    }
+  ],
+  "result": {
+    "item": "remnants_ballistics:remnant_alloy",
+    "count": 2
+  }
+}

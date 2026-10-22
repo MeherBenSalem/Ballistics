@@ -1,0 +1,37 @@
+{
+  "display": {
+    "icon": {
+      "item": "remnants_ballistics:steel_ingot"
+    },
+    "title": {
+      "translate": "advancements.remnants_ballistics.root.title"
+    },
+    "description": {
+      "translate": "advancements.remnants_ballistics.root.description"
+    },
+    "frame": "task",
+    "show_toast": true,
+    "announce_to_chat": true,
+    "hidden": false,
+    "background": "minecraft:textures/block/polished_blackstone.png"
+  },
+  "criteria": {
+    "steel": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "items": [
+              "remnants_ballistics:steel_ingot"
+            ]
+          }
+        ]
+      }
+    }
+  },
+  "requirements": [
+    [
+      "steel"
+    ]
+  ]
+}

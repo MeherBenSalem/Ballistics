@@ -1,0 +1,88 @@
+{
+  "animations": "remnants_ballistics:thunderpump",
+  "scale": 0.5,
+  "pivot": [
+    8,
+    5.014,
+    15.274
+  ],
+  "hip": [
+    0.3,
+    -0.35,
+    -0.54
+  ],
+  "hip_rotation": [
+    2,
+    -7,
+    0
+  ],
+  "ads_distance": 0.26,
+  "sight": [
+    8,
+    12.0,
+    11.4
+  ],
+  "muzzle": [
+    8,
+    9.2,
+    -15.6
+  ],
+  "eject": [
+    9.7,
+    8.6,
+    6.0
+  ],
+  "left_hand": [
+    8,
+    5.9,
+    -5.2
+  ],
+  "mounts": {
+    "optic": [
+      8,
+      10.75,
+      6.8
+    ],
+    "muzzle": [
+      8,
+      9.2,
+      -15.4
+    ],
+    "underbarrel": [
+      8,
+      6.0,
+      -5.2
+    ],
+    "stock": [
+      8,
+      8.0,
+      12.6
+    ]
+  },
+  "pivots": {
+    "action": [
+      8,
+      7.4,
+      -5.0
+    ],
+    "magazine": [
+      8,
+      7.4,
+      -12.2
+    ]
+  },
+  "sprint": {
+    "position": [
+      0.04,
+      -0.1,
+      0.06
+    ],
+    "rotation": [
+      -18,
+      42,
+      14
+    ]
+  },
+  "shell": "shotshell",
+  "flash_size": 1.35
+}

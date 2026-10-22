@@ -22,7 +22,7 @@ export const LOADER_DEPENDENCIES = Object.freeze({
   neoforge: Object.freeze([]),
 });
 
-export const SUPPORTED_TARGETS = Object.freeze(["neoforge:1.21.1", "fabric:1.21.1"]);
+export const SUPPORTED_TARGETS = Object.freeze(["forge:1.20.1", "fabric:1.20.1", "neoforge:1.21.1", "fabric:1.21.1"]);
 const SUPPORTED = new Set(SUPPORTED_TARGETS);
 
 export function assertCompleteRelease(releases) {

@@ -1,11 +1,11 @@
 """Verify the packaged release jars against the generated resources and record release hashes.
 
 This is an artifact audit, separate from the unit tests (./gradlew :common:test), the in-game GameTests
-(:neoforge:runGameTestServer, :fabric:runGametest), the client smoke tests and the source-level asset checks
+(:forge:runGameTestServer, :neoforge:runGameTestServer, :fabric:runGametest), the client smoke tests and the source-level asset checks
 (tools/assets/check_assets.py).
 
     python scripts/verify_release_jars.py --version 0.3.0 --jar-dir releases --output releases/manifest.json
-    python scripts/verify_release_jars.py --version 0.3.0 --jar-dir releases --targets neoforge:1.21.1
+    python scripts/verify_release_jars.py --version 0.3.0 --jar-dir releases --targets forge:1.20.1,neoforge:1.21.1
 
 Without --targets every supported target must be present.
 """
@@ -18,9 +18,12 @@ import zipfile
 
 ROOT = Path(__file__).resolve().parents[1]
 MOD_ID = 'remnants_ballistics'
-TARGETS = [('neoforge', '1.21.1'), ('fabric', '1.21.1')]
+TARGETS = [('forge', '1.20.1'), ('fabric', '1.20.1'), ('neoforge', '1.21.1'), ('fabric', '1.21.1')]
 # Resource and data pack formats each Minecraft version must accept.
-PACK_FORMATS = {'1.21.1': (34, 48)}
+PACK_FORMATS = {'1.20.1': (15,), '1.21.1': (34, 48)}
+# Data pack folder names: singular from 1.21 (the 1.20.1 data is ported by tools/assets/port_resources.py).
+DATA_FOLDERS = {'1.20.1': {'recipe': 'recipes', 'loot_table': 'loot_tables'},
+                '1.21.1': {'recipe': 'recipe', 'loot_table': 'loot_table'}}
 # Mods every jar must declare as required (besides the loader and Minecraft).
 LOADER_DEPENDENCIES = {'neoforge': set(), 'forge': set(), 'fabric': {'fabric-api', 'forgeconfigapiport'}}
 # Recipe -> expected result id. Covers each recipe family (weapon, attachment, press, smelting, stations).
@@ -52,14 +55,19 @@ def verify(jar, loader, game, version):
                     verify_access_widener(z.read(entry).decode(), path.read_text(), jar)
                 else:
                     assert z.read(entry) == path.read_bytes(), f'{jar}: stale {entry}'
+        folders = DATA_FOLDERS[game]
         for name, output in RECIPES.items():
-            recipe = json.loads(z.read(f'data/{MOD_ID}/recipe/{name}.json'))
-            assert recipe['result']['id'] == output, f'{name}: result {recipe["result"]}'
+            recipe = json.loads(z.read(f'data/{MOD_ID}/{folders["recipe"]}/{name}.json'))
+            result = recipe['result']
+            # 1.21 results name the item with "id"; 1.20 uses "item", or a bare id for cooking recipes.
+            result_id = result if isinstance(result, str) else result.get('id', result.get('item'))
+            assert result_id == output, f'{name}: result {result}'
         for name in BLOCKS:
-            loot = json.loads(z.read(f'data/{MOD_ID}/loot_table/blocks/{name}.json'))
+            loot = json.loads(z.read(f'data/{MOD_ID}/{folders["loot_table"]}/blocks/{name}.json'))
             assert loot['pools'][0]['entries'][0]['name'] == f'{MOD_ID}:{name}'
-        assert not any(n.startswith(f'data/{MOD_ID}/recipes/') or n.startswith(f'data/{MOD_ID}/loot_tables/') for n in names), \
-            'pre-1.21 data folder names'
+        other = {v for g, f in DATA_FOLDERS.items() if g != game for v in f.values()} - set(folders.values())
+        assert not any(n.startswith(f'data/{MOD_ID}/{folder}/') for n in names for folder in other), \
+            f'data folders of another Minecraft version: {sorted(other)}'
         for weapon in weapons:
             for part in WEAPON_PARTS:
                 assert f'assets/{MOD_ID}/models/gun/{weapon}/{part}.json' in names
@@ -124,6 +132,15 @@ def verify_descriptor(z, names, loader, game, version):
         deps = descriptor['dependencies'][MOD_ID]
         required = {d['modId'] for d in deps if d.get('mandatory') or d.get('type') == 'required'} - {loader, 'minecraft'}
         assert next(d['versionRange'] for d in deps if d['modId'] == 'minecraft') == f'[{game}]'
+        if loader == 'forge':
+            # Forge reads mixin configs from the manifest; the refmap maps their targets to SRG names.
+            manifest = z.read('META-INF/MANIFEST.MF').decode()
+            configs = [c.strip() for line in manifest.splitlines() if line.startswith('MixinConfigs:')
+                       for c in line.split(':', 1)[1].split(',')]
+            assert configs, 'no MixinConfigs in the manifest'
+            for mixins in configs:
+                config = json.loads(z.read(mixins))
+                assert config.get('refmap') in names, f'{mixins}: refmap {config.get("refmap")} not packaged'
     assert required == LOADER_DEPENDENCIES[loader], f'{loader}: unexpected required dependencies {required}'
     return required
 
