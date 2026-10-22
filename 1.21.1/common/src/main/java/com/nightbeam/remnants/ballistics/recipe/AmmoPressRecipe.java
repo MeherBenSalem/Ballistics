@@ -113,6 +113,15 @@ public record AmmoPressRecipe(List<CountedIngredient> ingredients, ItemStack res
         return ModRecipes.AMMO_PRESS_TYPE.get();
     }
 
+    /**
+     * The press has no recipe book. Special recipes are left out of the client recipe book, which otherwise logs
+     * "Unknown recipe category" for every press recipe on loaders without a category API (Fabric).
+     */
+    @Override
+    public boolean isSpecial() {
+        return true;
+    }
+
     public static final class Serializer implements RecipeSerializer<AmmoPressRecipe> {
         @Override
         public MapCodec<AmmoPressRecipe> codec() {

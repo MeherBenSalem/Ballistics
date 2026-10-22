@@ -52,7 +52,6 @@ public class GunsmithScreen extends AbstractContainerScreen<GunsmithMenu> {
         // The stat panel sits to the right of the standard-sized container.
         this.leftPos = (this.width - imageWidth - PANEL_WIDTH) / 2;
         this.titleLabelX = 8;
-        this.inventoryLabelY = this.imageHeight - 94;
         repairButton = addRenderableWidget(Button.builder(Component.translatable("gui.remnants_ballistics.repair"), b -> {
             if (minecraft != null && minecraft.gameMode != null) minecraft.gameMode.handleInventoryButtonClick(menu.containerId, GunsmithMenu.BUTTON_REPAIR);
         }).bounds(leftPos + 128, topPos + 18, 42, 14).build());
@@ -95,8 +94,8 @@ public class GunsmithScreen extends AbstractContainerScreen<GunsmithMenu> {
 
     @Override
     protected void renderLabels(GuiGraphics g, int mouseX, int mouseY) {
+        // No "Inventory" label: the bottom row of attachment slots fills the space it would take.
         g.drawString(font, title, titleLabelX, titleLabelY, 0x404040, false);
-        g.drawString(font, playerInventoryTitle, inventoryLabelX, inventoryLabelY, 0x404040, false);
     }
 
     /** Slowly rotating 3D model of the weapon with its current attachments. */

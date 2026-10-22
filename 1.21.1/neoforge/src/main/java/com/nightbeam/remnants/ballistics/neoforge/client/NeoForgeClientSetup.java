@@ -13,9 +13,7 @@ import com.nightbeam.remnants.ballistics.platform.RegistryObject;
 import com.nightbeam.remnants.ballistics.registry.ModEntities;
 import com.nightbeam.remnants.ballistics.registry.ModItems;
 import com.nightbeam.remnants.ballistics.registry.ModMenus;
-import com.nightbeam.remnants.ballistics.registry.ModRecipes;
 import net.minecraft.client.KeyMapping;
-import net.minecraft.client.RecipeBookCategories;
 import net.minecraft.client.model.HumanoidModel;
 import net.minecraft.client.renderer.BlockEntityWithoutLevelRenderer;
 import net.minecraft.world.InteractionHand;
@@ -31,7 +29,6 @@ import net.neoforged.neoforge.client.event.RegisterGuiLayersEvent;
 import net.neoforged.neoforge.client.event.RegisterKeyMappingsEvent;
 import net.neoforged.neoforge.client.event.RegisterMenuScreensEvent;
 import net.neoforged.neoforge.client.event.RegisterParticleProvidersEvent;
-import net.neoforged.neoforge.client.event.RegisterRecipeBookCategoriesEvent;
 import net.neoforged.neoforge.client.extensions.common.IClientItemExtensions;
 import net.neoforged.neoforge.client.extensions.common.RegisterClientExtensionsEvent;
 import net.neoforged.neoforge.client.gui.VanillaGuiLayers;
@@ -92,11 +89,5 @@ public final class NeoForgeClientSetup {
     @SubscribeEvent
     public static void onReloadListeners(RegisterClientReloadListenersEvent event) {
         for (ClientRegistration.ReloadListener listener : ClientRegistration.RELOAD_LISTENERS) event.registerReloadListener(listener.listener());
-    }
-
-    /** Ammo press recipes have no recipe book; without a category the client log warns once per recipe. */
-    @SubscribeEvent
-    public static void onRecipeBookCategories(RegisterRecipeBookCategoriesEvent event) {
-        event.registerRecipeCategoryFinder(ModRecipes.AMMO_PRESS_TYPE.get(), recipe -> RecipeBookCategories.UNKNOWN);
     }
 }

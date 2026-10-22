@@ -48,7 +48,10 @@ def verify(jar, loader, game, version):
             if path.is_file():
                 entry = path.relative_to(resources).as_posix()
                 assert entry in names, f'{jar}: missing {entry}'
-                assert z.read(entry) == path.read_bytes(), f'{jar}: stale {entry}'
+                if entry.endswith('.accesswidener') and loader == 'fabric':
+                    verify_access_widener(z.read(entry).decode(), path.read_text(), jar)
+                else:
+                    assert z.read(entry) == path.read_bytes(), f'{jar}: stale {entry}'
         for name, output in RECIPES.items():
             recipe = json.loads(z.read(f'data/{MOD_ID}/recipe/{name}.json'))
             assert recipe['result']['id'] == output, f'{name}: result {recipe["result"]}'
@@ -84,6 +87,16 @@ def verify(jar, loader, game, version):
             'bytes': len(data), 'sha1': hashlib.sha1(data).hexdigest(),
             'sha256': hashlib.sha256(data).hexdigest(), 'sha512': hashlib.sha512(data).hexdigest(),
             'required_dependencies': sorted(required)}
+
+
+def verify_access_widener(packaged, source, jar):
+    """Loom remaps the access widener to the runtime namespace: compare the rules, not the names."""
+    def rules(text):
+        lines = [l.split('#')[0].split() for l in text.splitlines()]
+        return [l for l in lines if l]
+    packaged_rules, source_rules = rules(packaged), rules(source)
+    assert packaged_rules[0][:2] == source_rules[0][:2], f'{jar}: access widener header {packaged_rules[0]}'
+    assert [r[:2] for r in packaged_rules[1:]] == [r[:2] for r in source_rules[1:]], f'{jar}: access widener rules differ'
 
 
 def verify_descriptor(z, names, loader, game, version):
@@ -123,8 +136,13 @@ if __name__ == '__main__':
     parser.add_argument('--targets', help='comma-separated loader:game pairs (default: every supported target)')
     args = parser.parse_args()
     targets = [tuple(t.split(':')) for t in args.targets.split(',')] if args.targets else TARGETS
-    manifests = [verify(Path(args.jar_dir) / f'{MOD_ID}-{loader}-{game}-{args.version}.jar', loader, game, args.version)
-                 for loader, game in targets]
+    try:
+        manifests = [verify(Path(args.jar_dir) / f'{MOD_ID}-{loader}-{game}-{args.version}.jar', loader, game, args.version)
+                     for loader, game in targets]
+    except (AssertionError, FileNotFoundError, KeyError) as e:
+        # A GitHub annotation, so the reason is readable from the run summary.
+        print(f'::error title=Jar verification::{type(e).__name__}: {e}')
+        raise
     output = json.dumps(manifests, indent=2) + '\n'
     if args.output:
         Path(args.output).write_text(output)
