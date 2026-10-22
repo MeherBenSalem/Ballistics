@@ -1,0 +1,38 @@
+{
+  "display": {
+    "icon": {
+      "id": "remnants_ballistics:voidcaster"
+    },
+    "title": {
+      "translate": "advancements.remnants_ballistics.void.title"
+    },
+    "description": {
+      "translate": "advancements.remnants_ballistics.void.description"
+    },
+    "frame": "challenge",
+    "show_toast": true,
+    "announce_to_chat": true,
+    "hidden": false
+  },
+  "criteria": {
+    "void": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "items": "remnants_ballistics:voidcaster"
+          }
+        ]
+      }
+    }
+  },
+  "requirements": [
+    [
+      "void"
+    ]
+  ],
+  "parent": "remnants_ballistics:prototype",
+  "rewards": {
+    "experience": 100
+  }
+}

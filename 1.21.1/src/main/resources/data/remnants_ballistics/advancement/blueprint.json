@@ -1,0 +1,35 @@
+{
+  "display": {
+    "icon": {
+      "id": "remnants_ballistics:blueprint_advanced"
+    },
+    "title": {
+      "translate": "advancements.remnants_ballistics.blueprint.title"
+    },
+    "description": {
+      "translate": "advancements.remnants_ballistics.blueprint.description"
+    },
+    "frame": "goal",
+    "show_toast": true,
+    "announce_to_chat": true,
+    "hidden": false
+  },
+  "criteria": {
+    "blueprint": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "items": "remnants_ballistics:blueprint_advanced"
+          }
+        ]
+      }
+    }
+  },
+  "requirements": [
+    [
+      "blueprint"
+    ]
+  ],
+  "parent": "remnants_ballistics:first_weapon"
+}

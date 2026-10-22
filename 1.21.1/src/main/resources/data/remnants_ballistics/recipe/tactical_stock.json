@@ -1,0 +1,35 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "equipment",
+  "group": "remnants_ballistics_attachments",
+  "ingredients": [
+    {
+      "item": "remnants_ballistics:polymer_sheet"
+    },
+    {
+      "item": "remnants_ballistics:polymer_sheet"
+    },
+    {
+      "item": "remnants_ballistics:polymer_sheet"
+    },
+    {
+      "tag": "c:ingots/steel"
+    },
+    {
+      "tag": "c:ingots/steel"
+    },
+    {
+      "item": "remnants_ballistics:gun_parts"
+    }
+  ],
+  "result": {
+    "id": "remnants_ballistics:tactical_stock",
+    "count": 1
+  },
+  "neoforge:conditions": [
+    {
+      "type": "remnants_ballistics:config",
+      "option": "attachment_crafting"
+    }
+  ]
+}

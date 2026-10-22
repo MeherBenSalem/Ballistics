@@ -1,0 +1,35 @@
+{
+  "display": {
+    "icon": {
+      "id": "remnants_ballistics:holo_reflex"
+    },
+    "title": {
+      "translate": "advancements.remnants_ballistics.attachment.title"
+    },
+    "description": {
+      "translate": "advancements.remnants_ballistics.attachment.description"
+    },
+    "frame": "task",
+    "show_toast": true,
+    "announce_to_chat": true,
+    "hidden": false
+  },
+  "criteria": {
+    "attachment": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "items": "#remnants_ballistics:attachments"
+          }
+        ]
+      }
+    }
+  },
+  "requirements": [
+    [
+      "attachment"
+    ]
+  ],
+  "parent": "remnants_ballistics:gunsmith"
+}

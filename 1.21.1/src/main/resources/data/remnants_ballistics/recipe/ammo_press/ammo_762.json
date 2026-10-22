@@ -1,0 +1,27 @@
+{
+  "type": "remnants_ballistics:ammo_press",
+  "ingredients": [
+    {
+      "item": "remnants_ballistics:casing",
+      "count": 4
+    },
+    {
+      "item": "minecraft:blaze_powder",
+      "count": 1
+    },
+    {
+      "item": "minecraft:copper_ingot",
+      "count": 1
+    }
+  ],
+  "result": {
+    "id": "remnants_ballistics:ammo_762",
+    "count": 16
+  },
+  "neoforge:conditions": [
+    {
+      "type": "remnants_ballistics:config",
+      "option": "ammo_crafting"
+    }
+  ]
+}

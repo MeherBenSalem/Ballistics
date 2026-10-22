@@ -1,0 +1,61 @@
+name: Bug report
+description: "Report a problem with Remnants: Ballistics"
+labels: ["bug"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Please include enough detail to reproduce the issue.
+  - type: input
+    id: mc-version
+    attributes:
+      label: Minecraft version
+      placeholder: "1.21.1"
+    validations:
+      required: true
+  - type: input
+    id: neoforge-version
+    attributes:
+      label: NeoForge version
+      placeholder: "21.1.264"
+    validations:
+      required: true
+  - type: input
+    id: mod-version
+    attributes:
+      label: "Remnants: Ballistics version"
+      placeholder: "0.3.0"
+    validations:
+      required: true
+  - type: dropdown
+    id: environment
+    attributes:
+      label: Where does it happen?
+      options:
+        - Singleplayer
+        - Dedicated server
+        - LAN / integrated server
+    validations:
+      required: true
+  - type: textarea
+    id: description
+    attributes:
+      label: Description
+      description: What happened, and what did you expect?
+    validations:
+      required: true
+  - type: textarea
+    id: steps
+    attributes:
+      label: Steps to reproduce
+      placeholder: |
+        1.
+        2.
+        3.
+    validations:
+      required: true
+  - type: textarea
+    id: logs
+    attributes:
+      label: Logs / crash report
+      description: Paste relevant log lines or attach a crash report.

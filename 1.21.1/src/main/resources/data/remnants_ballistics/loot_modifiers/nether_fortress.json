@@ -1,0 +1,12 @@
+{
+  "type": "remnants_ballistics:configurable_table",
+  "conditions": [
+    {
+      "condition": "neoforge:loot_table_id",
+      "loot_table_id": "minecraft:chests/nether_bridge"
+    }
+  ],
+  "table": "remnants_ballistics:inject/nether_fortress",
+  "category": "structure",
+  "chance": 0.5
+}

@@ -1,0 +1,27 @@
+{
+  "type": "remnants_ballistics:ammo_press",
+  "ingredients": [
+    {
+      "item": "remnants_ballistics:casing",
+      "count": 4
+    },
+    {
+      "item": "minecraft:gunpowder",
+      "count": 2
+    },
+    {
+      "item": "minecraft:iron_ingot",
+      "count": 1
+    }
+  ],
+  "result": {
+    "id": "remnants_ballistics:ammo_magnum",
+    "count": 12
+  },
+  "neoforge:conditions": [
+    {
+      "type": "remnants_ballistics:config",
+      "option": "ammo_crafting"
+    }
+  ]
+}

@@ -1,0 +1,133 @@
+// Root helper for the version workspaces. Each workspace (currently 1.21.1/) is an independent Gradle project;
+// these tasks drive it through its own wrapper and collect the release jars.
+
+String wrapperCmd(String rootDirName) {
+    File root = file(rootDirName)
+    if (System.getProperty('os.name').toLowerCase().contains('win')) {
+        return new File(root, 'gradlew.bat').absolutePath
+    }
+    return new File(root, 'gradlew').absolutePath
+}
+
+String pythonCmd() {
+    return System.getProperty('os.name').toLowerCase().contains('win') ? 'python' : 'python3'
+}
+
+tasks.register('build1211', Exec) {
+    group = 'build'
+    description = 'Build the 1.21.1 NeoForge jar and run the unit tests.'
+    workingDir = file('1.21.1')
+    commandLine wrapperCmd('1.21.1'), 'build'
+}
+
+tasks.register('gameTest1211', Exec) {
+    group = 'verification'
+    description = 'Run the in-game GameTests on a headless 1.21.1 GameTestServer.'
+    workingDir = file('1.21.1')
+    commandLine wrapperCmd('1.21.1'), 'runGameTestServer'
+}
+
+tasks.register('clean1211', Exec) {
+    group = 'build'
+    description = 'Clean the 1.21.1 workspace.'
+    workingDir = file('1.21.1')
+    commandLine wrapperCmd('1.21.1'), 'clean'
+}
+
+tasks.register('generateAssets', Exec) {
+    group = 'assets'
+    description = 'Regenerate every model, texture, sound, animation, translation and data file from tools/assets.'
+    commandLine pythonCmd(), 'tools/assets/generate.py'
+}
+
+tasks.register('checkAssets', Exec) {
+    group = 'verification'
+    description = 'Cross-check generated resources against the Java registries and refresh docs/ASSET_MANIFEST.md.'
+    commandLine pythonCmd(), 'tools/assets/check_assets.py', '--manifest', 'docs/ASSET_MANIFEST.md'
+}
+
+tasks.register('generateDocs', Exec) {
+    group = 'documentation'
+    description = 'Regenerate docs/CONFIG.md, docs/WEAPONS.md and docs/ATTACHMENTS.md from the Java sources.'
+    commandLine pythonCmd(), 'tools/docs_gen.py'
+}
+
+tasks.register('dist') {
+    group = 'build'
+    description = 'Build every workspace and copy the loader jars into releases/.'
+    dependsOn 'checkAssets', 'build1211'
+    doLast {
+        def outDir = file('releases')
+        outDir.mkdirs()
+        ['1.21.1'].each { modDir ->
+            def libsDir = file("${modDir}/build/libs")
+            if (libsDir.exists()) {
+                fileTree(libsDir).matching {
+                    include '*.jar'
+                    exclude '*-sources.jar', '*-javadoc.jar', '*-dev.jar'
+                }.each { jar ->
+                    copy {
+                        from jar
+                        into outDir
+                    }
+                }
+            }
+        }
+        println "Loader JARs collected in: ${outDir.absolutePath}"
+    }
+}
+
+tasks.register('buildAll') {
+    group = 'build'
+    description = 'Build every workspace and collect jars into releases/.'
+    dependsOn 'dist'
+}
+
+tasks.register('build') {
+    group = 'build'
+    description = 'Alias for buildAll so ./gradlew build still produces every loader jar.'
+    dependsOn 'buildAll'
+}
+
+tasks.register('cleanAll') {
+    group = 'build'
+    description = 'Clean every workspace and releases/.'
+    dependsOn 'clean1211'
+    doLast {
+        def outDir = file('releases')
+        if (outDir.exists()) {
+            outDir.deleteDir()
+            println 'Cleaned releases directory.'
+        }
+    }
+}
+
+tasks.register('syncVersion') {
+    group = 'build'
+    description = 'Set mod_version= in every workspace gradle.properties (use -PmodVersion=x.y.z).'
+    doLast {
+        def v = project.findProperty('modVersion')
+        if (!v) {
+            throw new GradleException('Pass -PmodVersion=x.y.z')
+        }
+        ['1.21.1'].each { dir ->
+            def file = file("${dir}/gradle.properties")
+            if (!file.exists()) {
+                throw new GradleException("Missing ${file}")
+            }
+            def updated = false
+            def out = file.readLines().collect { line ->
+                if (line.startsWith('mod_version=')) {
+                    updated = true
+                    return "mod_version=${v}"
+                }
+                return line
+            }
+            if (!updated) {
+                throw new GradleException("No mod_version= line in ${file}")
+            }
+            file.text = out.join(System.lineSeparator()) + System.lineSeparator()
+            println "Synced ${file} -> ${v}"
+        }
+    }
+}

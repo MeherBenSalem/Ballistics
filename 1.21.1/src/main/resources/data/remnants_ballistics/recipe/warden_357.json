@@ -1,0 +1,31 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "equipment",
+  "group": "remnants_ballistics_weapons",
+  "pattern": [
+    "SSS",
+    " PW",
+    "  W"
+  ],
+  "key": {
+    "S": {
+      "tag": "c:ingots/steel"
+    },
+    "P": {
+      "item": "remnants_ballistics:gun_parts"
+    },
+    "W": {
+      "tag": "minecraft:planks"
+    }
+  },
+  "result": {
+    "id": "remnants_ballistics:warden_357",
+    "count": 1
+  },
+  "neoforge:conditions": [
+    {
+      "type": "remnants_ballistics:config",
+      "option": "weapon_crafting"
+    }
+  ]
+}

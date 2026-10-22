@@ -1,0 +1,37 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "equipment",
+  "group": "remnants_ballistics_weapons",
+  "pattern": [
+    "AVA",
+    "ZQV",
+    "AAY"
+  ],
+  "key": {
+    "A": {
+      "item": "remnants_ballistics:remnant_alloy"
+    },
+    "V": {
+      "item": "remnants_ballistics:void_core"
+    },
+    "Z": {
+      "item": "remnants_ballistics:blueprint_prototype"
+    },
+    "Q": {
+      "item": "remnants_ballistics:precision_parts"
+    },
+    "Y": {
+      "item": "remnants_ballistics:polymer_sheet"
+    }
+  },
+  "result": {
+    "id": "remnants_ballistics:eclipse_railgun",
+    "count": 1
+  },
+  "neoforge:conditions": [
+    {
+      "type": "remnants_ballistics:config",
+      "option": "weapon_crafting"
+    }
+  ]
+}

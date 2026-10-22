@@ -1,0 +1,100 @@
+# Architecture
+
+Remnants: Ballistics is a NeoForge 1.21.1 mod (`1.21.1/`, package `com.nightbeam.remnants.ballistics`). The server owns every outcome: ammunition, timing, spread, hits, damage, reload state and block changes. Clients predict their own shots for instant feedback, and the server corrects them when it disagrees.
+
+## Packages
+
+| Package | Side | Contents |
+| --- | --- | --- |
+| `core` | both, Minecraft-free | Stat model (`Stat`, `WeaponStats`, `StatModifier`), ballistics maths (`BallisticMath`, `V3`), `SpreadModel`, `RecoilModel`, `DamageModel`, `HitZones`, `ReloadMath`, deterministic `ShotRandom`, `FireRateLimiter`. Unit-tested with plain JUnit. |
+| `weapon` | both | `WeaponDefinition` and the roster in `Weapons`, `GunItem`, `GunData` (data-component access), fire modes, rarity, categories, blueprints, repair kits. |
+| `attachment` | both | `AttachmentDefinition` and the list in `Attachments`, `GunAttachments` (the weapon's attachment component), compatibility rules. |
+| `ammo` | both | `AmmoType`, `AmmoItem`, `AmmoInventory` (reserve counting and consumption). |
+| `combat` | server | `ServerWeaponHandler` (fire, reload, aim, charge, tick), `BulletTracer`, `LagCompensation`, `ShooterState`, `WeaponMovement`, damage types and server events. |
+| `network` | both | Payload records and `ModNetwork` registration. |
+| `menu`, `block`, `recipe`, `loot`, `entity`, `registry`, `config` | both | Gunsmith Workbench and Ammunition Press, recipe type and config condition, configurable loot modifier, the Voidcaster orb, registries and the three config specs. |
+| `client` | client only | Input and prediction (`ClientGunHandler`, `ClientWeaponState`), rendering (`render`), animation (`anim`), HUD, effects (`fx`, `particle`), screens and client payload handlers. |
+| `gametest` | server | In-game GameTests (`./gradlew runGameTestServer`). |
+
+Client classes are reached only through `Dist.CLIENT` event subscribers and lambdas in the payload registration. A dedicated server never loads them.
+
+## Data model
+
+A weapon is an ordinary item stack. Its state lives in data components (`ModDataComponents`): rounds in the magazine, fire mode and fitted attachments. Durability uses the vanilla damage component. Effective stats are computed on demand as:
+
+base stats → server config overrides and global multipliers → attachment modifiers (flat, then percentage).
+
+Clients get the same server config through NeoForge's config sync, so their prediction uses the server's numbers.
+
+## Firing
+
+1. **Client** (`ClientGunHandler`): reads the trigger, checks rate, ammo and draw delay locally, and plays the shot at once. That covers recoil, viewmodel kick, muzzle flash, tracer and predicted impacts. It then sends `FireWeaponPayload(slot, sequence, yaw, pitch, clientSpread)`.
+2. **Server** (`ServerWeaponHandler.fire`) re-derives everything:
+   - **Checks:** the slot holds a gun; the sequence number is new (replays are dropped); the weapon is enabled, loaded, not broken and drawn.
+   - **Reloads:** a magazine reload in progress blocks the shot; a single-load reload is cancelled instead.
+   - **Charge:** a charged weapon must have charged long enough.
+   - **Rate:** `FireRateLimiter` accepts the shot. It is a leaky bucket with jitter tolerance and a little idle credit that is capped in ticks, so slow weapons cannot double-tap.
+   - **Aim:** the client's yaw and pitch are accepted only within `maxAimDeviation` of the player's real rotation.
+   - **Spread:** never below 75% of the server's own estimate.
+3. Spread directions come from `ShotRandom.forShot(seed, sequence)`. The seed is secret per player and sent to that player only (`ShooterSeedPayload`), so client and server roll identical pellet patterns without trusting the client's numbers.
+4. `BulletTracer` walks the shot along a ballistic arc segment by segment. It handles:
+   - entity hits against lag-compensated boxes, classified into head, body and limb zones;
+   - glass in `#bullet_breakable`;
+   - penetration through `#bullet_penetrable` blocks and entities, with damage loss;
+   - shallow-angle ricochets off hard blocks;
+   - material-tagged impacts.
+
+   The tracer never mutates the world; the server applies damage and block breaks afterwards.
+5. The server sends `HitConfirmPayload` to the shooter (hit markers) and `ShotEffectsPayload` to players within `fxBroadcastRange`. That payload carries the remote muzzle flash, tracer, impacts, third-person fire animation and far-field report.
+6. If the server rejects a shot, it sends a `WeaponCorrectionPayload` with the authoritative magazine count, and the client resynchronises.
+
+The Voidcaster fires a real projectile (`VoidOrbEntity`) instead of a hitscan trace.
+
+## Lag compensation
+
+The server measures each player's round-trip time with its own ping payload (`PingPayload` / `Pong`, every two seconds). `LagCompensation` records every player's bounding box each tick. When tracing a shot, other players' boxes are rewound by the shooter's latency, capped at `maxLagCompensationMs`. Mobs are not rewound; they already move on the server's timeline.
+
+## Reloading
+
+Reloads are a server state machine in `ShooterState`, with phases `MAGAZINE`, `START`, `INSERT`, `END`, `DONE` and `CANCEL`:
+
+- **Magazine reloads** load at the end of the timer.
+- **Single-load weapons** (revolver, pump shotgun, bolt-action) open the action, insert one round per phase and close.
+- **Interruptions:** firing interrupts a single-load reload, and switching weapons cancels any reload.
+
+Each phase is sent to the reloading player and to observers (`ReloadEventPayload`). Clients play the matching clip, time-scaled to the server's duration. Ammunition is only taken from the inventory when a round or magazine is actually loaded.
+
+## Rendering
+
+- **First person** (`ViewmodelRenderer`): replaces the vanilla hand.
+  - The weapon is placed between a hip pose and an ADS pose in which its `sight` point lands on the screen centre.
+  - It adds sway, bob, recoil kick, sprint pose and animated bones.
+  - The player's arms are drawn reaching the grip and the support-hand anchor.
+- **Models** (`GunRenderer`): weapons are drawn from six part models (body, action, magazine, stock, sights, muzzle), each moved by its animation bone.
+  - Attachments are separate models placed on per-weapon mount points (`gun_visuals/<weapon>.json`).
+  - Fitting an optic, stock or muzzle device hides the built-in sights, stock or muzzle.
+  - Skins swap the weapon's texture for a recoloured variant with the same UV layout.
+- **Third person, ground and item frames** (`GunItemRenderer`, a block-entity-without-level renderer): draws the 3D model with the item model's display transforms. Inventories show the 32×32 icon model.
+- **Animation:** Bedrock/Blockbench animation JSON per weapon (`animations/gun/<weapon>.json`), with keyframes, Catmull-Rom easing and sound cues. Three layers are blended: idle, action and fire.
+- **HUD** (`WeaponHud`): ammo and reserve, fire mode, reload or charge progress, durability, a spread-aware crosshair, hit markers, the scope overlay and reflex reticles.
+
+## Networking summary
+
+| Payload | Direction | Purpose |
+| --- | --- | --- |
+| `FireWeaponPayload` | C→S | One shot request |
+| `WeaponActionPayload` | C→S | Reload, fire-mode cycle, aim state, charge state |
+| `PingPayload.Pong` | C→S | Latency measurement reply |
+| `PingPayload` | S→C | Latency measurement |
+| `ShooterSeedPayload` | S→C | Per-player spread seed |
+| `ShotEffectsPayload` | S→C | Remote shot visuals and sounds |
+| `HitConfirmPayload` | S→C | Hit marker, headshot and kill feedback |
+| `ReloadEventPayload` | S→C | Reload phases for local confirmation and remote animation |
+| `RemoteAimPayload` | S→C | Other players' aim and charge state (third-person pose) |
+| `WeaponCorrectionPayload` | S→C | Authoritative magazine count after a rejected action |
+
+All server-bound handlers run on the main thread and validate the held slot and item before doing anything.
+
+## Duplication safety
+
+The Gunsmith Workbench's attachment slots are a live view of the weapon's attachment component. Inserting or removing an attachment edits the weapon on the server, and those slots are never returned on close. Ammunition press outputs are computed on the server from the current inputs, which are consumed when the output is taken.
