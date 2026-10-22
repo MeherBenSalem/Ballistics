@@ -57,6 +57,8 @@ jobs:
 
   build:
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
     strategy:
       matrix:
         game: ['1.21.1']
@@ -68,32 +70,47 @@ jobs:
           java-version: '21'
       - uses: gradle/actions/setup-gradle@v4
       - name: Build and run unit tests
+        id: build
         run: |
           set -o pipefail
           chmod +x "${{ matrix.game }}/gradlew"
           cd "${{ matrix.game }}"
           ./gradlew build --no-daemon 2>&1 | tee "$GITHUB_WORKSPACE/build-output.log"
       - name: Report build errors
-        if: failure()
+        if: failure() && steps.build.outcome == 'failure'
         run: python3 scripts/ci_annotate.py build-output.log "Build errors (${{ matrix.game }})"
       - name: Run GameTests on a headless server
+        id: gametest
         run: |
           set -o pipefail
           cd "${{ matrix.game }}"
           ./gradlew runGameTestServer --no-daemon 2>&1 | tee "$GITHUB_WORKSPACE/gametest-output.log"
       - name: Report GameTest failures
-        if: failure()
+        if: failure() && steps.gametest.outcome == 'failure'
         run: |
           if [ -f gametest-output.log ]; then python3 scripts/ci_annotate.py gametest-output.log "GameTest failures (${{ matrix.game }})"; fi
       - name: Verify the packaged jar
+        id: verify
+        if: always() && steps.build.outcome == 'success'
         run: |
           VERSION=$(grep '^mod_version=' "${{ matrix.game }}/gradle.properties" | cut -d= -f2)
           mkdir -p releases
           cp "${{ matrix.game }}"/build/libs/remnants_ballistics-neoforge-*-"$VERSION".jar releases/
           python3 scripts/verify_release_jars.py --version "$VERSION" --jar-dir releases --output releases/manifest.json
       - uses: actions/upload-artifact@v4
+        if: always() && steps.verify.outcome == 'success'
         with:
           name: verified-${{ matrix.game }}
           path: |
             releases/*.jar
             releases/manifest.json
+      - name: Publish the development build
+        if: always() && steps.verify.outcome == 'success' && github.event_name == 'push' && github.ref == 'refs/heads/main'
+        env:
+          GH_TOKEN: ${{ github.token }}
+          GAMETESTS: ${{ steps.gametest.outcome }}
+        run: |
+          gh release delete dev-build --yes --cleanup-tag 2>/dev/null || true
+          gh release create dev-build releases/*.jar releases/manifest.json --prerelease --target "$GITHUB_SHA" \
+            --title "Development build ${GITHUB_SHA::7}" \
+            --notes "Automatic build of \`main\` at ${GITHUB_SHA::7}. Unit tests and jar verification passed; GameTests: ${GAMETESTS}. For testing only; use the tagged releases for servers."
