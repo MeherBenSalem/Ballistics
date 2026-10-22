@@ -17,7 +17,11 @@ public final class FabricNetwork implements INetwork {
     /** Payload types (both sides) and server-bound handlers. Client-bound handlers are registered by the client entry point. */
     static void register() {
         for (ModNetwork.Entry<?> entry : ModNetwork.SERVER_BOUND) registerToServer(entry);
-        for (ModNetwork.Entry<?> entry : ModNetwork.CLIENT_BOUND) PayloadTypeRegistry.playS2C().register(entry.type(), entry.codec());
+        for (ModNetwork.Entry<?> entry : ModNetwork.CLIENT_BOUND) registerToClient(entry);
+    }
+
+    private static <T extends CustomPacketPayload> void registerToClient(ModNetwork.Entry<T> entry) {
+        PayloadTypeRegistry.playS2C().register(entry.type(), entry.codec());
     }
 
     private static <T extends CustomPacketPayload> void registerToServer(ModNetwork.Entry<T> entry) {

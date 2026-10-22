@@ -35,6 +35,7 @@ import net.minecraft.server.packs.PackType;
 import net.minecraft.server.packs.resources.PreparableReloadListener;
 import net.minecraft.server.packs.resources.ResourceManager;
 import net.minecraft.util.profiling.ProfilerFiller;
+import net.minecraft.world.item.Item;
 import net.neoforged.fml.config.ModConfig;
 
 import java.util.concurrent.CompletableFuture;
@@ -60,7 +61,7 @@ public final class RemnantsBallisticsFabricClient implements ClientModInitialize
         EntityRendererRegistry.register(ModEntities.VOID_ORB.get(), VoidOrbRenderer::new);
         MenuScreens.register(ModMenus.GUNSMITH.get(), GunsmithScreen::new);
         MenuScreens.register(ModMenus.AMMO_PRESS.get(), AmmoPressScreen::new);
-        for (RegistryObject<?, GunItem> gun : ModItems.guns()) {
+        for (RegistryObject<Item, GunItem> gun : ModItems.guns()) {
             // The renderer is created lazily: it needs the block entity render dispatcher, which exists once the client has started.
             BuiltinItemRendererRegistry.INSTANCE.register(gun.get(),
                     (stack, context, poseStack, buffers, light, overlay) -> GunItemRenderer.INSTANCE.renderByItem(stack, context, poseStack, buffers, light, overlay));
