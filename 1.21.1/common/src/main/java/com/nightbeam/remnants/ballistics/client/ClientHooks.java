@@ -3,8 +3,10 @@ package com.nightbeam.remnants.ballistics.client;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.nightbeam.remnants.ballistics.client.fx.ClientEffects;
 import com.nightbeam.remnants.ballistics.client.fx.FxRenderer;
+import com.nightbeam.remnants.ballistics.weapon.TooltipKeys;
 import net.minecraft.client.Camera;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.world.entity.Entity;
 
 /**
@@ -14,6 +16,11 @@ import net.minecraft.world.entity.Entity;
  */
 public final class ClientHooks {
     private ClientHooks() {}
+
+    /** Called once by each loader's client entry point. */
+    public static void init() {
+        TooltipKeys.install(Screen::hasShiftDown);
+    }
 
     public static void tickStart() {
         ClientGunHandler.clientTickStart();

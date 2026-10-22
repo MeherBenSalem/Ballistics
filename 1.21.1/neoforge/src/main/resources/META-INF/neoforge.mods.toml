@@ -13,6 +13,9 @@ logoFile="logo.png"
 logoBlur=false
 description='''${mod_description}'''
 
+[[accessTransformers]]
+file="META-INF/accesstransformer.cfg"
+
 [[dependencies.${mod_id}]]
     modId="neoforge"
     type="required"

@@ -39,9 +39,9 @@ public class GunItem extends Item {
                 .stacksTo(1)
                 .durability(def.durability())
                 .rarity(def.rarity().vanilla())
-                .component(ModDataComponents.AMMO, 0)
-                .component(ModDataComponents.FIRE_MODE, def.defaultFireMode())
-                .component(ModDataComponents.ATTACHMENTS, new GunAttachments(def.defaultAttachments()));
+                .component(ModDataComponents.AMMO.get(), 0)
+                .component(ModDataComponents.FIRE_MODE.get(), def.defaultFireMode())
+                .component(ModDataComponents.ATTACHMENTS.get(), new GunAttachments(def.defaultAttachments()));
     }
 
     public WeaponDefinition definition() {
@@ -110,7 +110,7 @@ public class GunItem extends Item {
             }
         }
 
-        if (flag.hasShiftDown()) {
+        if (TooltipKeys.shiftDown()) {
             int pellets = stats.getInt(Stat.PELLETS);
             tooltip.add(StatText.line(Stat.DAMAGE, stats.get(Stat.DAMAGE))
                     .append(pellets > 1 ? Component.literal(" ×" + pellets).withStyle(ChatFormatting.GRAY) : Component.empty()));

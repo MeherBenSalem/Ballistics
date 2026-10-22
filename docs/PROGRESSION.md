@@ -96,7 +96,7 @@ Shapeless crafting-table recipes.
 
 ## Where to find gear
 
-Loot is added to vanilla tables by global loot modifiers. Each source rolls its table with the listed chance (scaled by `lootChanceMultiplier`). Found weapons are partly worn.
+Loot is added to vanilla tables when they load (on every loader). Each source rolls its table with the listed chance (scaled by `lootChanceMultiplier`). Found weapons are partly worn.
 
 | Source | Chance | Highlights |
 |---|---:|---|

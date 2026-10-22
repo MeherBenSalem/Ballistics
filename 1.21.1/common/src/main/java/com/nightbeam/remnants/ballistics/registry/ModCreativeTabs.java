@@ -10,6 +10,7 @@ import com.nightbeam.remnants.ballistics.weapon.GunItem;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.CreativeModeTab;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 
 /** Three creative tabs: weapons, ammunition & materials, attachments. The loader places them after the vanilla tabs. */
@@ -20,7 +21,7 @@ public final class ModCreativeTabs {
             .title(Component.translatable("itemGroup.remnants_ballistics.weapons"))
             .icon(() -> new ItemStack(ModItems.gun("arx_16")))
             .displayItems((params, output) -> {
-                for (RegistryObject<?, GunItem> gun : ModItems.guns()) {
+                for (RegistryObject<Item, GunItem> gun : ModItems.guns()) {
                     // Creative stacks come loaded so a weapon can be tested immediately.
                     output.accept(GunData.loaded(gun.get()));
                 }

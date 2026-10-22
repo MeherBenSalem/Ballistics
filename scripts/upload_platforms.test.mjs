@@ -5,12 +5,12 @@ import path from "node:path";
 import { spawnSync } from "node:child_process";
 import { fileURLToPath, pathToFileURL } from "node:url";
 import test from "node:test";
-import { DEPENDENCY_PROJECTS, LOADER_IDS, modrinthDependencies,
-  modrinthMetadata, parseJar, releaseType } from "./release_metadata.mjs";
+import { DEPENDENCY_PROJECTS, LOADER_DEPENDENCIES, LOADER_IDS, SUPPORTED_TARGETS, curseforgeRelations,
+  modrinthDependencies, modrinthMetadata, parseJar, releaseType } from "./release_metadata.mjs";
 import { parseArgs, uploadPlatforms } from "./upload_platforms.mjs";
 
 const ROOT = fileURLToPath(new URL("../", import.meta.url));
-const TARGETS = [["neoforge", "1.21.1"]];
+const TARGETS = SUPPORTED_TARGETS.map((target) => target.split(":"));
 const VERSION = "0.3.0";
 const jarName = (loader, game, version = VERSION) => `remnants_ballistics-${loader}-${game}-${version}.jar`;
 const silent = () => {};
@@ -24,22 +24,31 @@ function fixture(t, version = VERSION) {
   return dir;
 }
 
-/** Required dependencies declared in the mods.toml template, other than the loader and Minecraft. */
-function sourceDependencies(game) {
-  const source = fs.readFileSync(path.join(ROOT, game, "src/main/templates/META-INF/neoforge.mods.toml"), "utf8");
+/** Required dependencies declared in a loader's descriptor, other than the loader, Minecraft and Java. */
+function sourceDependencies(loader, game) {
+  const resources = path.join(ROOT, game, loader, "src/main/resources");
+  if (loader === "fabric") {
+    const descriptor = JSON.parse(fs.readFileSync(path.join(resources, "fabric.mod.json"), "utf8"));
+    return Object.keys(descriptor.depends).filter((mod) => !["fabricloader", "minecraft", "java"].includes(mod));
+  }
+  const toml = loader === "neoforge" ? "META-INF/neoforge.mods.toml" : "META-INF/mods.toml";
+  const source = fs.readFileSync(path.join(resources, toml), "utf8");
   return source.split(/\[\[dependencies\./).slice(1).flatMap((block) => {
     const mod = block.match(/modId\s*=\s*"([^"]+)"/)?.[1];
     const required = /mandatory\s*=\s*true|type\s*=\s*"required"/.test(block);
-    return required && !["neoforge", "minecraft"].includes(mod) ? [mod] : [];
+    return required && ![loader, "minecraft"].includes(mod) ? [mod] : [];
   });
 }
 
-test("the payload matches the runtime requirements in neoforge.mods.toml", () => {
+test("every target's payload matches the runtime requirements in its loader descriptor", () => {
   for (const [loader, game] of TARGETS) {
-    assert.deepEqual(sourceDependencies(game).sort(), Object.keys(DEPENDENCY_PROJECTS).sort());
+    assert.deepEqual(sourceDependencies(loader, game).sort(), [...LOADER_DEPENDENCIES[loader]].sort(), `${loader} ${game}`);
     const release = parseJar(jarName(loader, game), VERSION);
     const body = modrinthMetadata(release, { version: VERSION, changelog: "Test", projectId: ids.MODRINTH_ID });
-    assert.deepEqual(body.dependencies, []);
+    assert.deepEqual(body.dependencies.map((d) => d.project_id), LOADER_DEPENDENCIES[loader].map((m) => DEPENDENCY_PROJECTS[m].modrinth));
+    assert.ok(body.dependencies.every((d) => d.dependency_type === "required"));
+    assert.deepEqual(curseforgeRelations(loader, game).projects.map((p) => p.slug),
+      LOADER_DEPENDENCIES[loader].map((m) => DEPENDENCY_PROJECTS[m].curseforge));
     assert.deepEqual(body.loaders, [loader]);
     assert.deepEqual(body.game_versions, [game]);
     assert.equal(body.version_number, `${VERSION}+${loader}-${game}`);
@@ -57,7 +66,7 @@ test("pre-1.0 and suffixed versions publish as beta, others as release", () => {
 });
 
 test("invalid targets, mismatched versions and missing arguments fail closed", () => {
-  for (const name of ["unknown.jar", "remnants_ballistics-fabric-1.21.1-0.3.0.jar", "remnants_ballistics-neoforge-1.20.1-0.3.0.jar"]) {
+  for (const name of ["unknown.jar", "remnants_ballistics-quilt-1.21.1-0.3.0.jar", "remnants_ballistics-neoforge-1.19.2-0.3.0.jar"]) {
     assert.throws(() => parseJar(name));
   }
   assert.throws(() => parseJar(jarName("neoforge", "1.21.1"), "0.3.1"), /does not match/);
@@ -78,13 +87,16 @@ test("dry-run emits complete payloads without credentials or network", async (t)
     log: (...values) => logs.push(values),
   });
   assert.equal(calls, 0);
-  assert.equal(logs.filter(([label]) => label === "[dry-run] Modrinth").length, 1);
+  assert.equal(logs.filter(([label]) => label === "[dry-run] Modrinth").length, TARGETS.length);
   const cf = logs.filter(([label]) => label === "[dry-run] CurseForge");
-  assert.equal(cf.length, 1);
-  const preview = JSON.parse(cf[0][2]);
-  assert.equal(preview.metadata.releaseType, "beta");
-  assert.deepEqual(preview.metadata.relations.projects, []);
-  assert.equal(preview.gameVersionLookup.loaderId, LOADER_IDS.neoforge);
+  assert.equal(cf.length, TARGETS.length);
+  for (const entry of cf) {
+    const preview = JSON.parse(entry[2]);
+    const loader = Object.keys(LOADER_IDS).find((l) => LOADER_IDS[l] === preview.gameVersionLookup.loaderId);
+    assert.ok(loader, "unknown CurseForge loader id");
+    assert.equal(preview.metadata.releaseType, "beta");
+    assert.deepEqual(preview.metadata.relations.projects.map((p) => p.slug), LOADER_DEPENDENCIES[loader].map((m) => DEPENDENCY_PROJECTS[m].curseforge));
+  }
 });
 
 test("CLI dry-run never reads local.env, jar bytes or calls fetch", (t) => {
@@ -106,7 +118,7 @@ test("CLI dry-run never reads local.env, jar bytes or calls fetch", (t) => {
     path.join(ROOT, "scripts/upload_platforms.mjs"), "--version", VERSION, "--jar-dir", dir, "--require-all-targets", "--dry-run"],
   { encoding: "utf8", env });
   assert.equal(child.status, 0, child.stderr);
-  assert.equal((child.stdout.match(/\[dry-run\] Modrinth/g) || []).length, 1);
+  assert.equal((child.stdout.match(/\[dry-run\] Modrinth/g) || []).length, TARGETS.length);
   assert.doesNotMatch(child.stdout, /Loaded secrets|not-a-token/);
 });
 
@@ -117,7 +129,7 @@ test("full-release and regular-file preflight stops before any upload", async (t
   const jar = path.join(jarDir, jarName("neoforge", "1.21.1"));
   fs.unlinkSync(jar);
   fs.writeFileSync(path.join(jarDir, jarName("neoforge", "1.21.1", "0.2.0")), "old jar");
-  await assert.rejects(uploadPlatforms({ version: VERSION, jarDir, requireAllTargets: true }, transport), /No remnants_ballistics/);
+  await assert.rejects(uploadPlatforms({ version: VERSION, jarDir, requireAllTargets: true }, transport), /Missing release targets: neoforge:1\.21\.1/);
   assert.equal(calls, 0);
   fs.mkdirSync(jar);
   await assert.rejects(uploadPlatforms({ version: VERSION, jarDir }, transport), /Not a regular jar file/);
@@ -154,7 +166,7 @@ function mockTransport(records, { modrinthFailure = false, modernLookupFails = f
       assert.equal(await file.text(), "fixture jar");
       assert.deepEqual(body.gameVersions, [1, 2, LOADER_IDS[release.loader], 1211]);
       assert.equal(body.releaseType, "beta");
-      assert.deepEqual(body.relations.projects, []);
+      assert.deepEqual(body.relations, curseforgeRelations(release.loader, release.game));
       records.push({ platform: "curseforge", body });
       return Response.json({ id: 42 });
     }
@@ -167,8 +179,8 @@ test("actual upload sends one Modrinth version and one CurseForge file", async (
   await uploadPlatforms({ version: VERSION, jarDir: fixture(t), requireAllTargets: true }, {
     env: tokens, fetchImpl: mockTransport(records), log: silent,
   });
-  assert.equal(records.filter((r) => r.platform === "modrinth").length, 1);
-  assert.equal(records.filter((r) => r.platform === "curseforge").length, 1);
+  assert.equal(records.filter((r) => r.platform === "modrinth").length, TARGETS.length);
+  assert.equal(records.filter((r) => r.platform === "curseforge").length, TARGETS.length);
 });
 
 test("CurseForge-only needs no Modrinth token and retains legacy lookup fallback", async (t) => {
@@ -178,7 +190,7 @@ test("CurseForge-only needs no Modrinth token and retains legacy lookup fallback
     fetchImpl: mockTransport(records, { modernLookupFails: true }), log: silent,
   });
   assert.equal(records.filter((r) => r.platform === "modrinth").length, 0);
-  assert.equal(records.filter((r) => r.platform === "curseforge").length, 1);
+  assert.equal(records.filter((r) => r.platform === "curseforge").length, TARGETS.length);
 });
 
 test("live mode without project ids, credentials or after an API rejection stops publication", async (t) => {

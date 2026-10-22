@@ -48,6 +48,7 @@ import java.util.concurrent.Executor;
 public final class RemnantsBallisticsFabricClient implements ClientModInitializer {
     @Override
     public void onInitializeClient() {
+        ClientHooks.init();
         NeoForgeConfigRegistry.INSTANCE.register(RemnantsBallistics.MODID, ModConfig.Type.CLIENT, ClientConfig.SPEC);
         FabricClientNetwork.registerReceivers();
 

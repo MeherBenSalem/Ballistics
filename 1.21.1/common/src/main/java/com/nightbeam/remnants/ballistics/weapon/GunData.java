@@ -25,28 +25,28 @@ public final class GunData {
     }
 
     public static int ammo(ItemStack stack) {
-        return stack.getOrDefault(ModDataComponents.AMMO, 0);
+        return stack.getOrDefault(ModDataComponents.AMMO.get(), 0);
     }
 
     public static void setAmmo(ItemStack stack, int ammo) {
-        stack.set(ModDataComponents.AMMO, Math.max(0, ammo));
+        stack.set(ModDataComponents.AMMO.get(), Math.max(0, ammo));
     }
 
     public static FireMode fireMode(ItemStack stack, WeaponDefinition def) {
-        FireMode mode = stack.get(ModDataComponents.FIRE_MODE);
+        FireMode mode = stack.get(ModDataComponents.FIRE_MODE.get());
         return mode != null && def.fireModes().contains(mode) ? mode : def.defaultFireMode();
     }
 
     public static void setFireMode(ItemStack stack, FireMode mode) {
-        stack.set(ModDataComponents.FIRE_MODE, mode);
+        stack.set(ModDataComponents.FIRE_MODE.get(), mode);
     }
 
     public static GunAttachments attachments(ItemStack stack) {
-        return stack.getOrDefault(ModDataComponents.ATTACHMENTS, GunAttachments.EMPTY);
+        return stack.getOrDefault(ModDataComponents.ATTACHMENTS.get(), GunAttachments.EMPTY);
     }
 
     public static void setAttachments(ItemStack stack, GunAttachments attachments) {
-        stack.set(ModDataComponents.ATTACHMENTS, attachments);
+        stack.set(ModDataComponents.ATTACHMENTS.get(), attachments);
     }
 
     /** Effective stats with config overrides and fitted attachments. */

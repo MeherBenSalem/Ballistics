@@ -19,6 +19,7 @@
     "fabric-gametest": ["com.nightbeam.remnants.ballistics.gametest.BallisticsGameTests"]
   },
   "mixins": ["${mod_id}.fabric.mixins.json"],
+  "accessWidener": "${mod_id}.accesswidener",
   "depends": {
     "fabricloader": ">=0.16.0",
     "fabric-api": "*",

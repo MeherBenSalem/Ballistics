@@ -31,7 +31,7 @@ public enum ImpactType {
         if (state.is(ModTags.Blocks.IMPACT_GLASS)) return GLASS;
         if (state.is(ModTags.Blocks.IMPACT_WOOD)) return WOOD;
         if (state.is(ModTags.Blocks.IMPACT_SOFT)) return SOFT;
-        SoundType sound = state.getSoundType(level, pos, null);
+        SoundType sound = state.getSoundType();
         if (sound == SoundType.METAL || sound == SoundType.COPPER || sound == SoundType.ANVIL || sound == SoundType.CHAIN
                 || sound == SoundType.NETHERITE_BLOCK || sound == SoundType.LANTERN) return METAL;
         if (sound == SoundType.GLASS || sound == SoundType.AMETHYST || sound == SoundType.AMETHYST_CLUSTER) return GLASS;

@@ -2,8 +2,9 @@
 
     python3 scripts/ci_annotate.py build-output.log [title]
 
-Emits up to 10 per-line annotations for javac errors (file and line linked) and one summary annotation holding every
-compiler error, failed test, failed GameTest and "What went wrong" block, so failures are readable from the run summary
+Emits one summary annotation holding every
+compiler error, failed test, failed GameTest and "What went wrong" block, then up to 8 per-line annotations for javac
+errors (file and line linked), so failures are readable from the run summary
 page and the checks API without downloading the raw log.
 """
 import os
@@ -34,7 +35,7 @@ def main():
     except FileNotFoundError:
         print(f'::error title={escape_property(title)}::{escape(path)} was not written')
         return
-    per_line = 0
+    per_line = []
     keep = []
     i = 0
     while i < len(lines):
@@ -44,9 +45,7 @@ def main():
             rel = m.group('path')
             if workspace and rel.startswith(workspace):
                 rel = rel[len(workspace):].lstrip('/')
-            if per_line < 10:
-                print(f'::error file={escape_property(rel)},line={m.group("line")}::{escape(m.group("msg"))}')
-                per_line += 1
+            per_line.append(f'::error file={escape_property(rel)},line={m.group("line")}::{escape(m.group("msg"))}')
             keep.extend(lines[i:i + 5])
             i += 5
             continue
@@ -60,7 +59,10 @@ def main():
     excerpt = '\n'.join(dict.fromkeys(keep)) if keep else '\n'.join(lines[-80:])
     if len(excerpt) > MAX_SUMMARY:
         excerpt = excerpt[:MAX_SUMMARY] + '\n[truncated]'
+    # GitHub keeps 10 error annotations per step: the summary goes first, then up to 8 linked lines.
     print(f'::error title={escape_property(title)}::{escape(excerpt)}')
+    for annotation in list(dict.fromkeys(per_line))[:8]:
+        print(annotation)
 
 
 if __name__ == '__main__':
