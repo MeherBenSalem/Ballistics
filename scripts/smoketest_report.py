@@ -45,6 +45,34 @@ def log_findings(path):
     return list(dict.fromkeys(warnings)), list(dict.fromkeys(crash))
 
 
+def failure_excerpt(log, run_dir, crash):
+    """Why a run produced no result: Gradle's failure block, the game's errors and the end of its log."""
+    parts = []
+    if os.path.exists(log):
+        with open(log, encoding='utf-8', errors='replace') as f:
+            lines = [l.rstrip('\n') for l in f]
+        for i, line in enumerate(lines):
+            if 'What went wrong' in line:
+                parts.append('Gradle:\n' + '\n'.join(lines[i:i + 10]))
+                break
+    if crash:
+        parts.append('Exceptions:\n' + '\n'.join(crash[:80]))
+    game_log = os.path.join(run_dir, 'logs', 'latest.log')
+    if os.path.exists(game_log):
+        with open(game_log, encoding='utf-8', errors='replace') as f:
+            lines = [l.rstrip('\n') for l in f]
+        errors = [l for l in lines if LEVEL.search(l) and not IGNORED.search(l)]
+        if errors:
+            parts.append('Game log errors and warnings:\n' + '\n'.join(list(dict.fromkeys(errors))[:60]))
+        parts.append('End of the game log:\n' + '\n'.join(lines[-40:]))
+    else:
+        parts.append(f'{game_log} was not written (the game never started).')
+        if os.path.exists(log):
+            with open(log, encoding='utf-8', errors='replace') as f:
+                parts.append('End of the Gradle output:\n' + ''.join(f.readlines()[-60:]))
+    return '\n\n'.join(parts)[:60000]
+
+
 def contact_sheets(run_dir, shots, out, prefix):
     try:
         from PIL import Image, ImageDraw
@@ -109,8 +137,7 @@ def main():
 
     result_path = os.path.join(args.run_dir, 'smoketest', 'result.json')
     if not os.path.exists(result_path):
-        excerpt = '\n'.join(crash[:120]) or 'no exception found in the log'
-        annotate('error', title, 'The client exited without writing a result (crash or hang).\n' + excerpt)
+        annotate('error', title, 'The client exited without writing a result (crash or hang).\n' + failure_excerpt(args.log, args.run_dir, crash))
         sys.exit(1)
     with open(result_path, encoding='utf-8') as f:
         result = json.load(f)
