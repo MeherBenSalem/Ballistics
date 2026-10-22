@@ -69,13 +69,22 @@ jobs:
       - uses: gradle/actions/setup-gradle@v4
       - name: Build and run unit tests
         run: |
+          set -o pipefail
           chmod +x "${{ matrix.game }}/gradlew"
           cd "${{ matrix.game }}"
-          ./gradlew build --no-daemon
+          ./gradlew build --no-daemon 2>&1 | tee "$GITHUB_WORKSPACE/build-output.log"
+      - name: Report build errors
+        if: failure()
+        run: python3 scripts/ci_annotate.py build-output.log "Build errors (${{ matrix.game }})"
       - name: Run GameTests on a headless server
         run: |
+          set -o pipefail
           cd "${{ matrix.game }}"
-          ./gradlew runGameTestServer --no-daemon
+          ./gradlew runGameTestServer --no-daemon 2>&1 | tee "$GITHUB_WORKSPACE/gametest-output.log"
+      - name: Report GameTest failures
+        if: failure()
+        run: |
+          if [ -f gametest-output.log ]; then python3 scripts/ci_annotate.py gametest-output.log "GameTest failures (${{ matrix.game }})"; fi
       - name: Verify the packaged jar
         run: |
           VERSION=$(grep '^mod_version=' "${{ matrix.game }}/gradle.properties" | cut -d= -f2)
