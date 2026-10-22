@@ -118,8 +118,10 @@ neoForge.ideSyncTask generateModMetadata
 tasks.named('jar', Jar).configure {
     // The license files live at the repository root, shared by every version workspace.
     // One from() per file: from(a, b) { ... } would pass the closure itself as a third source.
-    from(file('../LICENSE')) { rename { "LICENSE_${project.mod_id}" } }
-    from(file('../NOTICE')) { rename { "NOTICE_${project.mod_id}" } }
+    // Regex renames rather than closures: a rename closure runs at execution time, and the
+    // configuration cache cannot serialise the script objects it would reach.
+    from(file('../LICENSE')) { rename('^LICENSE$', "LICENSE_${mod_id}") }
+    from(file('../NOTICE')) { rename('^NOTICE$', "NOTICE_${mod_id}") }
     manifest {
         attributes([
                 'Specification-Title'   : mod_id,
