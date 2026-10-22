@@ -18,8 +18,9 @@ import java.util.Set;
 
 /** Loads {@link GunVisuals} for every weapon. Missing or broken files are logged and use a visible fallback. */
 public final class GunVisualsLoader extends SimpleJsonResourceReloadListener {
-    public static final GunVisualsLoader INSTANCE = new GunVisualsLoader();
+    // Declared before INSTANCE: static fields initialise in order, and the constructor passes GSON to super.
     private static final Gson GSON = new GsonBuilder().create();
+    public static final GunVisualsLoader INSTANCE = new GunVisualsLoader();
 
     private volatile Map<String, GunVisuals> visuals = Map.of();
     private final Set<String> warned = new HashSet<>();

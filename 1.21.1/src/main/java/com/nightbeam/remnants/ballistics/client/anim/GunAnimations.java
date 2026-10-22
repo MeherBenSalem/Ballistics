@@ -26,8 +26,9 @@ import java.util.TreeMap;
  * {@code sound_effects}. Missing sets are reported in the log, never silently replaced.
  */
 public final class GunAnimations extends SimpleJsonResourceReloadListener {
-    public static final GunAnimations INSTANCE = new GunAnimations();
+    // Declared before INSTANCE: static fields initialise in order, and the constructor passes GSON to super.
     private static final Gson GSON = new GsonBuilder().create();
+    public static final GunAnimations INSTANCE = new GunAnimations();
 
     private volatile Map<ResourceLocation, Map<String, GunAnimation>> sets = Map.of();
 
