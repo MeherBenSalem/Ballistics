@@ -285,7 +285,7 @@ public final class ClientSmokeTest {
             Minecraft mc = Minecraft.getInstance();
             before[0] = GunData.ammo(mc.player.getMainHandItem());
             previousShot[0] = ClientWeaponState.INSTANCE.lastShotNanos;
-            KeyMapping.click(mc.options.keyAttack.getKey());
+            KeyMapping.click(boundKey(mc.options.keyAttack));
             setKey(mc.options.keyAttack, true);
             // Charged weapons fire once the charge completes, so the trigger stays held until the shot is seen.
             pendingShot = prefix + "_3_fire";
@@ -304,13 +304,13 @@ public final class ClientSmokeTest {
             waitTicks = 8;
         });
         step(n + ": reload", () -> {
-            KeyMapping.click(Keybinds.RELOAD.getKey());
+            KeyMapping.click(boundKey(Keybinds.RELOAD));
             waitTicks = 10;
         });
         shot(prefix + "_4_reload");
         step(n + ": wait for the reload", () -> waitTicks = 90);
         step(n + ": inspect", () -> {
-            KeyMapping.click(Keybinds.INSPECT.getKey());
+            KeyMapping.click(boundKey(Keybinds.INSPECT));
             waitTicks = 18;
         });
         shot(prefix + "_5_inspect");
@@ -462,9 +462,13 @@ public final class ClientSmokeTest {
     }
 
     private static void setKey(KeyMapping key, boolean down) {
-        InputConstants.Key bound = key.getKey();
-        KeyMapping.set(bound, down);
+        KeyMapping.set(boundKey(key), down);
         key.setDown(down);
+    }
+
+    /** The key a mapping is bound to (vanilla keeps the field private; its saved name resolves back to it). */
+    private static InputConstants.Key boundKey(KeyMapping key) {
+        return InputConstants.getKey(key.saveString());
     }
 
     private interface ServerAction {
