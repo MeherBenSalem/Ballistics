@@ -27,9 +27,6 @@ loom {
     if (aw.exists()) {
         accessWidenerPath.set(aw)
     }
-    mixin {
-        defaultRefmapName.set("${mod_id}.refmap.json")
-    }
     mods {
         "${mod_id}" {
             sourceSet sourceSets.main
