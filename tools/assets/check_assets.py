@@ -19,8 +19,8 @@ HERE = os.path.dirname(os.path.abspath(__file__))
 ROOT = os.path.abspath(os.path.join(HERE, "..", ".."))
 NS = "remnants_ballistics"
 WORKSPACE = os.path.join(ROOT, "1.21.1")
-JAVA = os.path.join(WORKSPACE, "src", "main", "java", "com", "nightbeam", "remnants", "ballistics")
-RES = os.path.join(WORKSPACE, "src", "main", "resources")
+JAVA = os.path.join(WORKSPACE, "common", "src", "main", "java", "com", "nightbeam", "remnants", "ballistics")
+RES = os.path.join(WORKSPACE, "common", "src", "main", "resources")
 ASSETS = os.path.join(RES, "assets", NS)
 DATA = os.path.join(RES, "data", NS)
 
@@ -60,9 +60,10 @@ weapons = re.findall(r'WeaponDefinition\.builder\("([a-z0-9_]+)"', java("weapon/
 weapon_src = java("weapon/Weapons.java")
 attachments = re.findall(r'AttachmentDefinition\.builder\("([a-z0-9_]+)",\s*AttachmentSlot\.([A-Z]+)', java("attachment/Attachments.java"))
 ammo = re.findall(r'^\s{4}[A-Z0-9_]+\("([a-z0-9_]+)",', java("ammo/AmmoType.java"), re.M)
-simple_items = re.findall(r'register(?:Simple)?Item\("([a-z0-9_]+)"', java("registry/ModItems.java"))
-block_items = re.findall(r'registerSimpleBlockItem\("([a-z0-9_]+)"', java("registry/ModItems.java"))
-blocks = re.findall(r'registerBlock\("([a-z0-9_]+)"', java("registry/ModBlocks.java"))
+items_src = java("registry/ModItems.java")
+block_items = re.findall(r'ITEMS\.register\("([a-z0-9_]+)",\s*\(\) -> new BlockItem', items_src)
+simple_items = [i for i in re.findall(r'(?:\bsimple|ITEMS\.register)\("([a-z0-9_]+)"', items_src) if i not in block_items]
+blocks = re.findall(r'BLOCKS\.register\("([a-z0-9_]+)"', java("registry/ModBlocks.java"))
 sound_src = java("registry/ModSounds.java")
 profiles = [p.lower() for p in re.findall(r'\b([A-Z_]+)\b', re.search(r'enum SoundProfile \{([^;]*);', java("weapon/SoundProfile.java")).group(1))]
 sounds = set(re.findall(r'register\("([a-z0-9_.]+)"\)', sound_src)) | {f"gun.{p}.fire" for p in profiles}
@@ -248,14 +249,14 @@ for path in glob.glob(os.path.join(DATA, "recipe", "**", "*.json"), recursive=Tr
         if r not in item_ids and r not in (f"{NS}:config", f"{NS}:ammo_press"):
             problem(f"{os.path.relpath(path, RES)}: unknown id {r}")
 tables = {os.path.relpath(p, os.path.join(DATA, "loot_table"))[:-5].replace(os.sep, "/") for p in glob.glob(os.path.join(DATA, "loot_table", "**", "*.json"), recursive=True)}
-for path in glob.glob(os.path.join(DATA, "loot_modifiers", "*.json")):
-    m = load(path) or {}
-    if m.get("table", "").split(":", 1)[-1] not in tables:
-        problem(f"{os.path.relpath(path, RES)}: table {m.get('table')} missing")
-glm = load(os.path.join(RES, "data", "neoforge", "loot_modifiers", "global_loot_modifiers.json")) or {}
-for e in glm.get("entries", []):
-    if not os.path.exists(os.path.join(DATA, "loot_modifiers", e.split(":", 1)[1] + ".json")):
-        problem(f"global_loot_modifiers: {e} missing")
+injections = (load(os.path.join(DATA, "loot_injections.json")) or {}).get("injections", {})
+if not injections:
+    problem("loot_injections.json missing or empty")
+for name, inj in injections.items():
+    if inj.get("table", "").split(":", 1)[-1] not in tables:
+        problem(f"loot injection {name}: table {inj.get('table')} missing")
+    if inj.get("category") not in ("structure", "mob") or not 0 < inj.get("chance", 0) <= 1 or not inj.get("targets"):
+        problem(f"loot injection {name}: invalid category, chance or targets")
 for path in glob.glob(os.path.join(DATA, "loot_table", "**", "*.json"), recursive=True):
     for r in refs(load(path)):
         if r not in item_ids and not r.startswith(f"{NS}:blocks/"):
@@ -301,7 +302,7 @@ summary = [
     ("Particle types", len(particles)),
     ("Recipes", count("data/**/recipe/**/*.json")),
     ("Loot tables", count("data/**/loot_table/**/*.json")),
-    ("Loot modifiers", count("data/**/loot_modifiers/*.json") - 1),
+    ("Loot injections", len(injections)),
     ("Advancements", count("data/**/advancement/*.json")),
     ("Translation keys (en_us)", len(lang)),
 ]

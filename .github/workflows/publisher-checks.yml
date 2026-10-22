@@ -2,12 +2,15 @@ name: Publisher checks
 
 on:
   push:
-    branches: [main]
+    branches: [main, multiloader]
     paths:
       - "scripts/**"
       - "tools/**"
       - "docs/**"
+      - "1.20.1/**"
       - "1.21.1/**"
+      - "26.2/**"
+      - "26.3/**"
       - ".github/workflows/publish.yml"
       - ".github/workflows/publisher-checks.yml"
   pull_request:
@@ -15,7 +18,10 @@ on:
       - "scripts/**"
       - "tools/**"
       - "docs/**"
+      - "1.20.1/**"
       - "1.21.1/**"
+      - "26.2/**"
+      - "26.3/**"
       - ".github/workflows/publish.yml"
       - ".github/workflows/publisher-checks.yml"
 
@@ -55,44 +61,52 @@ jobs:
           python tools/docs_gen.py
           git diff --exit-code -- docs/
 
+  # One job per Minecraft version and loader: build, unit tests, GameTests on a headless server, a scripted client
+  # run under Xvfb (screenshots of every weapon), and an audit of the packaged jar.
   build:
+    name: build (${{ matrix.game }} ${{ matrix.loader }})
     runs-on: ubuntu-latest
-    permissions:
-      contents: write
     strategy:
+      fail-fast: false
       matrix:
-        game: ['1.21.1']
+        include:
+          - { game: '1.21.1', loader: neoforge, java: '21', gametest: runGameTestServer }
+          - { game: '1.21.1', loader: fabric, java: '21', gametest: runGametest }
+    env:
+      WS: ${{ matrix.game }}
+      LOADER: ${{ matrix.loader }}
+      TARGET: ${{ matrix.game }}-${{ matrix.loader }}
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-java@v4
         with:
           distribution: temurin
-          java-version: '21'
+          java-version: ${{ matrix.java }}
       - uses: gradle/actions/setup-gradle@v4
       - name: Build and run unit tests
         id: build
         run: |
           set -o pipefail
-          chmod +x "${{ matrix.game }}/gradlew"
-          cd "${{ matrix.game }}"
-          ./gradlew build --no-daemon 2>&1 | tee "$GITHUB_WORKSPACE/build-output.log"
+          chmod +x "$WS/gradlew"
+          cd "$WS"
+          ./gradlew :common:test ":$LOADER:build" --no-daemon 2>&1 | tee "$GITHUB_WORKSPACE/build-output.log"
       - name: Report build errors
         if: failure() && steps.build.outcome == 'failure'
-        run: python3 scripts/ci_annotate.py build-output.log "Build errors (${{ matrix.game }})"
+        run: python3 scripts/ci_annotate.py build-output.log "Build errors ($TARGET)"
       - name: Run GameTests on a headless server
         id: gametest
         run: |
           set -o pipefail
-          cd "${{ matrix.game }}"
-          ./gradlew runGameTestServer --no-daemon 2>&1 | tee "$GITHUB_WORKSPACE/gametest-output.log"
+          cd "$WS"
+          ./gradlew ":$LOADER:${{ matrix.gametest }}" --no-daemon 2>&1 | tee "$GITHUB_WORKSPACE/gametest-output.log"
       - name: Report GameTest results
         if: always() && steps.build.outcome == 'success'
         run: |
           if [ ! -f gametest-output.log ]; then exit 0; fi
           grep -hoE '(All [0-9]+ required tests passed|[0-9]+ required tests failed)[^"]*' gametest-output.log \
-            | head -1 | sed 's/^/::notice title=GameTests (${{ matrix.game }})::/' || true
+            | head -1 | sed "s/^/::notice title=GameTests ($TARGET)::/" || true
           if [ "${{ steps.gametest.outcome }}" = failure ]; then
-            python3 scripts/ci_annotate.py gametest-output.log "GameTest failures (${{ matrix.game }})"
+            python3 scripts/ci_annotate.py gametest-output.log "GameTest failures ($TARGET)"
           fi
       - uses: actions/setup-python@v5
         if: always() && steps.build.outcome == 'success'
@@ -112,49 +126,77 @@ jobs:
           LIBGL_ALWAYS_SOFTWARE: '1'
         run: |
           set -o pipefail
-          mkdir -p "${{ matrix.game }}/run/smoketest"
-          cp scripts/smoketest-options.txt "${{ matrix.game }}/run/smoketest/options.txt"
-          cd "${{ matrix.game }}"
-          xvfb-run -a -s "-screen 0 1280x720x24" ./gradlew runClientSmokeTest --no-daemon 2>&1 | tee "$GITHUB_WORKSPACE/smoketest-output.log"
+          mkdir -p "$WS/$LOADER/run/smoketest"
+          cp scripts/smoketest-options.txt "$WS/$LOADER/run/smoketest/options.txt"
+          cd "$WS"
+          xvfb-run -a -s "-screen 0 1280x720x24" ./gradlew ":$LOADER:runClientSmokeTest" --no-daemon 2>&1 | tee "$GITHUB_WORKSPACE/smoketest-output.log"
       - name: Report the client smoke test
         id: smokereport
         if: always() && steps.build.outcome == 'success'
-        run: python3 scripts/smoketest_report.py --log smoketest-output.log --run-dir "${{ matrix.game }}/run/smoketest" --out smoketest
+        run: python3 scripts/smoketest_report.py --log smoketest-output.log --run-dir "$WS/$LOADER/run/smoketest" --out smoketest --prefix "$TARGET"
       - name: Verify the packaged jar
         id: verify
         if: always() && steps.build.outcome == 'success'
         run: |
-          VERSION=$(grep '^mod_version=' "${{ matrix.game }}/gradle.properties" | cut -d= -f2)
+          VERSION=$(grep '^mod_version=' "$WS/gradle.properties" | cut -d= -f2)
           mkdir -p releases
-          cp "${{ matrix.game }}"/build/libs/remnants_ballistics-neoforge-*-"$VERSION".jar releases/
-          python3 scripts/verify_release_jars.py --version "$VERSION" --jar-dir releases --output releases/manifest.json
+          cp "$WS/$LOADER/build/libs/remnants_ballistics-$LOADER-${{ matrix.game }}-$VERSION.jar" releases/
+          python3 scripts/verify_release_jars.py --version "$VERSION" --jar-dir releases --targets "$LOADER:${{ matrix.game }}" \
+            --output "releases/manifest-$TARGET.json"
+      - name: Record the results
+        if: always()
+        run: |
+          mkdir -p releases
+          echo "$TARGET: build ${{ steps.build.outcome }}, jar ${{ steps.verify.outcome }}, GameTests ${{ steps.gametest.outcome }}, client smoke test ${{ steps.smokereport.outcome }}" \
+            > "releases/status-$TARGET.txt"
+          cp smoketest/*.jpg smoketest/summary-*.txt releases/ 2>/dev/null || true
       - uses: actions/upload-artifact@v4
-        if: always() && steps.verify.outcome == 'success'
+        if: always()
         with:
-          name: verified-${{ matrix.game }}
-          path: |
-            releases/*.jar
-            releases/manifest.json
+          name: build-${{ matrix.game }}-${{ matrix.loader }}
+          if-no-files-found: ignore
+          path: releases/
       - uses: actions/upload-artifact@v4
         if: always() && steps.build.outcome == 'success'
         with:
-          name: client-smoke-test-${{ matrix.game }}
+          name: logs-${{ matrix.game }}-${{ matrix.loader }}
           if-no-files-found: ignore
           path: |
-            smoketest/
-            smoketest-output.log
-            ${{ matrix.game }}/run/smoketest/logs/
-            ${{ matrix.game }}/run/smoketest/crash-reports/
+            *-output.log
+            ${{ matrix.game }}/${{ matrix.loader }}/run/smoketest/logs/
+            ${{ matrix.game }}/${{ matrix.loader }}/run/smoketest/crash-reports/
+
+  # Collects every target's jar and screenshots into a pre-release: dev-build for main, dev-build-<branch> otherwise.
+  publish-dev:
+    needs: build
+    if: always() && github.event_name == 'push'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/download-artifact@v4
+        with:
+          pattern: build-*
+          merge-multiple: true
+          path: out
       - name: Publish the development build
-        if: always() && steps.verify.outcome == 'success' && github.event_name == 'push' && github.ref == 'refs/heads/main'
         env:
           GH_TOKEN: ${{ github.token }}
-          GAMETESTS: ${{ steps.gametest.outcome }}
-          SMOKETEST: ${{ steps.smokereport.outcome }}
         run: |
-          gh release delete dev-build --yes --cleanup-tag 2>/dev/null || true
-          SUMMARY=$(cat smoketest/summary.txt 2>/dev/null || echo "did not run")
-          gh release create dev-build releases/*.jar releases/manifest.json --prerelease --target "$GITHUB_SHA" \
-            --title "Development build ${GITHUB_SHA::7}" \
-            --notes "Automatic build of \`main\` at ${GITHUB_SHA::7}. Unit tests and jar verification passed; GameTests: ${GAMETESTS}; client smoke test: ${SMOKETEST} (${SUMMARY}). The smoke-*.jpg files are screenshots from that run. For testing only; use the tagged releases for servers."
-          if ls smoketest/*.jpg > /dev/null 2>&1; then gh release upload dev-build smoketest/*.jpg --clobber; fi
+          TAG=dev-build
+          if [ "$GITHUB_REF_NAME" != main ]; then TAG="dev-build-${GITHUB_REF_NAME//\//-}"; fi
+          ls -la out
+          STATUS=$(cat out/status-*.txt 2>/dev/null | sed 's/^/- /')
+          SUMMARIES=$(cat out/summary-*.txt 2>/dev/null | sed 's/^/- /')
+          if ls out/manifest-*.json > /dev/null 2>&1; then jq -s 'add' out/manifest-*.json > out/manifest.json; fi
+          gh release delete "$TAG" --yes --cleanup-tag 2>/dev/null || true
+          gh release create "$TAG" --prerelease --target "$GITHUB_SHA" --title "Development build ${GITHUB_SHA::7} ($GITHUB_REF_NAME)" \
+            --notes "Automatic build of \`$GITHUB_REF_NAME\` at ${GITHUB_SHA::7}. For testing only; use the tagged releases for servers.
+
+          $STATUS
+
+          Client smoke tests (the smoke-*.jpg files are screenshots from these runs):
+          $SUMMARIES"
+          if ls out/*.jar > /dev/null 2>&1; then gh release upload "$TAG" out/*.jar out/manifest.json --clobber; fi
+          if ls out/*.jpg > /dev/null 2>&1; then gh release upload "$TAG" out/*.jpg --clobber; fi

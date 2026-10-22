@@ -1,0 +1,38 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "equipment",
+  "group": "remnants_ballistics_attachments",
+  "ingredients": [
+    {
+      "tag": "c:ingots/steel"
+    },
+    {
+      "tag": "c:ingots/steel"
+    },
+    {
+      "item": "minecraft:iron_ingot"
+    },
+    {
+      "item": "minecraft:iron_ingot"
+    },
+    {
+      "item": "minecraft:leather"
+    }
+  ],
+  "result": {
+    "id": "remnants_ballistics:light_stock",
+    "count": 1
+  },
+  "neoforge:conditions": [
+    {
+      "type": "remnants_ballistics:config",
+      "option": "attachment_crafting"
+    }
+  ],
+  "fabric:load_conditions": [
+    {
+      "condition": "remnants_ballistics:config",
+      "option": "attachment_crafting"
+    }
+  ]
+}

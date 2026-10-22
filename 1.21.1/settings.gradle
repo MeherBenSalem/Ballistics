@@ -1,11 +1,29 @@
 pluginManagement {
     repositories {
         gradlePluginPortal()
+        mavenCentral()
+        exclusiveContent {
+            forRepository {
+                maven {
+                    name = 'Fabric'
+                    url = uri('https://maven.fabricmc.net')
+                }
+            }
+            filter {
+                includeGroup('net.fabricmc')
+                includeGroup('net.fabricmc.unpick')
+                includeGroup('fabric-loom')
+            }
+        }
     }
 }
 
 plugins {
-    id 'org.gradle.toolchains.foojay-resolver-convention' version '1.0.0'
+    id 'org.gradle.toolchains.foojay-resolver-convention' version '0.8.0'
 }
 
-rootProject.name = 'remnants-ballistics'
+// Minecraft 1.21.1: common code plus a NeoForge and a Fabric loader module (MultiLoader layout).
+rootProject.name = 'remnants-ballistics-1.21.1'
+include('common')
+include('fabric')
+include('neoforge')

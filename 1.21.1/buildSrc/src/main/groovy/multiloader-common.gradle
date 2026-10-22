@@ -1,0 +1,92 @@
+// Shared by common and every loader module.
+plugins {
+    id 'java-library'
+}
+
+version = mod_version
+group = mod_group_id
+
+base {
+    // <mod_id>-<loader>-<minecraft>-<version>.jar, the naming scheme of the other NightBeam mods.
+    archivesName = "${mod_id}-${project.name}-${minecraft_version}"
+}
+
+java {
+    toolchain.languageVersion = JavaLanguageVersion.of(java_version)
+    withSourcesJar()
+}
+
+repositories {
+    mavenCentral()
+    exclusiveContent {
+        forRepository {
+            maven {
+                name = 'Fuzs Mod Resources'
+                url = 'https://raw.githubusercontent.com/Fuzss/modresources/main/maven/'
+            }
+        }
+        filter { includeGroup('fuzs.forgeconfigapiport') }
+    }
+}
+
+// Declare capabilities on the outgoing configurations (see the MultiLoader template).
+['apiElements', 'runtimeElements', 'sourcesElements'].each { variant ->
+    configurations."$variant".outgoing {
+        capability("$group:${project.name}:$version")
+        capability("$group:${base.archivesName.get()}:$version")
+        capability("$group:$mod_id-${project.name}-${minecraft_version}:$version")
+        capability("$group:$mod_id:$version")
+    }
+}
+
+tasks.withType(JavaCompile).configureEach {
+    options.encoding = 'UTF-8'
+    options.compilerArgs.addAll(['-Xlint:deprecation', '-Xlint:unchecked'])
+}
+
+tasks.named('jar', Jar).configure {
+    // The license files live at the repository root, shared by every version workspace. Regex renames, not
+    // closures: they keep the task cacheable.
+    from(rootProject.file('../LICENSE')) { rename('^LICENSE$', "LICENSE_${mod_id}") }
+    from(rootProject.file('../NOTICE')) { rename('^NOTICE$', "NOTICE_${mod_id}") }
+    manifest {
+        attributes([
+                'Specification-Title'   : mod_id,
+                'Specification-Vendor'  : mod_authors,
+                'Specification-Version' : '1',
+                'Implementation-Title'  : project.name,
+                'Implementation-Version': version,
+                'Implementation-Vendor' : mod_authors,
+                'Built-On-Minecraft'    : minecraft_version
+        ])
+    }
+}
+
+tasks.named('processResources', ProcessResources).configure {
+    var expandProps = [
+            'version'                      : version,
+            'mod_id'                       : mod_id,
+            'mod_name'                     : mod_name,
+            'mod_authors'                  : mod_authors,
+            'mod_license'                  : mod_license,
+            'mod_description'              : mod_description,
+            'minecraft_version'            : minecraft_version,
+            'minecraft_version_range'      : minecraft_version_range,
+            'java_version'                 : java_version,
+            'neoforge_version'             : neoforge_version,
+            'neoforge_loader_version_range': neoforge_loader_version_range,
+            'fabric_loader_version'        : fabric_loader_version,
+            'fabric_version'               : fabric_version,
+            'fcap_version'                 : fcap_version,
+    ]
+    var jsonExpandProps = expandProps.collectEntries { key, value ->
+        [(key): value instanceof String ? value.replace('\n', '\\\\n') : value]
+    }
+    filesMatching(['META-INF/neoforge.mods.toml', 'META-INF/mods.toml']) {
+        expand expandProps
+    }
+    filesMatching(['fabric.mod.json', '*.mixins.json']) {
+        expand jsonExpandProps
+    }
+    inputs.properties(expandProps)
+}

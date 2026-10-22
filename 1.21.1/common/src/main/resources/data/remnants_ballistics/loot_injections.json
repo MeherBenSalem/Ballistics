@@ -1,0 +1,133 @@
+{
+  "injections": {
+    "outpost": {
+      "targets": [
+        "minecraft:chests/pillager_outpost",
+        "minecraft:chests/woodland_mansion"
+      ],
+      "table": "remnants_ballistics:inject/outpost",
+      "category": "structure",
+      "chance": 0.75,
+      "killed_by_player": false
+    },
+    "village_weaponsmith": {
+      "targets": [
+        "minecraft:chests/village/village_weaponsmith",
+        "minecraft:chests/village/village_toolsmith"
+      ],
+      "table": "remnants_ballistics:inject/village_weaponsmith",
+      "category": "structure",
+      "chance": 0.6,
+      "killed_by_player": false
+    },
+    "dungeon": {
+      "targets": [
+        "minecraft:chests/simple_dungeon",
+        "minecraft:chests/abandoned_mineshaft",
+        "minecraft:chests/trial_chambers/corridor"
+      ],
+      "table": "remnants_ballistics:inject/dungeon",
+      "category": "structure",
+      "chance": 0.5,
+      "killed_by_player": false
+    },
+    "stronghold": {
+      "targets": [
+        "minecraft:chests/stronghold_corridor",
+        "minecraft:chests/stronghold_crossing",
+        "minecraft:chests/stronghold_library"
+      ],
+      "table": "remnants_ballistics:inject/stronghold",
+      "category": "structure",
+      "chance": 0.6,
+      "killed_by_player": false
+    },
+    "desert": {
+      "targets": [
+        "minecraft:chests/desert_pyramid"
+      ],
+      "table": "remnants_ballistics:inject/desert",
+      "category": "structure",
+      "chance": 0.6,
+      "killed_by_player": false
+    },
+    "jungle": {
+      "targets": [
+        "minecraft:chests/jungle_temple"
+      ],
+      "table": "remnants_ballistics:inject/jungle",
+      "category": "structure",
+      "chance": 0.6,
+      "killed_by_player": false
+    },
+    "igloo": {
+      "targets": [
+        "minecraft:chests/igloo_chest"
+      ],
+      "table": "remnants_ballistics:inject/igloo",
+      "category": "structure",
+      "chance": 0.35,
+      "killed_by_player": false
+    },
+    "shipwreck": {
+      "targets": [
+        "minecraft:chests/shipwreck_supply",
+        "minecraft:chests/buried_treasure"
+      ],
+      "table": "remnants_ballistics:inject/shipwreck",
+      "category": "structure",
+      "chance": 0.5,
+      "killed_by_player": false
+    },
+    "nether_fortress": {
+      "targets": [
+        "minecraft:chests/nether_bridge"
+      ],
+      "table": "remnants_ballistics:inject/nether_fortress",
+      "category": "structure",
+      "chance": 0.5,
+      "killed_by_player": false
+    },
+    "bastion": {
+      "targets": [
+        "minecraft:chests/bastion_treasure",
+        "minecraft:chests/bastion_other",
+        "minecraft:chests/bastion_bridge"
+      ],
+      "table": "remnants_ballistics:inject/bastion",
+      "category": "structure",
+      "chance": 0.55,
+      "killed_by_player": false
+    },
+    "ancient_city": {
+      "targets": [
+        "minecraft:chests/ancient_city",
+        "minecraft:chests/ancient_city_ice_box"
+      ],
+      "table": "remnants_ballistics:inject/ancient_city",
+      "category": "structure",
+      "chance": 0.5,
+      "killed_by_player": false
+    },
+    "end_city": {
+      "targets": [
+        "minecraft:chests/end_city_treasure"
+      ],
+      "table": "remnants_ballistics:inject/end_city",
+      "category": "structure",
+      "chance": 0.5,
+      "killed_by_player": false
+    },
+    "armed_mobs": {
+      "targets": [
+        "minecraft:entities/pillager",
+        "minecraft:entities/vindicator",
+        "minecraft:entities/piglin_brute"
+      ],
+      "table": "remnants_ballistics:inject/armed_mob",
+      "category": "mob",
+      "chance": 0.25,
+      "killed_by_player": true
+    }
+  }
+}

@@ -15,16 +15,16 @@ String pythonCmd() {
 
 tasks.register('build1211', Exec) {
     group = 'build'
-    description = 'Build the 1.21.1 NeoForge jar and run the unit tests.'
+    description = 'Build the 1.21.1 NeoForge and Fabric jars and run the unit tests.'
     workingDir = file('1.21.1')
     commandLine wrapperCmd('1.21.1'), 'build'
 }
 
 tasks.register('gameTest1211', Exec) {
     group = 'verification'
-    description = 'Run the in-game GameTests on a headless 1.21.1 GameTestServer.'
+    description = 'Run the in-game GameTests on headless 1.21.1 NeoForge and Fabric servers.'
     workingDir = file('1.21.1')
-    commandLine wrapperCmd('1.21.1'), 'runGameTestServer'
+    commandLine wrapperCmd('1.21.1'), ':neoforge:runGameTestServer', ':fabric:runGametest'
 }
 
 tasks.register('clean1211', Exec) {
@@ -59,7 +59,7 @@ tasks.register('dist') {
     doLast {
         def outDir = file('releases')
         outDir.mkdirs()
-        ['1.21.1'].each { modDir ->
+        ['1.21.1/neoforge', '1.21.1/fabric'].each { modDir ->
             def libsDir = file("${modDir}/build/libs")
             if (libsDir.exists()) {
                 fileTree(libsDir).matching {

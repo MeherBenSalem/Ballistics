@@ -1,0 +1,50 @@
+plugins {
+    id 'multiloader-common'
+    id 'net.neoforged.moddev'
+}
+
+// Vanilla Minecraft only: common code may not reference a loader API. The loader modules compile these sources
+// together with their own (see buildSrc/src/main/groovy/multiloader-loader.gradle).
+neoForge {
+    neoFormVersion = neo_form_version
+    def at = file('src/main/resources/META-INF/accesstransformer.cfg')
+    if (at.exists()) {
+        accessTransformers.from(at.absolutePath)
+    }
+}
+
+dependencies {
+    // The config classes use NeoForge's ModConfigSpec API; NeoForge provides it at runtime, Forge Config API Port on Fabric.
+    compileOnly "fuzs.forgeconfigapiport:forgeconfigapiport-common-neoforgeapi:${fcap_version}"
+    compileOnly "com.electronwill.night-config:core:${night_config_version}"
+    compileOnly "com.electronwill.night-config:toml:${night_config_version}"
+
+    // Pure-Java unit tests (com.nightbeam.remnants.ballistics.core) do not need the game.
+    testImplementation platform("org.junit:junit-bom:${junit_version}")
+    testImplementation 'org.junit.jupiter:junit-jupiter'
+    testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+}
+
+tasks.named('test', Test).configure {
+    useJUnitPlatform()
+    testLogging {
+        events 'passed', 'failed', 'skipped'
+        exceptionFormat = 'full'
+    }
+}
+
+configurations {
+    commonJava {
+        canBeResolved = false
+        canBeConsumed = true
+    }
+    commonResources {
+        canBeResolved = false
+        canBeConsumed = true
+    }
+}
+
+artifacts {
+    commonJava sourceSets.main.java.sourceDirectories.singleFile
+    commonResources sourceSets.main.resources.sourceDirectories.singleFile
+}

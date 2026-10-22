@@ -23,6 +23,15 @@ VANILLA = {
 }
 
 CONDITION = lambda option: [{"type": f"{NS}:config", "option": option}]  # noqa: E731
+# Fabric's resource conditions use the same condition, keyed by "condition" instead of "type".
+FABRIC_CONDITION = lambda option: [{"condition": f"{NS}:config", "option": option}]  # noqa: E731
+
+
+def _conditions(recipe, option):
+    """Attaches the config condition in both loaders' formats; each loader ignores the other's key."""
+    recipe["neoforge:conditions"] = CONDITION(option)
+    recipe["fabric:load_conditions"] = FABRIC_CONDITION(option)
+    return recipe
 
 
 def shaped(result, pattern, key, count=1, category="equipment", option=None, group=None):
@@ -33,7 +42,7 @@ def shaped(result, pattern, key, count=1, category="equipment", option=None, gro
     r["key"] = {k: _ing(v) for k, v in key.items()}
     r["result"] = {"id": _id(result), "count": count}
     if option:
-        r["neoforge:conditions"] = CONDITION(option)
+        _conditions(r, option)
     return r
 
 
@@ -44,7 +53,7 @@ def shapeless(result, ingredients, count=1, category="misc", option=None, group=
     r["ingredients"] = [_ing(i) for i in ingredients]
     r["result"] = {"id": _id(result), "count": count}
     if option:
-        r["neoforge:conditions"] = CONDITION(option)
+        _conditions(r, option)
     return r
 
 
@@ -119,13 +128,10 @@ def recipes(weapons, attachments):
         out[a] = shapeless(a, ATTACHMENT_RECIPES[a], category="equipment", option="attachment_crafting",
                            group="remnants_ballistics_attachments")
     for name, (ingredients, count) in PRESS_RECIPES.items():
-        ings = []
-        for item, n in ingredients:
-            ing = _ing(item)
-            ing["count"] = n
-            ings.append(ing)
+        ings = [{"ingredient": _ing(item), "count": n} for item, n in ingredients]
         out[f"ammo_press/{name}"] = {"type": f"{NS}:ammo_press", "ingredients": ings, "result": {"id": _id(name), "count": count},
-                                     "neoforge:conditions": CONDITION("ammo_crafting")}
+                                     "neoforge:conditions": CONDITION("ammo_crafting"),
+                                     "fabric:load_conditions": FABRIC_CONDITION("ammo_crafting")}
     out["steel_ingot_from_blasting"] = {"type": "minecraft:blasting", "category": "misc", "ingredient": {"item": "minecraft:iron_ingot"},
                                         "result": {"id": _id("steel_ingot")}, "experience": 0.7, "cookingtime": 100}
     out["steel_ingot_from_smelting"] = {"type": "minecraft:smelting", "category": "misc", "ingredient": {"item": "minecraft:iron_ingot"},
@@ -220,12 +226,8 @@ def loot_tables():
     return t
 
 
-def _any_table(*ids):
-    terms = [{"condition": "neoforge:loot_table_id", "loot_table_id": i} for i in ids]
-    return [terms[0]] if len(terms) == 1 else [{"condition": "minecraft:any_of", "terms": terms}]
-
-
-def loot_modifiers():
+def loot_injections():
+    """Extra tables rolled into vanilla loot tables (read by LootInjections; applied when the target tables load)."""
     mods = {
         "outpost": (["minecraft:chests/pillager_outpost", "minecraft:chests/woodland_mansion"], "inject/outpost", "structure", 0.75),
         "village_weaponsmith": (["minecraft:chests/village/village_weaponsmith", "minecraft:chests/village/village_toolsmith"],
@@ -246,13 +248,9 @@ def loot_modifiers():
         "armed_mobs": (["minecraft:entities/pillager", "minecraft:entities/vindicator", "minecraft:entities/piglin_brute"],
                        "inject/armed_mob", "mob", 0.25),
     }
-    out = {}
-    for name, (targets, table, category, chance) in mods.items():
-        cond = _any_table(*targets)
-        if category == "mob":
-            cond = cond + [{"condition": "minecraft:killed_by_player"}]
-        out[name] = {"type": f"{NS}:configurable_table", "conditions": cond, "table": _id(table), "category": category, "chance": chance}
-    return out
+    return {name: {"targets": targets, "table": _id(table), "category": category, "chance": chance,
+                   "killed_by_player": category == "mob"}
+            for name, (targets, table, category, chance) in mods.items()}
 
 
 def block_loot(block):

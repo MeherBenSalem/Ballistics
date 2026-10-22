@@ -13,7 +13,7 @@ import sys
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 ROOT = os.path.abspath(os.path.join(HERE, ".."))
-JAVA = os.path.join(ROOT, "1.21.1", "src", "main", "java", "com", "nightbeam", "remnants", "ballistics")
+JAVA = os.path.join(ROOT, "1.21.1", "common", "src", "main", "java", "com", "nightbeam", "remnants", "ballistics")
 DOCS = os.path.join(ROOT, "docs")
 
 sys.path.insert(0, os.path.join(HERE, "assets"))
@@ -348,17 +348,12 @@ def progression_doc(ws):
     for name, ings in data_gen.ATTACHMENT_RECIPES.items():
         lines.append(f"| {ATTACHMENT_NAMES[name]} | {_counted(ings)} |")
     lines += ["", "## Where to find gear", "",
-              "Loot is added to vanilla tables by global loot modifiers. Each source rolls its table with the listed chance "
+              "Loot is added to vanilla tables when they load (on every loader). Each source rolls its table with the listed chance "
               "(scaled by `lootChanceMultiplier`). Found weapons are partly worn.", "",
               "| Source | Chance | Highlights |", "|---|---:|---|"]
     tables = data_gen.loot_tables()
-    for name, mod in data_gen.loot_modifiers().items():
-        targets = []
-        for cond in mod["conditions"]:
-            if cond.get("condition") == "neoforge:loot_table_id":
-                targets.append(cond["loot_table_id"])
-            for term in cond.get("terms", []):
-                targets.append(term["loot_table_id"])
+    for name, mod in data_gen.loot_injections().items():
+        targets = mod["targets"]
         table = tables[mod["table"].split(":", 1)[1]]
         entries = [e for p in table["pools"] for e in p["entries"] if e["type"] == "minecraft:item"]
         top = ", ".join(_label(e["name"]) for e in entries)

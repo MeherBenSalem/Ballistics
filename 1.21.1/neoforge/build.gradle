@@ -1,0 +1,76 @@
+plugins {
+    id 'multiloader-loader'
+    id 'net.neoforged.moddev'
+}
+
+// Development-only companion mod for the scripted client run: the shared script in common/src/smoketest plus the
+// NeoForge entry point in src/smoketest. Never part of the release jar.
+sourceSets {
+    smoketest {
+        java.srcDir project(':common').file('src/smoketest/java')
+        compileClasspath += sourceSets.main.output
+        runtimeClasspath += sourceSets.main.output
+    }
+}
+
+neoForge {
+    version = neoforge_version
+    def at = project(':common').file('src/main/resources/META-INF/accesstransformer.cfg')
+    if (at.exists()) {
+        accessTransformers.from(at.absolutePath)
+    }
+
+    mods {
+        "${mod_id}" {
+            sourceSet sourceSets.main
+        }
+        remnants_ballistics_smoketest {
+            sourceSet sourceSets.smoketest
+        }
+    }
+
+    runs {
+        configureEach {
+            systemProperty 'neoforge.enabledGameTestNamespaces', mod_id
+            systemProperty 'forge.logging.markers', 'REGISTRIES'
+            logLevel = org.slf4j.event.Level.INFO
+            ideName = "NeoForge ${it.name.capitalize()} (${project.path})"
+            // Only the scripted client run loads the smoke-test companion mod.
+            loadedMods = [mods.getByName(mod_id)]
+        }
+
+        client {
+            client()
+        }
+
+        // A second client for local multiplayer testing (log in to a dedicated `server` run).
+        client2 {
+            client()
+            gameDirectory = project.file('run/client2')
+            programArguments.addAll '--username', 'Dev2'
+        }
+
+        server {
+            server()
+            programArgument '--nogui'
+        }
+
+        // Boots a GameTestServer, runs every gametest in our namespace and exits (non-zero on failure).
+        gameTestServer {
+            type = 'gameTestServer'
+        }
+
+        // Scripted client run (CI runs it under Xvfb): boots a world, exercises every weapon and screen, takes
+        // screenshots into run/smoketest/screenshots, writes run/smoketest/smoketest/result.json and exits.
+        clientSmokeTest {
+            client()
+            sourceSet = sourceSets.smoketest
+            loadedMods = [mods.getByName(mod_id), mods.getByName('remnants_ballistics_smoketest')]
+            gameDirectory = project.file('run/smoketest')
+            programArguments.addAll '--width', '1280', '--height', '720', '--username', 'SmokeTest'
+            disableIdeRun()
+        }
+    }
+}
+
+neoForge.addModdingDependenciesTo(sourceSets.smoketest)

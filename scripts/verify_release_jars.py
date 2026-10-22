@@ -1,9 +1,13 @@
-"""Verify the packaged release jar against the generated resources and record release hashes.
+"""Verify the packaged release jars against the generated resources and record release hashes.
 
-This is an artifact audit, separate from the unit tests (./gradlew test), the in-game GameTests
-(./gradlew runGameTestServer) and the source-level asset checks (tools/assets/check_assets.py).
+This is an artifact audit, separate from the unit tests (./gradlew :common:test), the in-game GameTests
+(:neoforge:runGameTestServer, :fabric:runGametest), the client smoke tests and the source-level asset checks
+(tools/assets/check_assets.py).
 
     python scripts/verify_release_jars.py --version 0.3.0 --jar-dir releases --output releases/manifest.json
+    python scripts/verify_release_jars.py --version 0.3.0 --jar-dir releases --targets neoforge:1.21.1
+
+Without --targets every supported target must be present.
 """
 import argparse
 import hashlib
@@ -14,7 +18,11 @@ import zipfile
 
 ROOT = Path(__file__).resolve().parents[1]
 MOD_ID = 'remnants_ballistics'
-TARGETS = [('neoforge', '1.21.1')]
+TARGETS = [('neoforge', '1.21.1'), ('fabric', '1.21.1')]
+# Resource and data pack formats each Minecraft version must accept.
+PACK_FORMATS = {'1.21.1': (34, 48)}
+# Mods every jar must declare as required (besides the loader and Minecraft).
+LOADER_DEPENDENCIES = {'neoforge': set(), 'forge': set(), 'fabric': {'fabric-api', 'forgeconfigapiport'}}
 # Recipe -> expected result id. Covers each recipe family (weapon, attachment, press, smelting, stations).
 RECIPES = {
     'r9_sidearm': f'{MOD_ID}:r9_sidearm',
@@ -30,7 +38,7 @@ WEAPON_PARTS = ['body', 'action', 'magazine', 'stock', 'sights', 'muzzle']
 
 
 def verify(jar, loader, game, version):
-    resources = ROOT / game / 'src/main/resources'
+    resources = ROOT / game / 'common/src/main/resources'
     weapons = sorted(p.stem for p in (resources / f'assets/{MOD_ID}/gun_visuals').glob('*.json'))
     with zipfile.ZipFile(jar) as z:
         names = z.namelist()
@@ -56,24 +64,55 @@ def verify(jar, loader, game, version):
         assert len(weapons) == 16, f'expected 16 weapons, found {len(weapons)}'
         pack = json.loads(z.read('pack.mcmeta'))['pack']
         formats = pack.get('supported_formats', {'min_inclusive': pack['pack_format'], 'max_inclusive': pack['pack_format']})
-        for fmt in (34, 48):  # 1.21.1 resource and data pack formats
-            assert formats['min_inclusive'] <= fmt <= formats['max_inclusive']
-        descriptor = tomllib.loads(z.read('META-INF/neoforge.mods.toml').decode())
-        assert descriptor['mods'][0]['modId'] == MOD_ID
-        assert descriptor['mods'][0]['version'] == version
-        assert descriptor['mods'][0]['logoFile'] == 'logo.png' and 'logo.png' in names
-        deps = descriptor['dependencies'][MOD_ID]
-        required = {d['modId'] for d in deps if d.get('mandatory') or d.get('type') == 'required'}
-        assert required == {loader, 'minecraft'}, f'unexpected required dependencies {required}'
-        assert next(d['versionRange'] for d in deps if d['modId'] == 'minecraft') == f'[{game}]'
+        for fmt in PACK_FORMATS[game]:
+            assert formats['min_inclusive'] <= fmt <= formats['max_inclusive'], f'{jar}: pack format {fmt} not supported'
+        assert 'logo.png' in names
+        required = verify_descriptor(z, names, loader, game, version)
+        # Every loader module lists its platform services.
+        for service in ('IPlatform', 'INetwork'):
+            entry = f'META-INF/services/com.nightbeam.remnants.ballistics.platform.{service}'
+            assert entry in names and f'.{loader}.' in z.read(entry).decode(), f'{jar}: {entry} missing or for another loader'
         assert f'LICENSE_{MOD_ID}' in names and f'NOTICE_{MOD_ID}' in names, 'license files not packaged'
-        # Unit tests never ship.
+        # Unit tests and the development-only smoke test never ship.
         assert not any(n.endswith('Test.class') for n in names)
+        assert not any('/smoketest/' in n or n.startswith('remnants_ballistics_smoketest') for n in names), f'{jar}: smoke test packaged'
+        assert not any(f'/{other}/' in n for n in names if n.endswith('.class') for other in ('neoforge', 'fabric', 'forge') if other != loader), \
+            f'{jar}: classes of another loader packaged'
+
     data = jar.read_bytes()
     return {'file': jar.name, 'loader': loader, 'game': game, 'version': version,
             'bytes': len(data), 'sha1': hashlib.sha1(data).hexdigest(),
             'sha256': hashlib.sha256(data).hexdigest(), 'sha512': hashlib.sha512(data).hexdigest(),
-            'required_dependencies': []}
+            'required_dependencies': sorted(required)}
+
+
+def verify_descriptor(z, names, loader, game, version):
+    """Checks the loader's mod descriptor; returns the required mods besides the loader and Minecraft."""
+    if loader == 'fabric':
+        descriptor = json.loads(z.read('fabric.mod.json'))
+        assert descriptor['id'] == MOD_ID and descriptor['version'] == version
+        assert descriptor['icon'] == 'logo.png'
+        depends = descriptor['depends']
+        assert depends['minecraft'] == game, f'fabric.mod.json targets {depends["minecraft"]}'
+        required = set(depends) - {'fabricloader', 'minecraft', 'java'}
+        for mixins in descriptor.get('mixins', []):
+            config = json.loads(z.read(mixins))
+            if 'refmap' in config:
+                assert config['refmap'] in names, f'{mixins}: refmap {config["refmap"]} not packaged'
+        for entrypoints in descriptor['entrypoints'].values():
+            for entry in entrypoints:
+                assert entry.replace('.', '/') + '.class' in names, f'entry point {entry} missing'
+    else:
+        path = 'META-INF/neoforge.mods.toml' if loader == 'neoforge' else 'META-INF/mods.toml'
+        descriptor = tomllib.loads(z.read(path).decode())
+        assert descriptor['mods'][0]['modId'] == MOD_ID
+        assert descriptor['mods'][0]['version'] == version
+        assert descriptor['mods'][0]['logoFile'] == 'logo.png'
+        deps = descriptor['dependencies'][MOD_ID]
+        required = {d['modId'] for d in deps if d.get('mandatory') or d.get('type') == 'required'} - {loader, 'minecraft'}
+        assert next(d['versionRange'] for d in deps if d['modId'] == 'minecraft') == f'[{game}]'
+    assert required == LOADER_DEPENDENCIES[loader], f'{loader}: unexpected required dependencies {required}'
+    return required
 
 
 if __name__ == '__main__':
@@ -81,9 +120,11 @@ if __name__ == '__main__':
     parser.add_argument('--version', required=True)
     parser.add_argument('--jar-dir', default='releases')
     parser.add_argument('--output')
+    parser.add_argument('--targets', help='comma-separated loader:game pairs (default: every supported target)')
     args = parser.parse_args()
+    targets = [tuple(t.split(':')) for t in args.targets.split(',')] if args.targets else TARGETS
     manifests = [verify(Path(args.jar_dir) / f'{MOD_ID}-{loader}-{game}-{args.version}.jar', loader, game, args.version)
-                 for loader, game in TARGETS]
+                 for loader, game in targets]
     output = json.dumps(manifests, indent=2) + '\n'
     if args.output:
         Path(args.output).write_text(output)
