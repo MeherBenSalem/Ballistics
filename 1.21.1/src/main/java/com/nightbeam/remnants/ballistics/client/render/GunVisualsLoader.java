@@ -29,6 +29,11 @@ public final class GunVisualsLoader extends SimpleJsonResourceReloadListener {
         super(GSON, "gun_visuals");
     }
 
+    /** Whether the weapon has a loaded visuals file (rather than the fallback). */
+    public boolean has(WeaponDefinition def) {
+        return visuals.containsKey(def.name());
+    }
+
     public GunVisuals get(WeaponDefinition def) {
         GunVisuals v = visuals.get(def.name());
         if (v != null) return v;

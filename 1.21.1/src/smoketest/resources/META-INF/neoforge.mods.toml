@@ -1,0 +1,16 @@
+modLoader="javafml"
+loaderVersion="[1,)"
+license="Apache-2.0"
+
+[[mods]]
+modId="remnants_ballistics_smoketest"
+version="1"
+displayName="Remnants: Ballistics client smoke test"
+description='''Development-only: boots a world, exercises every weapon and screen, takes screenshots and exits.'''
+
+[[dependencies.remnants_ballistics_smoketest]]
+    modId="remnants_ballistics"
+    type="required"
+    versionRange="[0,)"
+    ordering="AFTER"
+    side="CLIENT"
