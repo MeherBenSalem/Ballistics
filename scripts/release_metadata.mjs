@@ -16,7 +16,7 @@ export const DEPENDENCY_PROJECTS = Object.freeze({
   neoforge: Object.freeze({}),
   fabric: Object.freeze({
     "fabric-api": Object.freeze({ modrinth: "P7dR8mSH", curseforge: "fabric-api" }),
-    forgeconfigapiport: Object.freeze({ modrinth: "ohNO6lps", curseforge: "forge-config-api-port-fabric" }),
+    forgeconfigapiport: Object.freeze({ modrinth: "ohNO6lps", curseforge: "forge-config-api-port" }),
   }),
 });
 

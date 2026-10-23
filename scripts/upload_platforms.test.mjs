@@ -95,7 +95,7 @@ test("dry-run emits complete payloads without credentials or network", async (t)
     assert.equal(preview.gameVersionLookup.loaderId, LOADER_IDS[release.loader]);
   }
   const fabric = JSON.parse(cf.find(([, name]) => name.includes("-fabric-"))[2]);
-  assert.deepEqual(fabric.metadata.relations.projects.map((p) => p.slug), ["fabric-api", "forge-config-api-port-fabric"]);
+  assert.deepEqual(fabric.metadata.relations.projects.map((p) => p.slug), ["fabric-api", "forge-config-api-port"]);
 });
 
 test("CLI dry-run never reads local.env, jar bytes or calls fetch", (t) => {
