@@ -6,13 +6,21 @@ export const MODRINTH_ID = "";
 export const CURSEFORGE_ID = "";
 export const MOD_ID = "remnants_ballistics";
 export const MOD_TITLE = "Remnants: Ballistics";
-export const LOADER_IDS = Object.freeze({ neoforge: 10150 });
+// CurseForge "modloader" game-version ids.
+export const LOADER_IDS = Object.freeze({ neoforge: 10150, fabric: 7499 });
 
-// Runtime requirements besides NeoForge and Minecraft, keyed by mod id -> Modrinth project id.
-// Remnants: Ballistics has none; keep this in sync with 1.21.1/src/main/templates/META-INF/neoforge.mods.toml.
-export const DEPENDENCY_PROJECTS = Object.freeze({});
+// Runtime requirements besides the loader and Minecraft, per loader: mod id -> Modrinth project id and CurseForge slug.
+// Keep in sync with 1.21.1/neoforge/src/main/resources/META-INF/neoforge.mods.toml (none) and
+// 1.21.1/fabric/src/main/resources/fabric.mod.json (Fabric API, Forge Config API Port); the tests compare them.
+export const DEPENDENCY_PROJECTS = Object.freeze({
+  neoforge: Object.freeze({}),
+  fabric: Object.freeze({
+    "fabric-api": Object.freeze({ modrinth: "P7dR8mSH", curseforge: "fabric-api" }),
+    forgeconfigapiport: Object.freeze({ modrinth: "ohNO6lps", curseforge: "forge-config-api-port-fabric" }),
+  }),
+});
 
-const SUPPORTED_TARGETS = new Set(["neoforge:1.21.1"]);
+const SUPPORTED_TARGETS = new Set(["neoforge:1.21.1", "fabric:1.21.1"]);
 
 export function assertCompleteRelease(releases) {
   const targets = new Set(releases.map((p) => `${p.loader}:${p.game}`));
@@ -38,8 +46,8 @@ export function modrinthDependencies(loader, game) {
   if (!SUPPORTED_TARGETS.has(`${loader}:${game}`)) {
     throw new Error(`Unsupported release target ${loader} ${game}`);
   }
-  return Object.values(DEPENDENCY_PROJECTS).map((projectId) => ({
-    project_id: projectId,
+  return Object.values(DEPENDENCY_PROJECTS[loader]).map((project) => ({
+    project_id: project.modrinth,
     version_id: null,
     file_name: null,
     dependency_type: "required",
@@ -47,16 +55,15 @@ export function modrinthDependencies(loader, game) {
 }
 
 export function curseforgeRelations(loader, game) {
-  const ids = modrinthDependencies(loader, game).map((d) => d.project_id);
-  return { projects: Object.entries(DEPENDENCY_PROJECTS)
-    .filter(([, id]) => ids.includes(id))
-    .map(([slug]) => ({ slug, type: "requiredDependency" })) };
+  modrinthDependencies(loader, game); // Fail closed on unsupported targets.
+  return { projects: Object.values(DEPENDENCY_PROJECTS[loader])
+    .map((project) => ({ slug: project.curseforge, type: "requiredDependency" })) };
 }
 
 export function parseJar(jar, expectedVersion) {
   const name = path.basename(jar);
   const match = name.match(
-    /^remnants_ballistics-(neoforge)-(\d+\.\d+\.\d+)-(\d+\.\d+\.\d+(?:-[A-Za-z0-9.]+)?)\.jar$/,
+    /^remnants_ballistics-(neoforge|fabric)-(\d+\.\d+\.\d+)-(\d+\.\d+\.\d+(?:-[A-Za-z0-9.]+)?)\.jar$/,
   );
   if (!match) throw new Error(`Cannot parse release jar ${name}`);
   const [, loader, game, version] = match;

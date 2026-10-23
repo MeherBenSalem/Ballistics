@@ -15,16 +15,16 @@ String pythonCmd() {
 
 tasks.register('build1211', Exec) {
     group = 'build'
-    description = 'Build the 1.21.1 NeoForge jar and run the unit tests.'
+    description = 'Build the 1.21.1 Fabric and NeoForge jars and run the unit tests.'
     workingDir = file('1.21.1')
     commandLine wrapperCmd('1.21.1'), 'build'
 }
 
 tasks.register('gameTest1211', Exec) {
     group = 'verification'
-    description = 'Run the in-game GameTests on a headless 1.21.1 GameTestServer.'
+    description = 'Run the in-game GameTests on headless 1.21.1 NeoForge and Fabric GameTest servers.'
     workingDir = file('1.21.1')
-    commandLine wrapperCmd('1.21.1'), 'runGameTestServer'
+    commandLine wrapperCmd('1.21.1'), ':neoforge:runGameTestServer', ':fabric:runGameTestServer'
 }
 
 tasks.register('clean1211', Exec) {
@@ -59,12 +59,12 @@ tasks.register('dist') {
     doLast {
         def outDir = file('releases')
         outDir.mkdirs()
-        ['1.21.1'].each { modDir ->
+        ['1.21.1/fabric', '1.21.1/neoforge'].each { modDir ->
             def libsDir = file("${modDir}/build/libs")
             if (libsDir.exists()) {
                 fileTree(libsDir).matching {
                     include '*.jar'
-                    exclude '*-sources.jar', '*-javadoc.jar', '*-dev.jar'
+                    exclude '*-sources.jar', '*-javadoc.jar', '*-dev.jar', '*-dev-shadow.jar'
                 }.each { jar ->
                     copy {
                         from jar
@@ -104,7 +104,7 @@ tasks.register('cleanAll') {
 
 tasks.register('syncVersion') {
     group = 'build'
-    description = 'Set mod_version= in every workspace gradle.properties (use -PmodVersion=x.y.z).'
+    description = 'Set version= in every workspace gradle.properties (use -PmodVersion=x.y.z).'
     doLast {
         def v = project.findProperty('modVersion')
         if (!v) {
@@ -117,14 +117,14 @@ tasks.register('syncVersion') {
             }
             def updated = false
             def out = file.readLines().collect { line ->
-                if (line.startsWith('mod_version=')) {
+                if (line.startsWith('version=')) {
                     updated = true
-                    return "mod_version=${v}"
+                    return "version=${v}"
                 }
                 return line
             }
             if (!updated) {
-                throw new GradleException("No mod_version= line in ${file}")
+                throw new GradleException("No version= line in ${file}")
             }
             file.text = out.join(System.lineSeparator()) + System.lineSeparator()
             println "Synced ${file} -> ${v}"

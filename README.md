@@ -26,17 +26,19 @@ A firearms mod for Minecraft built for multiplayer: sixteen hand-modelled weapon
 
 ## Supported versions
 
-| Workspace | Minecraft | Loader | Java |
+| Workspace | Minecraft | Loaders | Java |
 | --- | --- | --- | --- |
-| `1.21.1/` | 1.21.1 | NeoForge 21.1.264+ | 21 |
+| `1.21.1/` | 1.21.1 | NeoForge 21.1.264+, Fabric (Loader 0.16.14+) | 21 |
 
-Each version folder is an independent Gradle project. The release version is `0.3.0` (`mod_version=` in `1.21.1/gradle.properties`). See [the release notes](patchnotes/0.3.0.md).
+Each version folder is an independent Gradle project with `common`, `fabric` and `neoforge` subprojects, like the other NightBeam mods: gameplay, rendering, assets and data live in `common`, and each loader project only adds its entry points, registration, networking and event hooks. The release version is `0.4.0` (`version=` in `1.21.1/gradle.properties`). See [the release notes](patchnotes/0.4.0.md).
 
 ## Requirements
 
 - JDK 21
-- NeoForge 21.1.264 or newer for Minecraft 1.21.1
-- No other mods are required. Install on **both the server and every client**.
+- Minecraft 1.21.1 with either:
+  - **NeoForge** 21.1.264 or newer (no other mods required), or
+  - **Fabric** Loader 0.16.14 or newer with [Fabric API](https://modrinth.com/mod/fabric-api) and [Forge Config API Port](https://modrinth.com/mod/forge-config-api-port) 21.1.6 or newer. [Mod Menu](https://modrinth.com/mod/modmenu) is optional and opens the config screen.
+- Install on **both the server and every client**.
 
 ## Build
 
@@ -44,8 +46,8 @@ From the workspace:
 
 ```
 cd 1.21.1
-./gradlew build                 # jar + unit tests
-./gradlew runGameTestServer     # in-game GameTests on a headless server
+./gradlew build                                              # Fabric and NeoForge jars + unit tests
+./gradlew :neoforge:runGameTestServer :fabric:runGameTestServer  # in-game GameTests on headless servers
 ```
 
 From the repository root:
@@ -54,15 +56,15 @@ From the repository root:
 ./gradlew buildAll              # checks the generated assets, builds every workspace, copies jars to releases/
 ```
 
-The release jar is `1.21.1/build/libs/remnants_ballistics-neoforge-1.21.1-<version>.jar`.
+The release jars are `1.21.1/neoforge/build/libs/remnants_ballistics-neoforge-1.21.1-<version>.jar` and `1.21.1/fabric/build/libs/remnants_ballistics-fabric-1.21.1-<version>.jar`.
 
 ## Run
 
 ```
 cd 1.21.1
-./gradlew runClient             # development client
-./gradlew runServer             # dedicated server (set online-mode=false in run/server.properties for dev clients)
-./gradlew runClient2            # second client "Dev2" for two-player testing
+./gradlew :neoforge:runClient   # development client (or :fabric:runClient)
+./gradlew :neoforge:runServer   # dedicated server (or :fabric:runServer; set online-mode=false in server.properties for dev clients)
+./gradlew :neoforge:runClient2  # second client "Dev2" for two-player testing
 ```
 
 See [docs/MULTIPLAYER_TESTING.md](docs/MULTIPLAYER_TESTING.md) for latency and packet-loss testing.
@@ -81,7 +83,7 @@ Charge the Eclipse Railgun by holding fire. See [docs/CONTROLS.md](docs/CONTROLS
 
 ## Assets
 
-Every model, texture, icon, animation, sound, GUI and data file is generated from source by the scripts in [`tools/assets`](tools/assets). All assets are original. The asset set is cross-checked against the Java registries:
+Every model, texture, icon, animation, sound, GUI and data file is generated from source by the scripts in [`tools/assets`](tools/assets) into `1.21.1/common/src/main/resources`, shared by both loaders. All assets are original; the firearm sounds are generated with ElevenLabs. The asset set is cross-checked against the Java registries:
 
 ```
 python3 tools/assets/generate.py        # regenerate everything (needs Python 3, numpy, Pillow and ffmpeg)

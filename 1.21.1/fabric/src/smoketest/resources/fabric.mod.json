@@ -1,0 +1,20 @@
+{
+  "schemaVersion": 1,
+  "id": "remnants_ballistics_smoketest",
+  "version": "1",
+  "name": "Remnants: Ballistics client smoke test",
+  "description": "Development-only: boots a world, exercises every weapon and screen, takes screenshots and exits.",
+  "license": "Apache-2.0",
+  "environment": "client",
+  "entrypoints": {
+    "client": [
+      "com.nightbeam.remnants.ballistics.smoketest.FabricSmokeTest"
+    ]
+  },
+  "mixins": [
+    "remnants_ballistics_smoketest.mixins.json"
+  ],
+  "depends": {
+    "remnants_ballistics": "*"
+  }
+}

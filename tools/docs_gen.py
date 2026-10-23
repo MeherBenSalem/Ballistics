@@ -13,7 +13,7 @@ import sys
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 ROOT = os.path.abspath(os.path.join(HERE, ".."))
-JAVA = os.path.join(ROOT, "1.21.1", "src", "main", "java", "com", "nightbeam", "remnants", "ballistics")
+JAVA = os.path.join(ROOT, "1.21.1", "common", "src", "main", "java", "com", "nightbeam", "remnants", "ballistics")
 DOCS = os.path.join(ROOT, "docs")
 
 sys.path.insert(0, os.path.join(HERE, "assets"))

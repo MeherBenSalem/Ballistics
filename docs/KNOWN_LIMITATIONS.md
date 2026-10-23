@@ -2,11 +2,12 @@
 
 ## Release status
 
-0.3.0 is a **pre-release**. The Minecraft-free core is covered by unit tests, the generated assets are cross-checked against the code, and the GameTests exercise the server pipeline. The first public builds should still be treated as beta, and server owners should keep backups.
+0.4.0 is a **pre-release**. The Minecraft-free core is covered by unit tests, the generated assets are cross-checked against the code, and the GameTests exercise the server pipeline. The first public builds should still be treated as beta, and server owners should keep backups.
 
 ## Platform
 
-- Only **NeoForge 1.21.1** is supported. There are no Fabric or Forge builds and no ports to other Minecraft versions yet.
+- Minecraft **1.21.1** on **NeoForge** and **Fabric** is supported. There is no Forge build and no port to other Minecraft versions yet.
+- On Fabric the weapon HUD and crosshair are drawn from a mixin on the vanilla crosshair, and NeoForge's projectile-impact event has no Fabric counterpart, so other mods cannot cancel Voidcaster orb impacts there.
 - It is a mod, not a server plugin. It does not run on Paper, Spigot or Folia, and it must be installed on both the server and every client.
 
 ## Ballistics

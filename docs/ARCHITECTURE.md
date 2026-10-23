@@ -1,6 +1,6 @@
 # Architecture
 
-Remnants: Ballistics is a NeoForge 1.21.1 mod (`1.21.1/`, package `com.nightbeam.remnants.ballistics`). The server owns every outcome: ammunition, timing, spread, hits, damage, reload state and block changes. Clients predict their own shots for instant feedback, and the server corrects them when it disagrees.
+Remnants: Ballistics is a Minecraft 1.21.1 mod for NeoForge and Fabric (`1.21.1/`, package `com.nightbeam.remnants.ballistics`). The server owns every outcome: ammunition, timing, spread, hits, damage, reload state and block changes. Clients predict their own shots for instant feedback, and the server corrects them when it disagrees.
 
 ## Packages
 
@@ -14,9 +14,18 @@ Remnants: Ballistics is a NeoForge 1.21.1 mod (`1.21.1/`, package `com.nightbeam
 | `network` | both | Payload records and `ModNetwork` registration. |
 | `menu`, `block`, `recipe`, `loot`, `entity`, `registry`, `config` | both | Gunsmith Workbench and Ammunition Press, recipe type and config condition, configurable loot modifier, the Voidcaster orb, registries and the three config specs. |
 | `client` | client only | Input and prediction (`ClientGunHandler`, `ClientWeaponState`), rendering (`render`), animation (`anim`), HUD, effects (`fx`, `particle`), screens and client payload handlers. |
-| `gametest` | server | In-game GameTests (`./gradlew runGameTestServer`). |
+| `gametest` | server | In-game GameTests shared by both loaders (`./gradlew :neoforge:runGameTestServer`, `:fabric:runGameTestServer`). |
+| `platform`, `client.platform` | both / client | `Services`: the loader hooks common code needs (creative tabs, fake players, projectile events, payload sending, standalone model lookup). |
 
-Client classes are reached only through `Dist.CLIENT` event subscribers and lambdas in the payload registration. A dedicated server never loads them.
+Client classes are reached only through client entry points (NeoForge `Dist.CLIENT` subscribers, the Fabric client initializer and client mixins) and lambdas in the payload registration. A dedicated server never loads them.
+
+## Loaders
+
+The workspace follows the MultiLoader layout of the other NightBeam mods:
+
+- **`common`** compiles against vanilla Minecraft only and holds everything above, the assets and the data. Registry entries are declared through `registry.Registrar` as `RegistryHolder`s; payloads are listed in `network.ModNetwork`; client behaviour is exposed as plain hook methods (`ClientGunHandler.onClientTickPre`, `ViewmodelRenderer.renderHand`, `FxRenderer.render`, `GunArmPose.of`, ...).
+- **`neoforge`** binds the holders in `RegisterEvent`, registers payloads, configs, the global loot modifier and the recipe condition, and forwards NeoForge events to the common hooks (`NeoForgeServerEvents`, `neoforge.client`).
+- **`fabric`** registers the holders directly, uses Fabric API callbacks for ticks, connections, tracking, world rendering, models and particles, and small client mixins for the hooks Fabric API has no event for (first-person hand, FOV, mouse sensitivity, camera shake, crosshair and HUD, arm poses, attack and use blocking). Configs use the NeoForge config API through Forge Config API Port, so both loaders read the same TOML files and the server config syncs to clients the same way. Loot injection reads the same generated loot-modifier data and adds pools with `LootTableEvents.MODIFY`; recipe toggles use Fabric resource conditions, emitted next to the NeoForge conditions by `tools/assets/data_gen.py`.
 
 ## Data model
 
@@ -24,7 +33,7 @@ A weapon is an ordinary item stack. Its state lives in data components (`ModData
 
 base stats → server config overrides and global multipliers → attachment modifiers (flat, then percentage).
 
-Clients get the same server config through NeoForge's config sync, so their prediction uses the server's numbers.
+Clients get the same server config through config sync (NeoForge's, or Forge Config API Port's on Fabric), so their prediction uses the server's numbers.
 
 ## Firing
 

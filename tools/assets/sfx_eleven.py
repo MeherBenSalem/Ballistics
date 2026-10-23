@@ -34,7 +34,7 @@ import sfx
 SR = 44100
 HERE = os.path.dirname(os.path.abspath(__file__))
 ROOT = os.path.dirname(os.path.dirname(HERE))
-SOUNDS = os.path.join(ROOT, "1.21.1", "src", "main", "resources", "assets", "remnants_ballistics", "sounds")
+SOUNDS = os.path.join(ROOT, "1.21.1", "common", "src", "main", "resources", "assets", "remnants_ballistics", "sounds")
 CACHE = os.path.join(ROOT, "build", "sfx_eleven")
 API = "https://api.elevenlabs.io/v1/sound-generation?output_format=pcm_44100"
 MODEL = "eleven_text_to_sound_v2"

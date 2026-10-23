@@ -1,0 +1,33 @@
+{
+  "type": "remnants_ballistics:ammo_press",
+  "ingredients": [
+    {
+      "item": "remnants_ballistics:casing",
+      "count": 4
+    },
+    {
+      "item": "minecraft:gunpowder",
+      "count": 2
+    },
+    {
+      "tag": "c:ingots/steel",
+      "count": 1
+    }
+  ],
+  "result": {
+    "id": "remnants_ballistics:ammo_556",
+    "count": 16
+  },
+  "neoforge:conditions": [
+    {
+      "type": "remnants_ballistics:config",
+      "option": "ammo_crafting"
+    }
+  ],
+  "fabric:load_conditions": [
+    {
+      "condition": "remnants_ballistics:config",
+      "option": "ammo_crafting"
+    }
+  ]
+}

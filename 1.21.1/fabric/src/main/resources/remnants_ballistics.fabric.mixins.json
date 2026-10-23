@@ -1,0 +1,21 @@
+{
+  "required": true,
+  "minVersion": "0.8",
+  "package": "com.nightbeam.remnants.ballistics.fabric.mixin",
+  "compatibilityLevel": "JAVA_21",
+  "mixins": [],
+  "client": [
+    "client.AbstractClientPlayerMixin",
+    "client.GameRendererMixin",
+    "client.GuiMixin",
+    "client.ItemInHandRendererMixin",
+    "client.LivingEntityRendererMixin",
+    "client.MinecraftMixin",
+    "client.MouseHandlerMixin",
+    "client.PlayerRendererMixin"
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  },
+  "refmap": "${mod_id}.refmap.json"
+}

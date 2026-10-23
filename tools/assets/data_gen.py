@@ -22,7 +22,10 @@ VANILLA = {
     "brown_dye", "yellow_dye", "snowball", "white_dye", "light_gray_dye", "black_dye", "purple_dye",
 }
 
-CONDITION = lambda option: [{"type": f"{NS}:config", "option": option}]  # noqa: E731
+def conditions(option):
+    """Load conditions on both loaders, backed by the same common-config option (NeoForge ignores Fabric's key and back)."""
+    return {"neoforge:conditions": [{"type": f"{NS}:config", "option": option}],
+            "fabric:load_conditions": [{"condition": f"{NS}:config", "option": option}]}
 
 
 def shaped(result, pattern, key, count=1, category="equipment", option=None, group=None):
@@ -33,7 +36,7 @@ def shaped(result, pattern, key, count=1, category="equipment", option=None, gro
     r["key"] = {k: _ing(v) for k, v in key.items()}
     r["result"] = {"id": _id(result), "count": count}
     if option:
-        r["neoforge:conditions"] = CONDITION(option)
+        r.update(conditions(option))
     return r
 
 
@@ -44,7 +47,7 @@ def shapeless(result, ingredients, count=1, category="misc", option=None, group=
     r["ingredients"] = [_ing(i) for i in ingredients]
     r["result"] = {"id": _id(result), "count": count}
     if option:
-        r["neoforge:conditions"] = CONDITION(option)
+        r.update(conditions(option))
     return r
 
 
@@ -125,7 +128,7 @@ def recipes(weapons, attachments):
             ing["count"] = n
             ings.append(ing)
         out[f"ammo_press/{name}"] = {"type": f"{NS}:ammo_press", "ingredients": ings, "result": {"id": _id(name), "count": count},
-                                     "neoforge:conditions": CONDITION("ammo_crafting")}
+                                     **conditions("ammo_crafting")}
     out["steel_ingot_from_blasting"] = {"type": "minecraft:blasting", "category": "misc", "ingredient": {"item": "minecraft:iron_ingot"},
                                         "result": {"id": _id("steel_ingot")}, "experience": 0.7, "cookingtime": 100}
     out["steel_ingot_from_smelting"] = {"type": "minecraft:smelting", "category": "misc", "ingredient": {"item": "minecraft:iron_ingot"},
