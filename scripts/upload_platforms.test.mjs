@@ -96,6 +96,9 @@ test("dry-run emits complete payloads without credentials or network", async (t)
   }
   const fabric = JSON.parse(cf.find(([, name]) => name.includes("-fabric-"))[2]);
   assert.deepEqual(fabric.metadata.relations.projects.map((p) => p.slug), ["fabric-api", "forge-config-api-port"]);
+  // CurseForge rejects an empty relations.projects array, so a jar without dependencies sends no relations at all.
+  const neoforge = JSON.parse(cf.find(([, name]) => name.includes("-neoforge-"))[2]);
+  assert.equal("relations" in neoforge.metadata, false);
 });
 
 test("CLI dry-run never reads local.env, jar bytes or calls fetch", (t) => {

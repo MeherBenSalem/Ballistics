@@ -54,10 +54,12 @@ export function modrinthDependencies(loader, game) {
   }));
 }
 
+/** CurseForge relations, or undefined when there are none: the upload API rejects an empty project list. */
 export function curseforgeRelations(loader, game) {
   modrinthDependencies(loader, game); // Fail closed on unsupported targets.
-  return { projects: Object.values(DEPENDENCY_PROJECTS[loader])
-    .map((project) => ({ slug: project.curseforge, type: "requiredDependency" })) };
+  const projects = Object.values(DEPENDENCY_PROJECTS[loader])
+    .map((project) => ({ slug: project.curseforge, type: "requiredDependency" }));
+  return projects.length ? { projects } : undefined;
 }
 
 export function parseJar(jar, expectedVersion) {
