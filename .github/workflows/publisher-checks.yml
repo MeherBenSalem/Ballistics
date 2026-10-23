@@ -69,7 +69,7 @@ jobs:
           distribution: temurin
           java-version: '21'
       - uses: gradle/actions/setup-gradle@v4
-      - name: Build and run unit tests
+      - name: Build both loaders and run unit tests
         id: build
         run: |
           set -o pipefail
@@ -79,20 +79,33 @@ jobs:
       - name: Report build errors
         if: failure() && steps.build.outcome == 'failure'
         run: python3 scripts/ci_annotate.py build-output.log "Build errors (${{ matrix.game }})"
-      - name: Run GameTests on a headless server
-        id: gametest
+      - name: Run GameTests on a headless NeoForge server
+        id: gametest_neoforge
         run: |
           set -o pipefail
           cd "${{ matrix.game }}"
-          ./gradlew runGameTestServer --no-daemon 2>&1 | tee "$GITHUB_WORKSPACE/gametest-output.log"
+          ./gradlew :neoforge:runGameTestServer --no-daemon 2>&1 | tee "$GITHUB_WORKSPACE/gametest-neoforge.log"
+      - name: Run GameTests on a headless Fabric server
+        id: gametest_fabric
+        if: always() && steps.build.outcome == 'success'
+        run: |
+          set -o pipefail
+          cd "${{ matrix.game }}"
+          ./gradlew :fabric:runGameTestServer --no-daemon 2>&1 | tee "$GITHUB_WORKSPACE/gametest-fabric.log"
       - name: Report GameTest results
         if: always() && steps.build.outcome == 'success'
         run: |
-          if [ ! -f gametest-output.log ]; then exit 0; fi
-          grep -hoE '(All [0-9]+ required tests passed|[0-9]+ required tests failed)[^"]*' gametest-output.log \
-            | head -1 | sed 's/^/::notice title=GameTests (${{ matrix.game }})::/' || true
-          if [ "${{ steps.gametest.outcome }}" = failure ]; then
-            python3 scripts/ci_annotate.py gametest-output.log "GameTest failures (${{ matrix.game }})"
+          for loader in neoforge fabric; do
+            log="gametest-$loader.log"
+            if [ ! -f "$log" ]; then continue; fi
+            grep -hoE '(All [0-9]+ required tests passed|[0-9]+ required tests failed)[^"]*' "$log" \
+              | head -1 | sed "s/^/::notice title=GameTests ($loader, ${{ matrix.game }})::/" || true
+          done
+          if [ "${{ steps.gametest_neoforge.outcome }}" = failure ]; then
+            python3 scripts/ci_annotate.py gametest-neoforge.log "GameTest failures (neoforge, ${{ matrix.game }})"
+          fi
+          if [ "${{ steps.gametest_fabric.outcome }}" = failure ]; then
+            python3 scripts/ci_annotate.py gametest-fabric.log "GameTest failures (fabric, ${{ matrix.game }})"
           fi
       - uses: actions/setup-python@v5
         if: always() && steps.build.outcome == 'success'
@@ -104,29 +117,47 @@ jobs:
           sudo apt-get update -qq
           sudo apt-get install -y -qq xvfb libgl1-mesa-dri libglx-mesa0 > /dev/null
           pip install --quiet pillow
-      - name: Boot the client and exercise every weapon
-        id: smoketest
+      - name: Boot the NeoForge client and exercise every weapon
+        id: smoketest_neoforge
         if: always() && steps.build.outcome == 'success'
         timeout-minutes: 30
         env:
           LIBGL_ALWAYS_SOFTWARE: '1'
         run: |
           set -o pipefail
-          mkdir -p "${{ matrix.game }}/run/smoketest"
-          cp scripts/smoketest-options.txt "${{ matrix.game }}/run/smoketest/options.txt"
+          mkdir -p "${{ matrix.game }}/neoforge/run/smoketest"
+          cp scripts/smoketest-options.txt "${{ matrix.game }}/neoforge/run/smoketest/options.txt"
           cd "${{ matrix.game }}"
-          xvfb-run -a -s "-screen 0 1280x720x24" ./gradlew runClientSmokeTest --no-daemon 2>&1 | tee "$GITHUB_WORKSPACE/smoketest-output.log"
-      - name: Report the client smoke test
-        id: smokereport
+          xvfb-run -a -s "-screen 0 1280x720x24" ./gradlew :neoforge:runClientSmokeTest --no-daemon 2>&1 | tee "$GITHUB_WORKSPACE/smoketest-neoforge.log"
+      - name: Report the NeoForge client smoke test
+        id: smokereport_neoforge
         if: always() && steps.build.outcome == 'success'
-        run: python3 scripts/smoketest_report.py --log smoketest-output.log --run-dir "${{ matrix.game }}/run/smoketest" --out smoketest
-      - name: Verify the packaged jar
+        run: python3 scripts/smoketest_report.py --log smoketest-neoforge.log --run-dir "${{ matrix.game }}/neoforge/run/smoketest" --out smoketest --label NeoForge
+      - name: Boot the Fabric client and exercise every weapon
+        id: smoketest_fabric
+        if: always() && steps.build.outcome == 'success'
+        timeout-minutes: 30
+        env:
+          LIBGL_ALWAYS_SOFTWARE: '1'
+        run: |
+          set -o pipefail
+          mkdir -p "${{ matrix.game }}/fabric/run/smoketest"
+          cp scripts/smoketest-options.txt "${{ matrix.game }}/fabric/run/smoketest/options.txt"
+          cd "${{ matrix.game }}"
+          xvfb-run -a -s "-screen 0 1280x720x24" ./gradlew :fabric:runClientSmokeTest --no-daemon 2>&1 | tee "$GITHUB_WORKSPACE/smoketest-fabric.log"
+      - name: Report the Fabric client smoke test
+        id: smokereport_fabric
+        if: always() && steps.build.outcome == 'success'
+        run: python3 scripts/smoketest_report.py --log smoketest-fabric.log --run-dir "${{ matrix.game }}/fabric/run/smoketest" --out smoketest --label Fabric
+      - name: Verify the packaged jars
         id: verify
         if: always() && steps.build.outcome == 'success'
         run: |
-          VERSION=$(grep '^mod_version=' "${{ matrix.game }}/gradle.properties" | cut -d= -f2)
+          VERSION=$(grep '^version=' "${{ matrix.game }}/gradle.properties" | cut -d= -f2)
           mkdir -p releases
-          cp "${{ matrix.game }}"/build/libs/remnants_ballistics-neoforge-*-"$VERSION".jar releases/
+          for loader in neoforge fabric; do
+            cp "${{ matrix.game }}/$loader/build/libs/remnants_ballistics-$loader-${{ matrix.game }}-$VERSION.jar" releases/
+          done
           python3 scripts/verify_release_jars.py --version "$VERSION" --jar-dir releases --output releases/manifest.json
       - uses: actions/upload-artifact@v4
         if: always() && steps.verify.outcome == 'success'
@@ -142,19 +173,20 @@ jobs:
           if-no-files-found: ignore
           path: |
             smoketest/
-            smoketest-output.log
-            ${{ matrix.game }}/run/smoketest/logs/
-            ${{ matrix.game }}/run/smoketest/crash-reports/
+            smoketest-*.log
+            ${{ matrix.game }}/*/run/smoketest/logs/
+            ${{ matrix.game }}/*/run/smoketest/crash-reports/
       - name: Publish the development build
         if: always() && steps.verify.outcome == 'success' && github.event_name == 'push' && github.ref == 'refs/heads/main'
         env:
           GH_TOKEN: ${{ github.token }}
-          GAMETESTS: ${{ steps.gametest.outcome }}
-          SMOKETEST: ${{ steps.smokereport.outcome }}
+          GAMETESTS: neoforge ${{ steps.gametest_neoforge.outcome }}, fabric ${{ steps.gametest_fabric.outcome }}
+          SMOKETESTS: neoforge ${{ steps.smokereport_neoforge.outcome }}, fabric ${{ steps.smokereport_fabric.outcome }}
         run: |
           gh release delete dev-build --yes --cleanup-tag 2>/dev/null || true
-          SUMMARY=$(cat smoketest/summary.txt 2>/dev/null || echo "did not run")
+          NEOFORGE=$(cat smoketest/summary-neoforge.txt 2>/dev/null || echo "did not run")
+          FABRIC=$(cat smoketest/summary-fabric.txt 2>/dev/null || echo "did not run")
           gh release create dev-build releases/*.jar releases/manifest.json --prerelease --target "$GITHUB_SHA" \
             --title "Development build ${GITHUB_SHA::7}" \
-            --notes "Automatic build of \`main\` at ${GITHUB_SHA::7}. Unit tests and jar verification passed; GameTests: ${GAMETESTS}; client smoke test: ${SMOKETEST} (${SUMMARY}). The smoke-*.jpg files are screenshots from that run. For testing only; use the tagged releases for servers."
+            --notes "Automatic build of \`main\` at ${GITHUB_SHA::7} (Fabric and NeoForge jars). Unit tests and jar verification passed; GameTests: ${GAMETESTS}; client smoke tests: ${SMOKETESTS}. NeoForge: ${NEOFORGE} Fabric: ${FABRIC} The smoke-*.jpg files are screenshots from those runs. For testing only; use the tagged releases for servers."
           if ls smoketest/*.jpg > /dev/null 2>&1; then gh release upload dev-build smoketest/*.jpg --clobber; fi

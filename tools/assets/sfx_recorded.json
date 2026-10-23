@@ -1,0 +1,398 @@
+{
+  "gun/aim_in": {
+    "model": "eleven_text_to_sound_v2",
+    "prompt": "Close-up foley recording of a soldier quickly raising a rifle to aim, clothing and gear rustle. Real firearm handling sound, single action, no gunshot, no music.",
+    "seconds": 0.8,
+    "influence": 0.6,
+    "takes": [
+      "gun/aim_in/f858a8c24c/t03.pcm",
+      "gun/aim_in/f858a8c24c/t00.pcm"
+    ]
+  },
+  "gun/aim_out": {
+    "model": "eleven_text_to_sound_v2",
+    "prompt": "Close-up foley recording of a soldier lowering a rifle from the shoulder, short clothing rustle. Real firearm handling sound, single action, no gunshot, no music.",
+    "seconds": 0.8,
+    "influence": 0.6,
+    "takes": [
+      "gun/aim_out/d79f4ef3ff/t02.pcm",
+      "gun/aim_out/d79f4ef3ff/t01.pcm"
+    ]
+  },
+  "gun/ak_fire": {
+    "model": "eleven_text_to_sound_v2",
+    "prompt": "Authentic AK-47 7.62x39mm rifle firing a single round outdoors, real gunshot recording, close microphone, heavy punchy blast with a deep crack, natural outdoor echo. One shot only, no burst, no music.",
+    "seconds": 1.6,
+    "influence": 0.6,
+    "takes": [
+      "gun/ak_fire/e5d0bb648c/t01.pcm",
+      "gun/ak_fire/e5d0bb648c/t07.pcm",
+      "gun/ak_fire/e5d0bb648c/t08.pcm"
+    ]
+  },
+  "gun/bolt_close": {
+    "model": "eleven_text_to_sound_v2",
+    "prompt": "Close-up foley recording of a bolt-action rifle bolt pushed forward and locked down, chambering a round. Real firearm handling sound, single action, no gunshot, no music.",
+    "seconds": 1.0,
+    "influence": 0.6,
+    "takes": [
+      "gun/bolt_close/383d08ff4b/t02.pcm",
+      "gun/bolt_close/383d08ff4b/t01.pcm"
+    ]
+  },
+  "gun/bolt_open": {
+    "model": "eleven_text_to_sound_v2",
+    "prompt": "Close-up foley recording of a bolt-action rifle bolt lifted and pulled back. Real firearm handling sound, single action, no gunshot, no music.",
+    "seconds": 1.0,
+    "influence": 0.6,
+    "takes": [
+      "gun/bolt_open/0bf6157ae3/t02.pcm",
+      "gun/bolt_open/0bf6157ae3/t00.pcm"
+    ]
+  },
+  "gun/burst_fire": {
+    "model": "eleven_text_to_sound_v2",
+    "prompt": "Authentic FAMAS bullpup 5.56mm assault rifle firing a single round outdoors, real gunshot recording, close microphone, sharp crack with a tight mechanical snap, natural outdoor echo. One shot only, no music.",
+    "seconds": 1.5,
+    "influence": 0.6,
+    "takes": [
+      "gun/burst_fire/c3b2c76dc1/t10.pcm",
+      "gun/burst_fire/c3b2c76dc1/t05.pcm",
+      "gun/burst_fire/c3b2c76dc1/t01.pcm"
+    ]
+  },
+  "gun/casing_drop": {
+    "model": "eleven_text_to_sound_v2",
+    "prompt": "Real recording of a single empty brass bullet casing falling and bouncing on a concrete floor, metallic tinkle. No gunshot, no music.",
+    "seconds": 1.0,
+    "influence": 0.6,
+    "takes": [
+      "gun/casing_drop/6e1913827a/t00.pcm",
+      "gun/casing_drop/6e1913827a/t02.pcm"
+    ]
+  },
+  "gun/cover_close": {
+    "model": "eleven_text_to_sound_v2",
+    "prompt": "Close-up foley recording of a machine gun feed tray cover slammed shut. Real firearm handling sound, single action, no gunshot, no music.",
+    "seconds": 1.0,
+    "influence": 0.6,
+    "takes": [
+      "gun/cover_close/30660230a8/t02.pcm",
+      "gun/cover_close/30660230a8/t00.pcm"
+    ]
+  },
+  "gun/cover_open": {
+    "model": "eleven_text_to_sound_v2",
+    "prompt": "Close-up foley recording of a machine gun feed tray cover unlatched and opened. Real firearm handling sound, single action, no gunshot, no music.",
+    "seconds": 1.0,
+    "influence": 0.6,
+    "takes": [
+      "gun/cover_open/e229b869ae/t01.pcm",
+      "gun/cover_open/e229b869ae/t03.pcm"
+    ]
+  },
+  "gun/cylinder_close": {
+    "model": "eleven_text_to_sound_v2",
+    "prompt": "Close-up foley recording of a revolver cylinder snapped shut with a firm click. Real firearm handling sound, single action, no gunshot, no music.",
+    "seconds": 1.0,
+    "influence": 0.6,
+    "takes": [
+      "gun/cylinder_close/9e5a0fb0bc/t02.pcm",
+      "gun/cylinder_close/9e5a0fb0bc/t01.pcm"
+    ]
+  },
+  "gun/cylinder_open": {
+    "model": "eleven_text_to_sound_v2",
+    "prompt": "Close-up foley recording of a revolver cylinder released and swung open. Real firearm handling sound, single action, no gunshot, no music.",
+    "seconds": 1.0,
+    "influence": 0.6,
+    "takes": [
+      "gun/cylinder_open/40dcf129b5/t03.pcm",
+      "gun/cylinder_open/40dcf129b5/t01.pcm"
+    ]
+  },
+  "gun/distant_fire": {
+    "model": "eleven_text_to_sound_v2",
+    "prompt": "Real recording of a single rifle gunshot heard from far away, about half a kilometre across open terrain, muffled boom with a long rolling echo. One shot only, no music.",
+    "seconds": 2.5,
+    "influence": 0.6,
+    "takes": [
+      "gun/distant_fire/368e1c2f45/t06.pcm",
+      "gun/distant_fire/368e1c2f45/t08.pcm",
+      "gun/distant_fire/368e1c2f45/t11.pcm"
+    ]
+  },
+  "gun/dry_fire": {
+    "model": "eleven_text_to_sound_v2",
+    "prompt": "Close-up foley recording of a pistol dry firing on an empty chamber, trigger pull and hammer click. Real firearm handling sound, single action, no gunshot, no music.",
+    "seconds": 0.6,
+    "influence": 0.6,
+    "takes": [
+      "gun/dry_fire/93a220f37c/t01.pcm",
+      "gun/dry_fire/93a220f37c/t02.pcm"
+    ]
+  },
+  "gun/equip": {
+    "model": "eleven_text_to_sound_v2",
+    "prompt": "Close-up foley recording of a rifle picked up and shouldered, cloth rustle and a light rattle of the weapon. Real firearm handling sound, single action, no gunshot, no music.",
+    "seconds": 1.0,
+    "influence": 0.6,
+    "takes": [
+      "gun/equip/a9f3a454de/t00.pcm",
+      "gun/equip/a9f3a454de/t02.pcm"
+    ]
+  },
+  "gun/fire_mode": {
+    "model": "eleven_text_to_sound_v2",
+    "prompt": "Close-up foley recording of a rifle fire selector switch flipped with a small metallic click. Real firearm handling sound, single action, no gunshot, no music.",
+    "seconds": 0.6,
+    "influence": 0.6,
+    "takes": [
+      "gun/fire_mode/4373397d57/t01.pcm",
+      "gun/fire_mode/4373397d57/t00.pcm"
+    ]
+  },
+  "gun/heavy_lmg_fire": {
+    "model": "eleven_text_to_sound_v2",
+    "prompt": "Authentic M240 7.62mm machine gun firing a single round outdoors, real gunshot recording, close microphone, heavy powerful blast with mechanical clatter, natural outdoor echo. One shot only, no burst, no music.",
+    "seconds": 1.6,
+    "influence": 0.6,
+    "takes": [
+      "gun/heavy_lmg_fire/962221ee03/t00.pcm",
+      "gun/heavy_lmg_fire/962221ee03/t05.pcm",
+      "gun/heavy_lmg_fire/962221ee03/t04.pcm"
+    ]
+  },
+  "gun/heavy_sniper_fire": {
+    "model": "eleven_text_to_sound_v2",
+    "prompt": "Real field recording of a single gunshot from a Barrett M82 .50 BMG anti-materiel rifle fired at an outdoor range, recorded from the shooter's position. Enormous concussive blast and crack with a long natural echo rolling across open terrain. Authentic firearm audio, one shot only, no music, no voices.",
+    "seconds": 3.0,
+    "influence": 0.7,
+    "takes": [
+      "gun/heavy_sniper_fire/82ad0a2997/t05.pcm",
+      "gun/heavy_sniper_fire/82ad0a2997/t00.pcm",
+      "gun/heavy_sniper_fire/82ad0a2997/t02.pcm"
+    ]
+  },
+  "gun/inspect": {
+    "model": "eleven_text_to_sound_v2",
+    "prompt": "Close-up foley recording of a rifle being turned over and inspected in the hands, gentle metal and polymer rattles. Real firearm handling sound, single action, no gunshot, no music.",
+    "seconds": 1.2,
+    "influence": 0.6,
+    "takes": [
+      "gun/inspect/a2d8a4d440/t03.pcm",
+      "gun/inspect/a2d8a4d440/t02.pcm"
+    ]
+  },
+  "gun/jammed": {
+    "model": "eleven_text_to_sound_v2",
+    "prompt": "Close-up foley recording of a rifle jamming, trigger pulled with a dull mechanical clunk and the action stuck. Real firearm handling sound, single action, no gunshot, no music.",
+    "seconds": 0.8,
+    "influence": 0.6,
+    "takes": [
+      "gun/jammed/a2b46a6c16/t02.pcm",
+      "gun/jammed/a2b46a6c16/t00.pcm"
+    ]
+  },
+  "gun/lmg_fire": {
+    "model": "eleven_text_to_sound_v2",
+    "prompt": "Authentic M249 5.56mm light machine gun firing a single round outdoors, real gunshot recording, close microphone, loud sharp report with mechanical clatter, natural outdoor echo. One shot only, no burst, no music.",
+    "seconds": 1.5,
+    "influence": 0.6,
+    "takes": [
+      "gun/lmg_fire/d8788b0155/t04.pcm",
+      "gun/lmg_fire/d8788b0155/t03.pcm",
+      "gun/lmg_fire/d8788b0155/t01.pcm"
+    ]
+  },
+  "gun/mag_in": {
+    "model": "eleven_text_to_sound_v2",
+    "prompt": "Close-up foley recording of a rifle magazine inserted and seated with a firm locking click. Real firearm handling sound, single action, no gunshot, no music.",
+    "seconds": 1.0,
+    "influence": 0.6,
+    "takes": [
+      "gun/mag_in/500ea1aa62/t00.pcm",
+      "gun/mag_in/500ea1aa62/t03.pcm"
+    ]
+  },
+  "gun/mag_out": {
+    "model": "eleven_text_to_sound_v2",
+    "prompt": "Close-up foley recording of a magazine release button pressed and the magazine pulled out of a pistol. Real firearm handling sound, single action, no gunshot, no music.",
+    "seconds": 1.0,
+    "influence": 0.6,
+    "takes": [
+      "gun/mag_out/8b6ed9f8c1/t00.pcm",
+      "gun/mag_out/8b6ed9f8c1/t03.pcm"
+    ]
+  },
+  "gun/magnum_fire": {
+    "model": "eleven_text_to_sound_v2",
+    "prompt": "Loud .50 caliber magnum pistol fired once, real gunshot recorded close to the shooter, massive concussive blast and crack, natural outdoor echo. One shot only, no music.",
+    "seconds": 2.0,
+    "influence": 0.6,
+    "takes": [
+      "gun/magnum_fire/421d56ac80/t00.pcm",
+      "gun/magnum_fire/421d56ac80/t04.pcm",
+      "gun/magnum_fire/421d56ac80/t03.pcm"
+    ]
+  },
+  "gun/pdw_fire": {
+    "model": "eleven_text_to_sound_v2",
+    "prompt": "Authentic FN P90 5.7mm personal defense weapon firing a single round outdoors, real gunshot recording, close microphone, sharp high-pitched crack, natural reflections. One shot only, no burst, no music.",
+    "seconds": 1.2,
+    "influence": 0.6,
+    "takes": [
+      "gun/pdw_fire/3ed1f5e573/t02.pcm",
+      "gun/pdw_fire/3ed1f5e573/t03.pcm",
+      "gun/pdw_fire/3ed1f5e573/t05.pcm"
+    ]
+  },
+  "gun/pistol_fire": {
+    "model": "eleven_text_to_sound_v2",
+    "prompt": "Authentic 9mm handgun firing one round outdoors, real gunshot recording, close microphone, natural reflections and echo tail. One shot only.",
+    "seconds": 1.6,
+    "influence": 0.5,
+    "takes": [
+      "gun/pistol_fire/c686a35382/t05.pcm",
+      "gun/pistol_fire/c686a35382/t11.pcm",
+      "gun/pistol_fire/c686a35382/t00.pcm"
+    ]
+  },
+  "gun/pump_back": {
+    "model": "eleven_text_to_sound_v2",
+    "prompt": "Close-up foley recording of a pump-action shotgun forend racked back, ejecting a shell. Real firearm handling sound, single action, no gunshot, no music.",
+    "seconds": 1.0,
+    "influence": 0.6,
+    "takes": [
+      "gun/pump_back/ec7e063557/t00.pcm",
+      "gun/pump_back/ec7e063557/t02.pcm"
+    ]
+  },
+  "gun/pump_fire": {
+    "model": "eleven_text_to_sound_v2",
+    "prompt": "Authentic Remington 870 pump-action 12 gauge shotgun firing a single round outdoors, real gunshot recording, close microphone, massive deep boom, natural outdoor echo. One shot only, no pumping, no music.",
+    "seconds": 2.0,
+    "influence": 0.6,
+    "takes": [
+      "gun/pump_fire/1b62c5359a/t04.pcm",
+      "gun/pump_fire/1b62c5359a/t05.pcm",
+      "gun/pump_fire/1b62c5359a/t00.pcm"
+    ]
+  },
+  "gun/pump_forward": {
+    "model": "eleven_text_to_sound_v2",
+    "prompt": "Close-up foley recording of a pump-action shotgun forend pushed forward and locking. Real firearm handling sound, single action, no gunshot, no music.",
+    "seconds": 1.0,
+    "influence": 0.6,
+    "takes": [
+      "gun/pump_forward/7d83d9ad68/t01.pcm",
+      "gun/pump_forward/7d83d9ad68/t03.pcm"
+    ]
+  },
+  "gun/revolver_fire": {
+    "model": "eleven_text_to_sound_v2",
+    "prompt": "Authentic .357 Magnum revolver firing a single round outdoors, real gunshot recording, close microphone, loud sharp blast with a ringing metallic crack, natural outdoor echo. One shot only, no music.",
+    "seconds": 2.0,
+    "influence": 0.6,
+    "takes": [
+      "gun/revolver_fire/a115f8c6fb/t11.pcm",
+      "gun/revolver_fire/a115f8c6fb/t09.pcm",
+      "gun/revolver_fire/a115f8c6fb/t10.pcm"
+    ]
+  },
+  "gun/rifle_fire": {
+    "model": "eleven_text_to_sound_v2",
+    "prompt": "Authentic AR-15 5.56mm rifle firing a single round outdoors, real gunshot recording, close microphone, loud sharp supersonic crack and blast, natural outdoor echo. One shot only, no burst, no music.",
+    "seconds": 1.6,
+    "influence": 0.6,
+    "takes": [
+      "gun/rifle_fire/abc5bce2f6/t01.pcm",
+      "gun/rifle_fire/abc5bce2f6/t06.pcm",
+      "gun/rifle_fire/abc5bce2f6/t02.pcm"
+    ]
+  },
+  "gun/shell_drop": {
+    "model": "eleven_text_to_sound_v2",
+    "prompt": "Real recording of a single empty plastic shotgun shell falling and bouncing on the ground. No gunshot, no music.",
+    "seconds": 1.0,
+    "influence": 0.6,
+    "takes": [
+      "gun/shell_drop/9d38d6d2d7/t00.pcm",
+      "gun/shell_drop/9d38d6d2d7/t01.pcm"
+    ]
+  },
+  "gun/shell_insert": {
+    "model": "eleven_text_to_sound_v2",
+    "prompt": "Close-up foley recording of a single 12 gauge shell pushed into a shotgun tube magazine. Real firearm handling sound, single action, no gunshot, no music.",
+    "seconds": 1.0,
+    "influence": 0.6,
+    "takes": [
+      "gun/shell_insert/1e7e63ed90/t03.pcm",
+      "gun/shell_insert/1e7e63ed90/t01.pcm"
+    ]
+  },
+  "gun/shotgun_fire": {
+    "model": "eleven_text_to_sound_v2",
+    "prompt": "Authentic semi-automatic 12 gauge shotgun firing a single round outdoors, real gunshot recording, close microphone, huge booming blast, natural outdoor echo. One shot only, no pump, no music.",
+    "seconds": 2.0,
+    "influence": 0.6,
+    "takes": [
+      "gun/shotgun_fire/b2361b620d/t03.pcm",
+      "gun/shotgun_fire/b2361b620d/t07.pcm",
+      "gun/shotgun_fire/b2361b620d/t00.pcm"
+    ]
+  },
+  "gun/slide_back": {
+    "model": "eleven_text_to_sound_v2",
+    "prompt": "Close-up foley recording of a pistol slide pulled back to the rear, metallic scrape. Real firearm handling sound, single action, no gunshot, no music.",
+    "seconds": 1.0,
+    "influence": 0.6,
+    "takes": [
+      "gun/slide_back/7993c019a7/t01.pcm",
+      "gun/slide_back/7993c019a7/t02.pcm"
+    ]
+  },
+  "gun/slide_release": {
+    "model": "eleven_text_to_sound_v2",
+    "prompt": "Close-up foley recording of a pistol slide released and snapping forward into battery. Real firearm handling sound, single action, no gunshot, no music.",
+    "seconds": 1.0,
+    "influence": 0.6,
+    "takes": [
+      "gun/slide_release/f4a7e74265/t00.pcm",
+      "gun/slide_release/f4a7e74265/t01.pcm"
+    ]
+  },
+  "gun/smg_fire": {
+    "model": "eleven_text_to_sound_v2",
+    "prompt": "Authentic 9mm MP5 submachine gun firing a single round outdoors, real gunshot recording, close microphone, quick snappy report with a light mechanical clatter, natural reflections. One shot only, no burst, no music.",
+    "seconds": 1.2,
+    "influence": 0.6,
+    "takes": [
+      "gun/smg_fire/78403e206b/t05.pcm",
+      "gun/smg_fire/78403e206b/t04.pcm",
+      "gun/smg_fire/78403e206b/t00.pcm"
+    ]
+  },
+  "gun/sniper_fire": {
+    "model": "eleven_text_to_sound_v2",
+    "prompt": "Real field recording of a single gunshot from an M24 .308 bolt-action sniper rifle fired at an outdoor long-distance range, recorded from the shooter's position. Very loud supersonic crack and heavy muzzle blast followed by a long natural echo rolling across open terrain. Authentic firearm audio, one shot only, no bolt action, no music, no voices.",
+    "seconds": 3.0,
+    "influence": 0.7,
+    "takes": [
+      "gun/sniper_fire/6650e6b4cf/t00.pcm",
+      "gun/sniper_fire/6650e6b4cf/t06.pcm",
+      "gun/sniper_fire/6650e6b4cf/t07.pcm"
+    ]
+  },
+  "gun/suppressed_fire": {
+    "model": "eleven_text_to_sound_v2",
+    "prompt": "Authentic suppressed rifle firing a single round outdoors, real gunshot recording, close microphone, muffled thump with the metallic clack of the action, short quiet tail. One shot only, no loud crack, no music.",
+    "seconds": 1.2,
+    "influence": 0.6,
+    "takes": [
+      "gun/suppressed_fire/f0d7d6bb41/t11.pcm",
+      "gun/suppressed_fire/f0d7d6bb41/t06.pcm",
+      "gun/suppressed_fire/f0d7d6bb41/t01.pcm"
+    ]
+  }
+}

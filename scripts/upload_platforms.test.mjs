@@ -5,12 +5,12 @@ import path from "node:path";
 import { spawnSync } from "node:child_process";
 import { fileURLToPath, pathToFileURL } from "node:url";
 import test from "node:test";
-import { DEPENDENCY_PROJECTS, LOADER_IDS, modrinthDependencies,
+import { DEPENDENCY_PROJECTS, LOADER_IDS, curseforgeRelations, modrinthDependencies,
   modrinthMetadata, parseJar, releaseType } from "./release_metadata.mjs";
 import { parseArgs, uploadPlatforms } from "./upload_platforms.mjs";
 
 const ROOT = fileURLToPath(new URL("../", import.meta.url));
-const TARGETS = [["neoforge", "1.21.1"]];
+const TARGETS = [["fabric", "1.21.1"], ["neoforge", "1.21.1"]];
 const VERSION = "0.3.0";
 const jarName = (loader, game, version = VERSION) => `remnants_ballistics-${loader}-${game}-${version}.jar`;
 const silent = () => {};
@@ -24,9 +24,13 @@ function fixture(t, version = VERSION) {
   return dir;
 }
 
-/** Required dependencies declared in the mods.toml template, other than the loader and Minecraft. */
-function sourceDependencies(game) {
-  const source = fs.readFileSync(path.join(ROOT, game, "src/main/templates/META-INF/neoforge.mods.toml"), "utf8");
+/** Required dependencies declared in the loader's metadata, other than the loader itself, Minecraft and Java. */
+function sourceDependencies(loader, game) {
+  if (loader === "fabric") {
+    const source = JSON.parse(fs.readFileSync(path.join(ROOT, game, "fabric/src/main/resources/fabric.mod.json"), "utf8"));
+    return Object.keys(source.depends).filter((mod) => !["fabricloader", "minecraft", "java"].includes(mod));
+  }
+  const source = fs.readFileSync(path.join(ROOT, game, "neoforge/src/main/resources/META-INF/neoforge.mods.toml"), "utf8");
   return source.split(/\[\[dependencies\./).slice(1).flatMap((block) => {
     const mod = block.match(/modId\s*=\s*"([^"]+)"/)?.[1];
     const required = /mandatory\s*=\s*true|type\s*=\s*"required"/.test(block);
@@ -34,12 +38,14 @@ function sourceDependencies(game) {
   });
 }
 
-test("the payload matches the runtime requirements in neoforge.mods.toml", () => {
+test("the payload matches the runtime requirements in each loader's metadata", () => {
   for (const [loader, game] of TARGETS) {
-    assert.deepEqual(sourceDependencies(game).sort(), Object.keys(DEPENDENCY_PROJECTS).sort());
+    assert.deepEqual(sourceDependencies(loader, game).sort(), Object.keys(DEPENDENCY_PROJECTS[loader]).sort());
     const release = parseJar(jarName(loader, game), VERSION);
     const body = modrinthMetadata(release, { version: VERSION, changelog: "Test", projectId: ids.MODRINTH_ID });
-    assert.deepEqual(body.dependencies, []);
+    assert.deepEqual(body.dependencies.map((d) => d.project_id),
+      Object.values(DEPENDENCY_PROJECTS[loader]).map((p) => p.modrinth));
+    assert.ok(body.dependencies.every((d) => d.dependency_type === "required"));
     assert.deepEqual(body.loaders, [loader]);
     assert.deepEqual(body.game_versions, [game]);
     assert.equal(body.version_number, `${VERSION}+${loader}-${game}`);
@@ -57,7 +63,7 @@ test("pre-1.0 and suffixed versions publish as beta, others as release", () => {
 });
 
 test("invalid targets, mismatched versions and missing arguments fail closed", () => {
-  for (const name of ["unknown.jar", "remnants_ballistics-fabric-1.21.1-0.3.0.jar", "remnants_ballistics-neoforge-1.20.1-0.3.0.jar"]) {
+  for (const name of ["unknown.jar", "remnants_ballistics-forge-1.21.1-0.3.0.jar", "remnants_ballistics-neoforge-1.20.1-0.3.0.jar"]) {
     assert.throws(() => parseJar(name));
   }
   assert.throws(() => parseJar(jarName("neoforge", "1.21.1"), "0.3.1"), /does not match/);
@@ -78,13 +84,18 @@ test("dry-run emits complete payloads without credentials or network", async (t)
     log: (...values) => logs.push(values),
   });
   assert.equal(calls, 0);
-  assert.equal(logs.filter(([label]) => label === "[dry-run] Modrinth").length, 1);
+  assert.equal(logs.filter(([label]) => label === "[dry-run] Modrinth").length, TARGETS.length);
   const cf = logs.filter(([label]) => label === "[dry-run] CurseForge");
-  assert.equal(cf.length, 1);
-  const preview = JSON.parse(cf[0][2]);
-  assert.equal(preview.metadata.releaseType, "beta");
-  assert.deepEqual(preview.metadata.relations.projects, []);
-  assert.equal(preview.gameVersionLookup.loaderId, LOADER_IDS.neoforge);
+  assert.equal(cf.length, TARGETS.length);
+  for (const [, name, json] of cf) {
+    const release = parseJar(name);
+    const preview = JSON.parse(json);
+    assert.equal(preview.metadata.releaseType, "beta");
+    assert.deepEqual(preview.metadata.relations, curseforgeRelations(release.loader, release.game));
+    assert.equal(preview.gameVersionLookup.loaderId, LOADER_IDS[release.loader]);
+  }
+  const fabric = JSON.parse(cf.find(([, name]) => name.includes("-fabric-"))[2]);
+  assert.deepEqual(fabric.metadata.relations.projects.map((p) => p.slug), ["fabric-api", "forge-config-api-port"]);
 });
 
 test("CLI dry-run never reads local.env, jar bytes or calls fetch", (t) => {
@@ -106,7 +117,7 @@ test("CLI dry-run never reads local.env, jar bytes or calls fetch", (t) => {
     path.join(ROOT, "scripts/upload_platforms.mjs"), "--version", VERSION, "--jar-dir", dir, "--require-all-targets", "--dry-run"],
   { encoding: "utf8", env });
   assert.equal(child.status, 0, child.stderr);
-  assert.equal((child.stdout.match(/\[dry-run\] Modrinth/g) || []).length, 1);
+  assert.equal((child.stdout.match(/\[dry-run\] Modrinth/g) || []).length, TARGETS.length);
   assert.doesNotMatch(child.stdout, /Loaded secrets|not-a-token/);
 });
 
@@ -117,7 +128,7 @@ test("full-release and regular-file preflight stops before any upload", async (t
   const jar = path.join(jarDir, jarName("neoforge", "1.21.1"));
   fs.unlinkSync(jar);
   fs.writeFileSync(path.join(jarDir, jarName("neoforge", "1.21.1", "0.2.0")), "old jar");
-  await assert.rejects(uploadPlatforms({ version: VERSION, jarDir, requireAllTargets: true }, transport), /No remnants_ballistics/);
+  await assert.rejects(uploadPlatforms({ version: VERSION, jarDir, requireAllTargets: true }, transport), /Missing release targets: neoforge:1.21.1/);
   assert.equal(calls, 0);
   fs.mkdirSync(jar);
   await assert.rejects(uploadPlatforms({ version: VERSION, jarDir }, transport), /Not a regular jar file/);
@@ -154,7 +165,7 @@ function mockTransport(records, { modrinthFailure = false, modernLookupFails = f
       assert.equal(await file.text(), "fixture jar");
       assert.deepEqual(body.gameVersions, [1, 2, LOADER_IDS[release.loader], 1211]);
       assert.equal(body.releaseType, "beta");
-      assert.deepEqual(body.relations.projects, []);
+      assert.deepEqual(body.relations, curseforgeRelations(release.loader, release.game));
       records.push({ platform: "curseforge", body });
       return Response.json({ id: 42 });
     }
@@ -162,13 +173,13 @@ function mockTransport(records, { modrinthFailure = false, modernLookupFails = f
   };
 }
 
-test("actual upload sends one Modrinth version and one CurseForge file", async (t) => {
+test("actual upload sends one Modrinth version and one CurseForge file per jar", async (t) => {
   const records = [];
   await uploadPlatforms({ version: VERSION, jarDir: fixture(t), requireAllTargets: true }, {
     env: tokens, fetchImpl: mockTransport(records), log: silent,
   });
-  assert.equal(records.filter((r) => r.platform === "modrinth").length, 1);
-  assert.equal(records.filter((r) => r.platform === "curseforge").length, 1);
+  assert.equal(records.filter((r) => r.platform === "modrinth").length, TARGETS.length);
+  assert.equal(records.filter((r) => r.platform === "curseforge").length, TARGETS.length);
 });
 
 test("CurseForge-only needs no Modrinth token and retains legacy lookup fallback", async (t) => {
@@ -178,7 +189,7 @@ test("CurseForge-only needs no Modrinth token and retains legacy lookup fallback
     fetchImpl: mockTransport(records, { modernLookupFails: true }), log: silent,
   });
   assert.equal(records.filter((r) => r.platform === "modrinth").length, 0);
-  assert.equal(records.filter((r) => r.platform === "curseforge").length, 1);
+  assert.equal(records.filter((r) => r.platform === "curseforge").length, TARGETS.length);
 });
 
 test("live mode without project ids, credentials or after an API rejection stops publication", async (t) => {

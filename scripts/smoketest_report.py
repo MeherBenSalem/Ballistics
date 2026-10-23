@@ -1,11 +1,12 @@
-"""Report a scripted client run (1.21.1/src/smoketest) as GitHub annotations and contact sheets.
+"""Report a scripted client run (1.21.1/smoketest) as GitHub annotations and contact sheets.
 
-    python3 scripts/smoketest_report.py --log smoketest-output.log --run-dir 1.21.1/run/smoketest --out smoketest
+    python3 scripts/smoketest_report.py --log smoketest-fabric.log --run-dir 1.21.1/fabric/run/smoketest --out smoketest --label Fabric
 
 Reads <run-dir>/smoketest/result.json written by the run. Emits an error annotation per failed check, a warning
 per distinct log line our mod (or the model, sound and texture loaders about our files) logged at WARN or above,
 and a summary notice. With Pillow installed, it also builds one JPEG contact sheet per weapon (hip, aim, fire,
-reload, inspect, third person) plus the title and screen captures, in <out>/. Exits non-zero unless the run passed.
+reload, inspect, third person) plus the title and screen captures, in <out>/ (named smoke-<label>-*.jpg when a loader
+label is given, so both loaders' runs can share one folder). Exits non-zero unless the run passed.
 """
 import argparse
 import json
@@ -44,7 +45,7 @@ def log_findings(path):
     return list(dict.fromkeys(warnings)), list(dict.fromkeys(crash))
 
 
-def contact_sheets(run_dir, shots, out):
+def contact_sheets(run_dir, shots, out, prefix='smoke-'):
     try:
         from PIL import Image, ImageDraw
     except ImportError:
@@ -77,13 +78,13 @@ def contact_sheets(run_dir, shots, out):
             label = re.sub(r'^\d\d_[a-z0-9_]+?_\d_', '', name[:-4]).replace('_', ' ')
             draw.rectangle([x, y, x + 8 + 7 * len(label), y + 16], fill=(0, 0, 0))
             draw.text((x + 4, y + 2), label, fill=(255, 255, 255))
-        target = os.path.join(out, f'smoke-{key}.jpg')
+        target = os.path.join(out, f'{prefix}{key}.jpg')
         sheet.save(target, quality=86)
         written.append(target)
     for name in singles:
         path = os.path.join(shots_dir, name)
         if os.path.exists(path):
-            target = os.path.join(out, 'smoke-' + name[:-4] + '.jpg')
+            target = os.path.join(out, prefix + name[:-4] + '.jpg')
             Image.open(path).convert('RGB').save(target, quality=88)
             written.append(target)
     return written
@@ -94,30 +95,35 @@ def main():
     parser.add_argument('--log', required=True)
     parser.add_argument('--run-dir', required=True)
     parser.add_argument('--out', required=True)
+    parser.add_argument('--label', default='', help='loader name for titles and image names, e.g. Fabric')
     args = parser.parse_args()
     os.makedirs(args.out, exist_ok=True)
+    title = f'Client smoke test ({args.label})' if args.label else 'Client smoke test'
+    log_title = f'Client log ({args.label} smoke test)' if args.label else 'Client log (smoke test)'
+    prefix = f'smoke-{args.label.lower()}-' if args.label else 'smoke-'
 
     warnings, crash = log_findings(args.log)
     for line in warnings[:30]:
-        annotate('warning', 'Client log (smoke test)', line)
+        annotate('warning', log_title, line)
     if len(warnings) > 30:
-        annotate('warning', 'Client log (smoke test)', f'{len(warnings) - 30} more warnings not shown')
+        annotate('warning', log_title, f'{len(warnings) - 30} more warnings not shown')
 
     result_path = os.path.join(args.run_dir, 'smoketest', 'result.json')
     if not os.path.exists(result_path):
         excerpt = '\n'.join(crash[:120]) or 'no exception found in the log'
-        annotate('error', 'Client smoke test', 'The client exited without writing a result (crash or hang).\n' + excerpt)
+        annotate('error', title, 'The client exited without writing a result (crash or hang).\n' + excerpt)
         sys.exit(1)
     with open(result_path, encoding='utf-8') as f:
         result = json.load(f)
     for failure in result.get('failures', []):
-        annotate('error', 'Client smoke test', failure)
-    sheets = contact_sheets(args.run_dir, result.get('screenshots', []), args.out)
+        annotate('error', title, failure)
+    sheets = contact_sheets(args.run_dir, result.get('screenshots', []), args.out, prefix)
     summary = (f"{result.get('status')} in {result.get('seconds')} s: {len(result.get('failures', []))} failed checks, "
                f"{len(result.get('screenshots', []))} screenshots, {len(sheets)} images, {len(warnings)} log warnings. "
                + '; '.join(result.get('notes', [])))
-    annotate('notice', 'Client smoke test', summary)
-    with open(os.path.join(args.out, 'summary.txt'), 'w', encoding='utf-8') as f:
+    annotate('notice', title, summary)
+    summary_name = f'summary-{args.label.lower()}.txt' if args.label else 'summary.txt'
+    with open(os.path.join(args.out, summary_name), 'w', encoding='utf-8') as f:
         f.write(summary + '\n')
     sys.exit(0 if result.get('status') == 'PASS' else 1)
 

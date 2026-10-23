@@ -1,0 +1,80 @@
+plugins {
+    id 'multiloader-loader'
+    id 'fabric-loom'
+}
+
+// Development-only companion mod for the scripted client run (shared ClientSmokeTest in ../smoketest plus the Fabric
+// entry point in src/smoketest). Never part of the release jar.
+sourceSets {
+    smoketest {
+        java.srcDir(rootProject.file('smoketest/java'))
+        compileClasspath += sourceSets.main.output + sourceSets.main.compileClasspath
+        runtimeClasspath += sourceSets.main.output + sourceSets.main.runtimeClasspath
+    }
+}
+
+dependencies {
+    minecraft "com.mojang:minecraft:${minecraft_version}"
+    if (project.use_parchment.toBoolean()) {
+        mappings loom.layered {
+            officialMojangMappings()
+            parchment("org.parchmentmc.data:parchment-${parchment_minecraft}:${parchment_version}@zip")
+        }
+    } else {
+        mappings loom.officialMojangMappings()
+    }
+    modImplementation "net.fabricmc:fabric-loader:${fabric_loader_version}"
+    modImplementation "net.fabricmc.fabric-api:fabric-api:${fabric_version}"
+    // The NeoForge config API (ModConfigSpec) on Fabric; a required dependency in fabric.mod.json.
+    modApi "fuzs.forgeconfigapiport:forgeconfigapiport-fabric:${forgeconfigapiport_version}"
+}
+
+loom {
+    def aw = project(':common').file("src/main/resources/${mod_id}.accesswidener")
+    if (aw.exists()) {
+        accessWidenerPath.set(aw)
+    }
+    mixin {
+        defaultRefmapName.set("${mod_id}.refmap.json")
+    }
+    mods {
+        "${mod_id}" {
+            sourceSet sourceSets.main
+        }
+        remnants_ballistics_smoketest {
+            sourceSet sourceSets.smoketest
+        }
+    }
+    runs {
+        client {
+            client()
+            setConfigName('Fabric Client')
+            ideConfigGenerated(true)
+            runDir('run/client')
+        }
+        server {
+            server()
+            setConfigName('Fabric Server')
+            ideConfigGenerated(true)
+            runDir('run/server')
+        }
+        // Boots a server, runs every Fabric GameTest and exits (non-zero on failure).
+        gameTestServer {
+            server()
+            setConfigName('Fabric GameTest Server')
+            ideConfigGenerated(false)
+            property('fabric-api.gametest')
+            property('fabric-api.gametest.report-file', project.layout.buildDirectory.file('gametest/junit.xml').get().asFile.absolutePath)
+            runDir('run/gametest')
+        }
+        // Scripted client run (see ../smoketest): exercises every weapon and screen, then exits.
+        clientSmokeTest {
+            client()
+            source sourceSets.smoketest
+            setConfigName('Fabric Client Smoke Test')
+            ideConfigGenerated(false)
+            runDir('run/smoketest')
+            programArgs '--width', '1280', '--height', '720', '--username', 'SmokeTest'
+        }
+    }
+}

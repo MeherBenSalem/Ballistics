@@ -6,11 +6,12 @@ Remnants: Ballistics is server-authoritative. Clients predict their own shots an
 
 | Command (in `1.21.1/`) | What it covers |
 | --- | --- |
-| `./gradlew test` | Minecraft-free core: spread determinism, ballistic drop, recoil, bloom, falloff, hit zones, reload maths, stat modifiers, the fire-rate limiter (steady fire, spam, jitter, idle-credit caps) |
-| `./gradlew runGameTestServer` | GameTests on a headless server, driving the real server pipeline with a fake player. See below. |
+| `./gradlew :common:test` | Minecraft-free core: spread determinism, ballistic drop, recoil, bloom, falloff, hit zones, reload maths, stat modifiers, the fire-rate limiter (steady fire, spam, jitter, idle-credit caps) |
+| `./gradlew :neoforge:runGameTestServer` and `:fabric:runGameTestServer` | GameTests on a headless server of each loader, driving the real server pipeline with a fake player. See below. |
+| `./gradlew :neoforge:runClientSmokeTest` and `:fabric:runClientSmokeTest` | A scripted client of each loader boots a world, fires, reloads and inspects every weapon, opens the stations and writes screenshots and `run/smoketest/smoketest/result.json` |
 | `python3 tools/assets/check_assets.py` (repository root) | Every registered item, block, sound, particle, model part, animation clip, translation and data reference resolves |
 
-The GameTests (`gametest/BallisticsGameTests.java`) cover:
+The GameTests (`common/.../gametest/BallisticsGameTests.java`, registered by `NeoForgeGameTests` and `FabricGameTests`) cover:
 
 - an aimed rifle shot damages a target and uses one round;
 - bullets shatter glass;
@@ -28,9 +29,9 @@ The GameTests (`gametest/BallisticsGameTests.java`) cover:
 
 ```
 cd 1.21.1
-./gradlew runServer      # first run: accept run/eula.txt, set online-mode=false in run/server.properties
-./gradlew runClient      # player "Dev"
-./gradlew runClient2     # player "Dev2" (separate game directory run/client2)
+./gradlew :neoforge:runServer   # first run: accept run/eula.txt, set online-mode=false in run/server.properties
+./gradlew :neoforge:runClient   # player "Dev"
+./gradlew :neoforge:runClient2  # player "Dev2" (separate game directory run/client2)
 ```
 
 Connect both clients to `localhost`. Give items with `/give Dev remnants_ballistics:arx_16`, `/give Dev remnants_ballistics:ammo_556 128`, and so on, or use the creative tabs.

@@ -1,11 +1,15 @@
 """Procedural sound design: every sound is synthesised from noise, oscillators, filters and a small convolution
-reverb (numpy only), then encoded to mono Ogg Vorbis with ffmpeg. All audio is original.
+reverb (numpy only), then encoded to mono Ogg Vorbis with ffmpeg.
 
 Gunshots are layered like a real recording: a sharp transient crack, a pitched-down body thump, a filtered
 mechanical clack and an environmental tail. Profiles vary every layer so each weapon family sounds distinct.
+
+Stems listed in sfx_recorded.json come from sfx_eleven.py (real-recording style, generated with ElevenLabs) instead;
+generate() keeps those files and only synthesises the rest.
 """
 from __future__ import annotations
 
+import json
 import os
 import subprocess
 import tempfile
@@ -448,17 +452,29 @@ def write_ogg(samples, path, quality=5):
         os.unlink(wav_path)
 
 
+RECORDED = os.path.join(os.path.dirname(os.path.abspath(__file__)), "sfx_recorded.json")
+
+
+def recorded_stems():
+    """Stems whose files come from sfx_eleven.py rather than synthesis."""
+    if not os.path.exists(RECORDED):
+        return set()
+    with open(RECORDED, encoding="utf-8") as f:
+        return set(json.load(f))
+
+
 def generate(assets_dir, ns, seed=20260):
-    """Writes sounds/*.ogg and returns the sounds.json dict and subtitle translations."""
+    """Writes sounds/*.ogg (except recorded stems) and returns the sounds.json dict and subtitle translations."""
     sounds_json = {}
     subtitles = {}
+    recorded = recorded_stems()
     for event, stem, variants, gen, subtitle in catalogue():
         entries = []
         for v in range(variants):
-            rng = np.random.default_rng(seed + sum(map(ord, event)) * 31 + v)
-            samples = gen(rng)
             name = f"{stem}_{v + 1}" if variants > 1 else stem
-            write_ogg(samples, os.path.join(assets_dir, "sounds", name + ".ogg"))
+            if stem not in recorded:
+                rng = np.random.default_rng(seed + sum(map(ord, event)) * 31 + v)
+                write_ogg(gen(rng), os.path.join(assets_dir, "sounds", name + ".ogg"))
             entries.append({"name": f"{ns}:{name}"})
         key = f"subtitles.{ns}.{event}"
         sounds_json[event] = {"sounds": entries, "subtitle": key}

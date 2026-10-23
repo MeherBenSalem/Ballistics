@@ -1,15 +1,18 @@
 # Asset pipeline
 
-Every asset in the mod is generated from source in [`tools/assets`](../tools/assets): models, textures, icons, animations, sounds, GUIs, particles, translations, recipes, loot and tags. Nothing is hand-edited in `1.21.1/src/main/resources`, and nothing is copied from Minecraft or other mods.
+Every asset in the mod is generated from source in [`tools/assets`](../tools/assets): models, textures, icons, animations, sounds, GUIs, particles, translations, recipes, loot and tags. Nothing is hand-edited in `1.21.1/common/src/main/resources` (shared by the Fabric and NeoForge builds), and nothing is copied from Minecraft or other mods.
 
 ```
 python3 tools/assets/generate.py            # everything (about 30 s)
 python3 tools/assets/generate.py --no-sound # skip audio synthesis
+ELEVENLABS_API_KEY=... python3 tools/assets/sfx_eleven.py  # firearm and handling sounds not yet recorded
 python3 tools/assets/check_assets.py --manifest docs/ASSET_MANIFEST.md
 python3 tools/docs_gen.py                   # CONFIG/WEAPONS/ATTACHMENTS/PROGRESSION docs
 ```
 
-Requirements: Python 3.10+, `numpy`, `Pillow`, and `ffmpeg` built with `libvorbis`. Generation is deterministic.
+Requirements: Python 3.10+, `numpy`, `Pillow`, and `ffmpeg` built with `libvorbis`. Generation is deterministic, except
+`sfx_eleven.py`, which calls the ElevenLabs API; `generate.py` keeps the files it recorded (listed in
+`sfx_recorded.json`) and never re-synthesises them.
 
 ## Sources
 
@@ -21,7 +24,8 @@ Requirements: Python 3.10+, `numpy`, `Pillow`, and `ffmpeg` built with `libvorbi
 | `attachments.py` | The 23 attachment models, built around the mount point (8, 8, 8) |
 | `items.py`, `blocks.py` | Ammunition, materials and kits; the Gunsmith Workbench and Ammunition Press block models |
 | `anims.py` | One Bedrock-format animation set per weapon, built from its family's choreography and its own geometry |
-| `sfx.py` | Procedural audio: layered gunshots (crack, body, thump, mechanism, reverb tail), suppressed and distant variants, energy weapons, every mechanical handling sound, impacts, UI and blocks. Encoded as mono Ogg Vorbis |
+| `sfx.py` | Procedural audio: energy weapons, impacts, UI, blocks and ambience, plus layered fallbacks for every gunshot and handling sound. Encoded as mono Ogg Vorbis |
+| `sfx_eleven.py` | Real-recording style gunshots (every firearm, suppressed, distant) and handling foley, generated with ElevenLabs from per-weapon prompts. Takes that are clipped, faint, late or double-hit are rejected; the rest are de-clicked, high-passed, loudness-matched to the sound they replace and recorded in `sfx_recorded.json`. Raw takes are cached in `build/sfx_eleven`. Free-plan output must credit elevenlabs.io (see `NOTICE`) |
 | `art.py` | Container GUIs, HUD sprites (scope, reflex dot, holographic reticle), muzzle and energy flash sheets, bullet hole, particles, void orb, mod-list logo |
 | `data_gen.py` | Recipes (crafting, smelting, blasting, ammunition press), loot tables and global loot modifiers, tags, damage types, advancements |
 | `lang.py` | `en_us.json`, including config-screen keys parsed from the config sources |
