@@ -342,7 +342,14 @@ def main():
     if no_sound:
         subtitles = {f"subtitles.{NS}.{event}": sub for event, _, _, _, sub in sfx.catalogue()}
     else:
-        shutil.rmtree(os.path.join(ASSETS, "sounds"), ignore_errors=True)
+        # Re-synthesise everything except the recorded stems from sfx_eleven.py.
+        recorded = sfx.recorded_stems()
+        sounds_dir = os.path.join(ASSETS, "sounds")
+        for root, _, files in os.walk(sounds_dir):
+            for f in files:
+                stem = os.path.relpath(os.path.join(root, f), sounds_dir).replace(os.sep, "/").rsplit("_", 1)[0]
+                if stem not in recorded:
+                    os.remove(os.path.join(root, f))
         sounds_json, subtitles = sfx.generate(ASSETS, NS)
         write_json(os.path.join(ASSETS, "sounds.json"), sounds_json)
         report.append(f"audio: {len(sounds_json)} sound events")

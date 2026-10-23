@@ -20,7 +20,7 @@ A firearms mod for Minecraft built for multiplayer: sixteen hand-modelled weapon
   - Voxel weapons built from up to 118 elements each, with crisp 32×32 icons.
   - First-person viewmodels with per-weapon keyframed animations: equip, idle, inspect, fire, reloads, pump and bolt cycling, charge.
   - Animated muzzle flashes, tracers, per-material impacts, bullet holes, ejected brass and shells, hit markers.
-  - 59 synthesized sound events.
+  - 59 sound events: real-recording style gunshots and handling sounds made with [ElevenLabs](https://elevenlabs.io), synthesized impacts, UI and energy weapons.
 - **Progression:** steel and brass, an ammunition press, gun parts and precision parts, blueprints found in structures, remnant alloy and void cores. Loot is injected into 25 vanilla structure and mob tables.
 - **Configurable:** client visuals, HUD and accessibility; common recipe and loot toggles; server balance, hit zones, anti-cheat tolerances and per-weapon overrides. See [docs/CONFIG.md](docs/CONFIG.md).
 
