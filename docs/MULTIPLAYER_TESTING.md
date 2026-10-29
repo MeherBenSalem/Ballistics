@@ -4,7 +4,7 @@ Remnants: Ballistics is server-authoritative. Clients predict their own shots an
 
 ## Automated checks
 
-| Command (in `1.21.1/`) | What it covers |
+| Command (in a workspace: `1.21.1/`, `26.2/` or `26.3/`) | What it covers |
 | --- | --- |
 | `./gradlew :common:test` | Minecraft-free core: spread determinism, ballistic drop, recoil, bloom, falloff, hit zones, reload maths, stat modifiers, the fire-rate limiter (steady fire, spam, jitter, idle-credit caps) |
 | `./gradlew :neoforge:runGameTestServer` and `:fabric:runGameTestServer` | GameTests on a headless server of each loader, driving the real server pipeline with a fake player. See below. |
@@ -23,12 +23,13 @@ The GameTests (`common/.../gametest/BallisticsGameTests.java`, registered by `Ne
 - single-load reloads insert round by round;
 - the ammunition press recipe matches;
 - every weapon has a recipe;
-- loot tables and damage types are loaded.
+- loot tables and damage types are loaded;
+- vanilla structure chests also roll the mod's loot (NeoForge loot modifier, Fabric pool injection).
 
 ## Local two-player setup
 
 ```
-cd 1.21.1
+cd 26.3                         # or 1.21.1, 26.2
 ./gradlew :neoforge:runServer   # first run: accept run/eula.txt, set online-mode=false in run/server.properties
 ./gradlew :neoforge:runClient   # player "Dev"
 ./gradlew :neoforge:runClient2  # player "Dev2" (separate game directory run/client2)

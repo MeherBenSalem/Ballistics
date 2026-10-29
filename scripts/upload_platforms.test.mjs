@@ -5,12 +5,14 @@ import path from "node:path";
 import { spawnSync } from "node:child_process";
 import { fileURLToPath, pathToFileURL } from "node:url";
 import test from "node:test";
-import { DEPENDENCY_PROJECTS, LOADER_IDS, curseforgeRelations, modrinthDependencies,
+import { DEPENDENCY_PROJECTS, GAMES, LOADER_IDS, curseforgeRelations, modrinthDependencies,
   modrinthMetadata, parseJar, releaseType } from "./release_metadata.mjs";
 import { parseArgs, uploadPlatforms } from "./upload_platforms.mjs";
 
 const ROOT = fileURLToPath(new URL("../", import.meta.url));
-const TARGETS = [["fabric", "1.21.1"], ["neoforge", "1.21.1"]];
+const TARGETS = GAMES.flatMap((game) => [["fabric", game], ["neoforge", game]]);
+// Mock CurseForge game version ids, distinct per game so a wrong mapping fails.
+const CF_GAME_IDS = Object.fromEntries(GAMES.map((game, i) => [game, 9000 + i]));
 const VERSION = "0.3.0";
 const jarName = (loader, game, version = VERSION) => `remnants_ballistics-${loader}-${game}-${version}.jar`;
 const silent = () => {};
@@ -63,9 +65,11 @@ test("pre-1.0 and suffixed versions publish as beta, others as release", () => {
 });
 
 test("invalid targets, mismatched versions and missing arguments fail closed", () => {
-  for (const name of ["unknown.jar", "remnants_ballistics-forge-1.21.1-0.3.0.jar", "remnants_ballistics-neoforge-1.20.1-0.3.0.jar"]) {
+  for (const name of ["unknown.jar", "remnants_ballistics-forge-1.21.1-0.3.0.jar", "remnants_ballistics-neoforge-1.20.1-0.3.0.jar",
+    "remnants_ballistics-fabric-26.1-0.3.0.jar", "remnants_ballistics-neoforge-26-0.3.0.jar"]) {
     assert.throws(() => parseJar(name));
   }
+  assert.deepEqual(parseJar(jarName("neoforge", "26.2")).game, "26.2");
   assert.throws(() => parseJar(jarName("neoforge", "1.21.1"), "0.3.1"), /does not match/);
   assert.throws(() => modrinthDependencies("neoforge", "1.22"), /Unsupported/);
   assert.throws(() => parseArgs(["node", "script", "--version"]), /Missing value/);
@@ -154,10 +158,12 @@ function mockTransport(records, { modrinthFailure = false, modernLookupFails = f
       return new Response(modrinthFailure ? "test rejection" : "{}", { status: modrinthFailure ? 400 : 200 });
     }
     if (url === "https://minecraft.curseforge.com/api/game/versions") {
-      return Response.json([{ id: 1, name: "Client" }, { id: 2, name: "Server" }, { id: 1211, name: "1.21.1" }]);
+      return Response.json([{ id: 1, name: "Client" }, { id: 2, name: "Server" },
+        ...GAMES.map((game) => ({ id: CF_GAME_IDS[game], name: game }))]);
     }
     if (url.startsWith("https://api.curseforge.com/v1/minecraft/version/")) {
-      return modernLookupFails ? new Response("unavailable", { status: 503 }) : Response.json({ data: { gameVersionId: 1211 } });
+      const game = decodeURIComponent(url.slice(url.lastIndexOf("/") + 1));
+      return modernLookupFails ? new Response("unavailable", { status: 503 }) : Response.json({ data: { gameVersionId: CF_GAME_IDS[game] } });
     }
     if (url === `https://minecraft.curseforge.com/api/projects/${ids.CURSEFORGE_ID}/upload-file`) {
       assert.equal(options.method, "POST");
@@ -166,7 +172,7 @@ function mockTransport(records, { modrinthFailure = false, modernLookupFails = f
       const file = options.body.get("file");
       const release = parseJar(file.name);
       assert.equal(await file.text(), "fixture jar");
-      assert.deepEqual(body.gameVersions, [1, 2, LOADER_IDS[release.loader], 1211]);
+      assert.deepEqual(body.gameVersions, [1, 2, LOADER_IDS[release.loader], CF_GAME_IDS[release.game]]);
       assert.equal(body.releaseType, "beta");
       assert.deepEqual(body.relations, curseforgeRelations(release.loader, release.game));
       records.push({ platform: "curseforge", body });

@@ -25,24 +25,25 @@ public final class NeoForgeGameTests {
     private static final DeferredRegister<Consumer<GameTestHelper>> FUNCTIONS = DeferredRegister.create(Registries.TEST_FUNCTION,
             RemnantsBallistics.MODID);
 
-    private record Test(String name, int maxTicks, Consumer<GameTestHelper> function) {}
+    private record TestEntry(String name, int maxTicks, Consumer<GameTestHelper> function) {}
 
-    private static final Test[] TESTS = {
-            new Test("hitscan_damages_target", 200, BallisticsGameTests::hitscanDamagesTarget),
-            new Test("bullets_break_glass", 200, BallisticsGameTests::bulletsBreakGlass),
-            new Test("fire_rate_is_enforced", 200, BallisticsGameTests::fireRateIsEnforced),
-            new Test("draw_delay_blocks_firing", 100, BallisticsGameTests::drawDelayBlocksFiring),
-            new Test("empty_weapon_does_not_fire", 200, BallisticsGameTests::emptyWeaponDoesNotFire),
-            new Test("voidcaster_launches_orb", 200, BallisticsGameTests::voidcasterLaunchesOrb),
-            new Test("magazine_reload_uses_reserve", 400, BallisticsGameTests::magazineReloadUsesReserve),
-            new Test("single_load_reload_inserts_rounds", 600, BallisticsGameTests::singleLoadReloadInsertsRounds),
-            new Test("ammo_press_recipe_matches", 100, BallisticsGameTests::ammoPressRecipeMatches),
-            new Test("every_weapon_is_craftable", 100, BallisticsGameTests::everyWeaponIsCraftable),
-            new Test("loot_and_damage_data_loaded", 100, BallisticsGameTests::lootAndDamageDataLoaded),
+    private static final TestEntry[] TESTS = {
+            new TestEntry("hitscan_damages_target", 200, BallisticsGameTests::hitscanDamagesTarget),
+            new TestEntry("bullets_break_glass", 200, BallisticsGameTests::bulletsBreakGlass),
+            new TestEntry("fire_rate_is_enforced", 200, BallisticsGameTests::fireRateIsEnforced),
+            new TestEntry("draw_delay_blocks_firing", 100, BallisticsGameTests::drawDelayBlocksFiring),
+            new TestEntry("empty_weapon_does_not_fire", 200, BallisticsGameTests::emptyWeaponDoesNotFire),
+            new TestEntry("voidcaster_launches_orb", 200, BallisticsGameTests::voidcasterLaunchesOrb),
+            new TestEntry("magazine_reload_uses_reserve", 400, BallisticsGameTests::magazineReloadUsesReserve),
+            new TestEntry("single_load_reload_inserts_rounds", 600, BallisticsGameTests::singleLoadReloadInsertsRounds),
+            new TestEntry("ammo_press_recipe_matches", 100, BallisticsGameTests::ammoPressRecipeMatches),
+            new TestEntry("every_weapon_is_craftable", 100, BallisticsGameTests::everyWeaponIsCraftable),
+            new TestEntry("loot_and_damage_data_loaded", 100, BallisticsGameTests::lootAndDamageDataLoaded),
+            new TestEntry("structure_loot_is_injected", 100, BallisticsGameTests::structureLootIsInjected),
     };
 
     static {
-        for (Test test : TESTS) FUNCTIONS.register(test.name(), () -> test.function());
+        for (TestEntry test : TESTS) FUNCTIONS.register(test.name(), () -> test.function());
     }
 
     private NeoForgeGameTests() {}
@@ -56,7 +57,7 @@ public final class NeoForgeGameTests {
         Holder<TestEnvironmentDefinition<?>> environment = event.registerEnvironment(RemnantsBallistics.id("default"),
                 new TestEnvironmentDefinition.AllOf());
         Identifier range = Identifier.parse(BallisticsGameTests.RANGE);
-        for (Test test : TESTS) {
+        for (TestEntry test : TESTS) {
             Identifier id = RemnantsBallistics.id(test.name());
             event.registerTest(id, new FunctionGameTestInstance(ResourceKey.create(Registries.TEST_FUNCTION, id),
                     new TestData<>(environment, range, test.maxTicks(), 0, true)));

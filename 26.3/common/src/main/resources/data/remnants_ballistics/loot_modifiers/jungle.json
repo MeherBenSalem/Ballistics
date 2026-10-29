@@ -1,0 +1,10 @@
+{
+  "type": "remnants_ballistics:configurable_table",
+  "table": "remnants_ballistics:inject/jungle",
+  "category": "structure",
+  "chance": 0.6,
+  "condition": {
+    "type": "neoforge:loot_table_id",
+    "loot_table_id": "minecraft:chests/jungle_temple"
+  }
+}

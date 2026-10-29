@@ -23,10 +23,11 @@ SOURCE = os.path.join(ROOT, "1.21.1", "common", "src", "main", "resources")
 # Generated content; everything else in a workspace's resources is hand-written and kept.
 GENERATED = ("assets", "data", "pack.mcmeta", "logo.png")
 
-# Resource and data pack versions per target (version.json "pack_version" of the game).
+# Resource and data pack versions per target (version.json "pack_version" of the game). "typed_loot": loot
+# conditions and functions are keyed by "type" and fields hold one condition (26.3).
 TARGETS = {
-    "26.2": {"resource": 88, "data": [107, 1]},
-    "26.3": {"resource": 97, "data": [121, 0]},
+    "26.2": {"resource": 88, "data": [107, 1], "typed_loot": False},
+    "26.3": {"resource": 97, "data": [121, 0], "typed_loot": True},
 }
 
 
@@ -122,6 +123,89 @@ def advancement_26(advancement):
     return advancement
 
 
+# 26.3: loot conditions and item modifiers are keyed by "type"; a "condition" field holds one condition (several are
+# wrapped in minecraft:all_of), "functions" became "modifier", and rolls and item counts are integer providers.
+
+def _condition_263(condition):
+    out = {"type": condition["condition"]}
+    for key, value in condition.items():
+        if key == "condition":
+            continue
+        if key == "terms":
+            value = [_condition_263(t) for t in value]
+        elif key == "term":
+            value = _condition_263(value)
+        out[key] = value
+    return out
+
+
+def _conditions_263(conditions):
+    if len(conditions) == 1:
+        return _condition_263(conditions[0])
+    return {"type": "minecraft:all_of", "terms": [_condition_263(c) for c in conditions]}
+
+
+def _int_provider_263(value):
+    """Integer number providers: whole floats become ints (2.0 -> 2), uniform bounds likewise."""
+    if isinstance(value, float) and value.is_integer():
+        return int(value)
+    if isinstance(value, dict):
+        return {k: _int_provider_263(v) if k in ("min", "max", "value") else v for k, v in value.items()}
+    return value
+
+
+def _function_263(function):
+    out = {"type": function["function"]}
+    for key, value in function.items():
+        if key == "function":
+            continue
+        if key == "conditions":
+            out["condition"] = _conditions_263(value)
+            continue
+        if function["function"] == "minecraft:set_count" and key == "count":
+            value = _int_provider_263(value)
+        out[key] = value
+    return out
+
+
+def _loot_node_263(node):
+    """A loot table, pool or entry: conditions, functions and nested entries."""
+    out = {}
+    for key, value in node.items():
+        if key == "conditions":
+            out["condition"] = _conditions_263(value)
+        elif key == "functions":
+            out["modifier"] = [_function_263(f) for f in value]
+        elif key in ("pools", "entries", "children"):
+            out[key] = [_loot_node_263(n) for n in value]
+        elif key == "rolls":
+            out[key] = _int_provider_263(value)
+        else:
+            out[key] = value
+    return out
+
+
+def loot_modifier_263(modifier):
+    modifier = dict(modifier)
+    if "conditions" in modifier:
+        modifier["condition"] = _conditions_263(modifier.pop("conditions"))
+    return modifier
+
+
+def advancement_263(advancement):
+    for criterion in advancement.get("criteria", {}).values():
+        conditions = criterion.get("conditions", {})
+        for key, value in list(conditions.items()):
+            # Entity fields (player, entity, ...) hold one loot condition instead of a list.
+            if isinstance(value, list) and value and isinstance(value[0], dict) and "condition" in value[0]:
+                conditions[key] = _conditions_263(value)
+        # Damage type tags are written with their "#".
+        for tag in conditions.get("killing_blow", {}).get("tags", []):
+            if not tag["id"].startswith("#"):
+                tag["id"] = "#" + tag["id"]
+    return advancement
+
+
 def weapon_names():
     """Weapons are the items whose 1.21.1 item model is drawn by a renderer (parent builtin/entity)."""
     models = os.path.join(SOURCE, "assets", NS, "models", "item")
@@ -183,10 +267,17 @@ def port_26(game):
             path = os.path.join(dirpath, name)
             content = _renamed_26(read_json(path))
             # rel is <namespace>/<registry>[/...]
-            if rel.split("/")[1:2] == ["recipe"]:
+            registry = rel.split("/")[1:2]
+            if registry == ["recipe"]:
                 content = recipe_26(content)
-            elif rel.split("/")[1:2] == ["advancement"]:
+            elif registry == ["advancement"]:
                 content = advancement_26(content)
+                if formats["typed_loot"]:
+                    content = advancement_263(content)
+            elif registry == ["loot_table"] and formats["typed_loot"]:
+                content = _loot_node_263(content)
+            elif registry == ["loot_modifiers"] and formats["typed_loot"]:
+                content = loot_modifier_263(content)
             write_json(path, content)
 
     assets = os.path.join(target, "assets", NS)

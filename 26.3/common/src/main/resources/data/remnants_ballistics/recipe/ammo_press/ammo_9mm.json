@@ -1,0 +1,31 @@
+{
+  "type": "remnants_ballistics:ammo_press",
+  "ingredients": [
+    {
+      "ingredient": "remnants_ballistics:casing",
+      "count": 4
+    },
+    {
+      "ingredient": "minecraft:gunpowder"
+    },
+    {
+      "ingredient": "minecraft:copper_ingot"
+    }
+  ],
+  "result": {
+    "id": "remnants_ballistics:ammo_9mm",
+    "count": 16
+  },
+  "neoforge:conditions": [
+    {
+      "type": "remnants_ballistics:config",
+      "option": "ammo_crafting"
+    }
+  ],
+  "fabric:load_conditions": [
+    {
+      "condition": "remnants_ballistics:config",
+      "option": "ammo_crafting"
+    }
+  ]
+}

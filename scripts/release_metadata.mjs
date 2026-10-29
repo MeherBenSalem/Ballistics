@@ -9,9 +9,12 @@ export const MOD_TITLE = "Remnants: Ballistics";
 // CurseForge "modloader" game-version ids.
 export const LOADER_IDS = Object.freeze({ neoforge: 10150, fabric: 7499 });
 
+// Minecraft versions with a workspace (<game>/); every release ships a NeoForge and a Fabric jar for each.
+export const GAMES = Object.freeze(["1.21.1", "26.2", "26.3"]);
+
 // Runtime requirements besides the loader and Minecraft, per loader: mod id -> Modrinth project id and CurseForge slug.
-// Keep in sync with 1.21.1/neoforge/src/main/resources/META-INF/neoforge.mods.toml (none) and
-// 1.21.1/fabric/src/main/resources/fabric.mod.json (Fabric API, Forge Config API Port); the tests compare them.
+// Keep in sync with <game>/neoforge/src/main/resources/META-INF/neoforge.mods.toml (none) and
+// <game>/fabric/src/main/resources/fabric.mod.json (Fabric API, Forge Config API Port); the tests compare them.
 export const DEPENDENCY_PROJECTS = Object.freeze({
   neoforge: Object.freeze({}),
   fabric: Object.freeze({
@@ -20,7 +23,7 @@ export const DEPENDENCY_PROJECTS = Object.freeze({
   }),
 });
 
-const SUPPORTED_TARGETS = new Set(["neoforge:1.21.1", "fabric:1.21.1"]);
+const SUPPORTED_TARGETS = new Set(GAMES.flatMap((game) => [`neoforge:${game}`, `fabric:${game}`]));
 
 export function assertCompleteRelease(releases) {
   const targets = new Set(releases.map((p) => `${p.loader}:${p.game}`));
@@ -65,7 +68,7 @@ export function curseforgeRelations(loader, game) {
 export function parseJar(jar, expectedVersion) {
   const name = path.basename(jar);
   const match = name.match(
-    /^remnants_ballistics-(neoforge|fabric)-(\d+\.\d+\.\d+)-(\d+\.\d+\.\d+(?:-[A-Za-z0-9.]+)?)\.jar$/,
+    /^remnants_ballistics-(neoforge|fabric)-(\d+\.\d+(?:\.\d+)?)-(\d+\.\d+\.\d+(?:-[A-Za-z0-9.]+)?)\.jar$/,
   );
   if (!match) throw new Error(`Cannot parse release jar ${name}`);
   const [, loader, game, version] = match;

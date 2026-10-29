@@ -6,7 +6,7 @@ Generated from the config specs by `python3 tools/docs_gen.py`. Edit the files i
 |---|---|---|
 | `remnants_ballistics-client.toml` | Each player's own visuals, HUD, controls and audio | `config/` |
 | `remnants_ballistics-common.toml` | Recipe toggles and loot injection (applies on `/reload` or world load) | `config/` |
-| `remnants_ballistics-server.toml` | Balance, hit zones, block interaction, anti-cheat, per-weapon overrides. Synced to clients so their prediction matches the server | `<world>/serverconfig/` (copy to `defaultconfigs/` for new worlds) |
+| `remnants_ballistics-server.toml` | Balance, hit zones, block interaction, anti-cheat, per-weapon overrides. Synced to clients so their prediction matches the server | `<world>/serverconfig/` (copy to `defaultconfigs/` for new worlds). NeoForge on 26.3: `config/`, overridden per world by `<world>/syncedconfig/` |
 
 ## Client
 

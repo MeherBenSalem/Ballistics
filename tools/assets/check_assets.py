@@ -15,6 +15,8 @@ import os
 import re
 import sys
 
+import port_resources
+
 HERE = os.path.dirname(os.path.abspath(__file__))
 ROOT = os.path.abspath(os.path.join(HERE, "..", ".."))
 NS = "remnants_ballistics"
@@ -295,6 +297,16 @@ def model_refs(node):
             yield from model_refs(v)
 
 
+def json_items(node):
+    if isinstance(node, dict):
+        for k, v in node.items():
+            yield k, v
+            yield from json_items(v)
+    elif isinstance(node, list):
+        for v in node:
+            yield from json_items(v)
+
+
 for game in ("26.2", "26.3"):
     res = os.path.join(ROOT, game, "common", "src", "main", "resources")
     if not os.path.isdir(res):
@@ -315,6 +327,14 @@ for game in ("26.2", "26.3"):
     pack = (load(os.path.join(res, "pack.mcmeta")) or {}).get("pack", {})
     if "min_format" not in pack or "max_format" not in pack:
         problem(f"{game}: pack.mcmeta needs min_format and max_format")
+    if port_resources.TARGETS[game]["typed_loot"]:
+        # Loot conditions and item modifiers are keyed by "type"; fields hold one condition and "modifier" lists.
+        for sub in ("loot_table", "loot_modifiers"):
+            for path in sorted(glob.glob(os.path.join(res, "data", NS, sub, "**", "*.json"), recursive=True)):
+                old = sorted({k for k, v in json_items(load(path) or {})
+                              if k in ("conditions", "functions", "function") or (k == "condition" and isinstance(v, str))})
+                if old:
+                    problem(f"{game}: {os.path.relpath(path, res)} uses the pre-26.3 loot format ({', '.join(old)})")
 
 # ------------------------------------------------------------------------------------------------------------------
 # Report

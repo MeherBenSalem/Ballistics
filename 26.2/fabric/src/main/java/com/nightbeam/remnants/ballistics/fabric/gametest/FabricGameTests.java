@@ -63,4 +63,9 @@ public final class FabricGameTests {
     public void lootAndDamageDataLoaded(GameTestHelper helper) {
         BallisticsGameTests.lootAndDamageDataLoaded(helper);
     }
+
+    @GameTest(structure = BallisticsGameTests.RANGE, maxTicks = 100)
+    public void structureLootIsInjected(GameTestHelper helper) {
+        BallisticsGameTests.structureLootIsInjected(helper);
+    }
 }

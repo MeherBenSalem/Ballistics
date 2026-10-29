@@ -19,9 +19,11 @@ import com.nightbeam.remnants.ballistics.weapon.GunItem;
 import com.nightbeam.remnants.ballistics.weapon.WeaponDefinition;
 import com.nightbeam.remnants.ballistics.weapon.Weapons;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.gametest.framework.GameTestHelper;
 import net.minecraft.resources.ResourceKey;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.util.Mth;
@@ -30,7 +32,10 @@ import net.minecraft.world.entity.animal.Pig;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.storage.loot.LootParams;
 import net.minecraft.world.level.storage.loot.LootTable;
+import net.minecraft.world.level.storage.loot.parameters.LootContextParamSets;
+import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
 import net.minecraft.world.phys.Vec3;
 
 import java.util.List;
@@ -255,6 +260,25 @@ public final class BallisticsGameTests {
         for (var key : List.of(ModDamageTypes.BULLET, ModDamageTypes.BULLET_HEADSHOT, ModDamageTypes.ENERGY)) {
             helper.assertTrue(damageTypes.getHolder(key).isPresent(), "damage type " + key.location() + " missing");
         }
+        helper.succeed();
+    }
+
+    /** Timeout: 100 ticks. Vanilla structure chests also roll the mod's tables (NeoForge loot modifier, Fabric pool). */
+    public static void structureLootIsInjected(GameTestHelper helper) {
+        ServerLevel level = helper.getLevel();
+        LootTable chest = level.getServer().reloadableRegistries()
+                .getLootTable(ResourceKey.create(Registries.LOOT_TABLE, ResourceLocation.withDefaultNamespace("chests/ancient_city")));
+        LootParams params = new LootParams.Builder(level)
+                .withParameter(LootContextParams.ORIGIN, helper.absoluteVec(Vec3.ZERO))
+                .create(LootContextParamSets.CHEST);
+        // The ancient city injection rolls at a 50% chance; 200 chests without a mod item means it never fires.
+        boolean injected = false;
+        for (int i = 0; i < 200 && !injected; i++) {
+            for (ItemStack stack : chest.getRandomItems(params)) {
+                injected |= BuiltInRegistries.ITEM.getKey(stack.getItem()).getNamespace().equals(RemnantsBallistics.MODID);
+            }
+        }
+        helper.assertTrue(injected, "200 ancient city chests rolled no " + RemnantsBallistics.MODID + " items");
         helper.succeed();
     }
 }

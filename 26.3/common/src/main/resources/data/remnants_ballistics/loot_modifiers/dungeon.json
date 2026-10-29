@@ -1,0 +1,23 @@
+{
+  "type": "remnants_ballistics:configurable_table",
+  "table": "remnants_ballistics:inject/dungeon",
+  "category": "structure",
+  "chance": 0.5,
+  "condition": {
+    "type": "minecraft:any_of",
+    "terms": [
+      {
+        "type": "neoforge:loot_table_id",
+        "loot_table_id": "minecraft:chests/simple_dungeon"
+      },
+      {
+        "type": "neoforge:loot_table_id",
+        "loot_table_id": "minecraft:chests/abandoned_mineshaft"
+      },
+      {
+        "type": "neoforge:loot_table_id",
+        "loot_table_id": "minecraft:chests/trial_chambers/corridor"
+      }
+    ]
+  }
+}

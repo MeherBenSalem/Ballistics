@@ -1,0 +1,19 @@
+{
+  "variants": {
+    "facing=north": {
+      "model": "remnants_ballistics:block/gunsmith_workbench"
+    },
+    "facing=east": {
+      "model": "remnants_ballistics:block/gunsmith_workbench",
+      "y": 90
+    },
+    "facing=south": {
+      "model": "remnants_ballistics:block/gunsmith_workbench",
+      "y": 180
+    },
+    "facing=west": {
+      "model": "remnants_ballistics:block/gunsmith_workbench",
+      "y": 270
+    }
+  }
+}

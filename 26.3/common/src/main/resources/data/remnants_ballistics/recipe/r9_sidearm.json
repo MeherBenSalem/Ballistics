@@ -1,0 +1,30 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "equipment",
+  "group": "remnants_ballistics_weapons",
+  "pattern": [
+    "SSP",
+    " YY"
+  ],
+  "key": {
+    "S": "#c:ingots/steel",
+    "P": "remnants_ballistics:gun_parts",
+    "Y": "remnants_ballistics:polymer_sheet"
+  },
+  "result": {
+    "id": "remnants_ballistics:r9_sidearm",
+    "count": 1
+  },
+  "neoforge:conditions": [
+    {
+      "type": "remnants_ballistics:config",
+      "option": "weapon_crafting"
+    }
+  ],
+  "fabric:load_conditions": [
+    {
+      "condition": "remnants_ballistics:config",
+      "option": "weapon_crafting"
+    }
+  ]
+}

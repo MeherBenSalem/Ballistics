@@ -1,0 +1,7 @@
+plugins {
+    // see https://maven.fabricmc.net/net/fabricmc/fabric-loom/net.fabricmc.fabric-loom.gradle.plugin/maven-metadata.xml
+    // for new versions. Minecraft 26.x ships unobfuscated, so this is the non-remapping Loom.
+    id 'net.fabricmc.fabric-loom' version '1.18.1' apply false
+    // see https://projects.neoforged.net/neoforged/moddevgradle for new versions
+    id 'net.neoforged.moddev' version '2.0.148' apply false
+}

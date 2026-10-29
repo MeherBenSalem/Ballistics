@@ -1,0 +1,83 @@
+{
+  "animations": "remnants_ballistics:ironfang_50",
+  "scale": 0.56,
+  "pivot": [
+    8,
+    2.535,
+    14.284
+  ],
+  "hip": [
+    0.27,
+    -0.3,
+    -0.58
+  ],
+  "hip_rotation": [
+    0,
+    -4,
+    0
+  ],
+  "ads_distance": 0.48,
+  "sight": [
+    8,
+    13.85,
+    14.2
+  ],
+  "muzzle": [
+    8,
+    10.6,
+    -2.6
+  ],
+  "eject": [
+    9.8,
+    10.2,
+    7.8
+  ],
+  "left_hand": [
+    7.3,
+    1.2,
+    12.4
+  ],
+  "mounts": {
+    "optic": [
+      8,
+      13.45,
+      9.5
+    ],
+    "muzzle": [
+      8,
+      10.6,
+      -2.6
+    ],
+    "magazine": [
+      8,
+      1.5,
+      12.6
+    ]
+  },
+  "pivots": {
+    "action": [
+      8,
+      10,
+      8
+    ],
+    "magazine": [
+      8,
+      1.5,
+      12.6
+    ]
+  },
+  "sprint": {
+    "position": [
+      0.0,
+      -0.12,
+      0.08
+    ],
+    "rotation": [
+      -28,
+      20,
+      12
+    ]
+  },
+  "shell": "casing",
+  "flash_size": 1.25
+}

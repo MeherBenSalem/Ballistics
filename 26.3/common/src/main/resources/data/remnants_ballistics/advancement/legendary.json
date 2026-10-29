@@ -1,0 +1,38 @@
+{
+  "display": {
+    "icon": {
+      "id": "remnants_ballistics:eclipse_railgun"
+    },
+    "title": {
+      "translate": "advancements.remnants_ballistics.legendary.title"
+    },
+    "description": {
+      "translate": "advancements.remnants_ballistics.legendary.description"
+    },
+    "frame": "challenge",
+    "show_toast": true,
+    "announce_to_chat": true,
+    "hidden": false
+  },
+  "criteria": {
+    "legendary": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "items": "#remnants_ballistics:legendary_weapons"
+          }
+        ]
+      }
+    }
+  },
+  "requirements": [
+    [
+      "legendary"
+    ]
+  ],
+  "parent": "remnants_ballistics:prototype",
+  "rewards": {
+    "experience": 200
+  }
+}
