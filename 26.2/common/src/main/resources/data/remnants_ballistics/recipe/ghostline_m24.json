@@ -1,0 +1,40 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "equipment",
+  "group": "remnants_ballistics_weapons",
+  "pattern": [
+    "SSS",
+    "ZQS",
+    "YY "
+  ],
+  "key": {
+    "S": {
+      "tag": "c:ingots/steel"
+    },
+    "Z": {
+      "item": "remnants_ballistics:blueprint_prototype"
+    },
+    "Q": {
+      "item": "remnants_ballistics:precision_parts"
+    },
+    "Y": {
+      "item": "remnants_ballistics:polymer_sheet"
+    }
+  },
+  "result": {
+    "id": "remnants_ballistics:ghostline_m24",
+    "count": 1
+  },
+  "neoforge:conditions": [
+    {
+      "type": "remnants_ballistics:config",
+      "option": "weapon_crafting"
+    }
+  ],
+  "fabric:load_conditions": [
+    {
+      "condition": "remnants_ballistics:config",
+      "option": "weapon_crafting"
+    }
+  ]
+}

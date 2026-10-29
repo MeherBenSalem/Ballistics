@@ -1,0 +1,40 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "equipment",
+  "group": "remnants_ballistics_weapons",
+  "pattern": [
+    "YSS",
+    "XQY",
+    " Y "
+  ],
+  "key": {
+    "S": {
+      "tag": "c:ingots/steel"
+    },
+    "X": {
+      "item": "remnants_ballistics:blueprint_advanced"
+    },
+    "Q": {
+      "item": "remnants_ballistics:precision_parts"
+    },
+    "Y": {
+      "item": "remnants_ballistics:polymer_sheet"
+    }
+  },
+  "result": {
+    "id": "remnants_ballistics:spectre_pdw",
+    "count": 1
+  },
+  "neoforge:conditions": [
+    {
+      "type": "remnants_ballistics:config",
+      "option": "weapon_crafting"
+    }
+  ],
+  "fabric:load_conditions": [
+    {
+      "condition": "remnants_ballistics:config",
+      "option": "weapon_crafting"
+    }
+  ]
+}

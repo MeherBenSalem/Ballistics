@@ -1,0 +1,35 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "equipment",
+  "group": "remnants_ballistics_attachments",
+  "ingredients": [
+    {
+      "item": "remnants_ballistics:polymer_sheet"
+    },
+    {
+      "item": "remnants_ballistics:polymer_sheet"
+    },
+    {
+      "item": "remnants_ballistics:polymer_sheet"
+    },
+    {
+      "item": "remnants_ballistics:gun_parts"
+    }
+  ],
+  "result": {
+    "id": "remnants_ballistics:angled_grip",
+    "count": 1
+  },
+  "neoforge:conditions": [
+    {
+      "type": "remnants_ballistics:config",
+      "option": "attachment_crafting"
+    }
+  ],
+  "fabric:load_conditions": [
+    {
+      "condition": "remnants_ballistics:config",
+      "option": "attachment_crafting"
+    }
+  ]
+}

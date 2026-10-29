@@ -1,0 +1,12 @@
+{
+  "type": "remnants_ballistics:configurable_table",
+  "conditions": [
+    {
+      "condition": "neoforge:loot_table_id",
+      "loot_table_id": "minecraft:chests/igloo_chest"
+    }
+  ],
+  "table": "remnants_ballistics:inject/igloo",
+  "category": "structure",
+  "chance": 0.35
+}

@@ -1,0 +1,35 @@
+{
+  "display": {
+    "icon": {
+      "id": "remnants_ballistics:r9_sidearm"
+    },
+    "title": {
+      "translate": "advancements.remnants_ballistics.first_weapon.title"
+    },
+    "description": {
+      "translate": "advancements.remnants_ballistics.first_weapon.description"
+    },
+    "frame": "task",
+    "show_toast": true,
+    "announce_to_chat": true,
+    "hidden": false
+  },
+  "criteria": {
+    "weapon": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "items": "#remnants_ballistics:weapons"
+          }
+        ]
+      }
+    }
+  },
+  "requirements": [
+    [
+      "weapon"
+    ]
+  ],
+  "parent": "remnants_ballistics:root"
+}

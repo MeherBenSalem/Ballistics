@@ -1,0 +1,43 @@
+{
+  "schemaVersion": 1,
+  "id": "${mod_id}",
+  "version": "${version}",
+  "name": "${mod_name}",
+  "description": "${description}",
+  "authors": [
+    "${mod_author}"
+  ],
+  "contact": {
+    "homepage": "https://www.nightbeam.cloud",
+    "sources": "https://github.com/MeherBenSalem/Ballistics",
+    "issues": "https://github.com/MeherBenSalem/Ballistics/issues"
+  },
+  "license": "${license}",
+  "icon": "logo.png",
+  "environment": "*",
+  "entrypoints": {
+    "main": [
+      "com.nightbeam.remnants.ballistics.fabric.RemnantsBallisticsFabric"
+    ],
+    "client": [
+      "com.nightbeam.remnants.ballistics.fabric.client.RemnantsBallisticsFabricClient"
+    ],
+    "fabric-gametest": [
+      "com.nightbeam.remnants.ballistics.fabric.gametest.FabricGameTests"
+    ]
+  },
+  "mixins": [
+    "${mod_id}.fabric.mixins.json"
+  ],
+  "accessWidener": "${mod_id}.accesswidener",
+  "depends": {
+    "fabricloader": ">=${fabric_loader_version}",
+    "fabric-api": "*",
+    "forgeconfigapiport": ">=${forgeconfigapiport_version}",
+    "minecraft": "${minecraft_version}",
+    "java": ">=${java_version}"
+  },
+  "suggests": {
+    "modmenu": "*"
+  }
+}
