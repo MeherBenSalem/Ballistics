@@ -72,6 +72,8 @@ public final class BallisticsGameTests {
         float pitch = (float) -(Mth.atan2(d.y, Math.sqrt(d.x * d.x + d.z * d.z)) * Mth.RAD_TO_DEG);
         player.snapTo(feet.x, feet.y, feet.z, yaw, pitch);
         player.setYHeadRot(yaw);
+        // The fake player is never moved, so nothing sets onGround; it stands on the floor, and spread would count it airborne.
+        player.setOnGround(true);
         player.getInventory().clearContent();
         player.getInventory().setSelectedSlot(0);
         player.getInventory().setItem(0, GunData.loaded(ModItems.gun(weapon)));
