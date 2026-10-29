@@ -3,15 +3,9 @@
   "category": "equipment",
   "group": "remnants_ballistics_attachments",
   "ingredients": [
-    {
-      "item": "remnants_ballistics:polymer_sheet"
-    },
-    {
-      "item": "remnants_ballistics:polymer_sheet"
-    },
-    {
-      "item": "remnants_ballistics:gun_parts"
-    }
+    "remnants_ballistics:polymer_sheet",
+    "remnants_ballistics:polymer_sheet",
+    "remnants_ballistics:gun_parts"
   ],
   "result": {
     "id": "remnants_ballistics:vertical_grip",

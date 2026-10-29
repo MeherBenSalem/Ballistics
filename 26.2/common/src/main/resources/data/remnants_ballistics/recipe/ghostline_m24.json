@@ -8,18 +8,10 @@
     "YY "
   ],
   "key": {
-    "S": {
-      "tag": "c:ingots/steel"
-    },
-    "Z": {
-      "item": "remnants_ballistics:blueprint_prototype"
-    },
-    "Q": {
-      "item": "remnants_ballistics:precision_parts"
-    },
-    "Y": {
-      "item": "remnants_ballistics:polymer_sheet"
-    }
+    "S": "#c:ingots/steel",
+    "Z": "remnants_ballistics:blueprint_prototype",
+    "Q": "remnants_ballistics:precision_parts",
+    "Y": "remnants_ballistics:polymer_sheet"
   },
   "result": {
     "id": "remnants_ballistics:ghostline_m24",

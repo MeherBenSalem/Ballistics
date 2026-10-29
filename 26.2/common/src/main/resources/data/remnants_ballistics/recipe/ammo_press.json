@@ -7,21 +7,11 @@
     "CCC"
   ],
   "key": {
-    "S": {
-      "tag": "c:ingots/steel"
-    },
-    "P": {
-      "item": "minecraft:piston"
-    },
-    "I": {
-      "item": "minecraft:iron_ingot"
-    },
-    "R": {
-      "item": "minecraft:redstone"
-    },
-    "C": {
-      "tag": "minecraft:stone_crafting_materials"
-    }
+    "S": "#c:ingots/steel",
+    "P": "minecraft:piston",
+    "I": "minecraft:iron_ingot",
+    "R": "minecraft:redstone",
+    "C": "#minecraft:stone_crafting_materials"
   },
   "result": {
     "id": "remnants_ballistics:ammo_press",

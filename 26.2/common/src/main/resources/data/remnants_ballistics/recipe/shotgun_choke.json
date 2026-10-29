@@ -3,15 +3,9 @@
   "category": "equipment",
   "group": "remnants_ballistics_attachments",
   "ingredients": [
-    {
-      "tag": "c:ingots/steel"
-    },
-    {
-      "item": "minecraft:iron_nugget"
-    },
-    {
-      "item": "minecraft:iron_nugget"
-    }
+    "#c:ingots/steel",
+    "minecraft:iron_nugget",
+    "minecraft:iron_nugget"
   ],
   "result": {
     "id": "remnants_ballistics:shotgun_choke",

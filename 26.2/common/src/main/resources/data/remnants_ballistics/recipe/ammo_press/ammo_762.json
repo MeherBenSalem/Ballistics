@@ -2,16 +2,14 @@
   "type": "remnants_ballistics:ammo_press",
   "ingredients": [
     {
-      "item": "remnants_ballistics:casing",
+      "ingredient": "remnants_ballistics:casing",
       "count": 4
     },
     {
-      "item": "minecraft:blaze_powder",
-      "count": 1
+      "ingredient": "minecraft:blaze_powder"
     },
     {
-      "item": "minecraft:copper_ingot",
-      "count": 1
+      "ingredient": "minecraft:copper_ingot"
     }
   ],
   "result": {

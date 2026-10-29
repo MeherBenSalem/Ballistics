@@ -3,18 +3,10 @@
   "category": "equipment",
   "group": "remnants_ballistics_attachments",
   "ingredients": [
-    {
-      "tag": "c:ingots/steel"
-    },
-    {
-      "tag": "c:ingots/steel"
-    },
-    {
-      "item": "minecraft:glass_pane"
-    },
-    {
-      "item": "minecraft:redstone"
-    }
+    "#c:ingots/steel",
+    "#c:ingots/steel",
+    "minecraft:glass_pane",
+    "minecraft:redstone"
   ],
   "result": {
     "id": "remnants_ballistics:holo_reflex",

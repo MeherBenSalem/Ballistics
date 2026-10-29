@@ -7,15 +7,9 @@
     " YY"
   ],
   "key": {
-    "S": {
-      "tag": "c:ingots/steel"
-    },
-    "P": {
-      "item": "remnants_ballistics:gun_parts"
-    },
-    "Y": {
-      "item": "remnants_ballistics:polymer_sheet"
-    }
+    "S": "#c:ingots/steel",
+    "P": "remnants_ballistics:gun_parts",
+    "Y": "remnants_ballistics:polymer_sheet"
   },
   "result": {
     "id": "remnants_ballistics:r9_sidearm",

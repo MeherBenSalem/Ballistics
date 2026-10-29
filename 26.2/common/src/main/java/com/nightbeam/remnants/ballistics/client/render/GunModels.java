@@ -10,9 +10,9 @@ import com.nightbeam.remnants.ballistics.weapon.Weapons;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.model.geom.builders.UVPair;
 import net.minecraft.client.renderer.texture.MissingTextureAtlasSprite;
-import net.minecraft.client.renderer.texture.TextureAtlas;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.resources.model.geometry.BakedQuad;
+import net.minecraft.client.resources.model.sprite.SpriteId;
 import net.minecraft.resources.Identifier;
 
 import java.util.ArrayList;
@@ -89,7 +89,7 @@ public final class GunModels {
                 out.add(quad);
                 continue;
             }
-            TextureAtlasSprite skinned = swaps.computeIfAbsent(base, b -> atlas(b.atlasLocation()).getSprite(name.withSuffix("_" + skin)));
+            TextureAtlasSprite skinned = swaps.computeIfAbsent(base, b -> sprite(b.atlasLocation(), name.withSuffix("_" + skin)));
             // A missing skin texture resolves to the atlas' missing sprite; keep the original rather than show it.
             if (skinned.contents().name().equals(MissingTextureAtlasSprite.getLocation())) out.add(quad);
             else out.add(remap(quad, base, skinned));
@@ -101,8 +101,8 @@ public final class GunModels {
         return result;
     }
 
-    private static TextureAtlas atlas(Identifier location) {
-        return Minecraft.getInstance().getAtlasManager().getAtlasOrThrow(location);
+    private static TextureAtlasSprite sprite(Identifier atlas, Identifier texture) {
+        return Minecraft.getInstance().getAtlasManager().get(new SpriteId(atlas, texture));
     }
 
     private static BakedQuad remap(BakedQuad quad, TextureAtlasSprite from, TextureAtlasSprite to) {

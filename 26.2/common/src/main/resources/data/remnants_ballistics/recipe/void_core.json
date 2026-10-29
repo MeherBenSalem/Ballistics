@@ -7,15 +7,9 @@
     "AEA"
   ],
   "key": {
-    "A": {
-      "item": "minecraft:amethyst_shard"
-    },
-    "E": {
-      "item": "minecraft:ender_pearl"
-    },
-    "X": {
-      "item": "minecraft:echo_shard"
-    }
+    "A": "minecraft:amethyst_shard",
+    "E": "minecraft:ender_pearl",
+    "X": "minecraft:echo_shard"
   },
   "result": {
     "id": "remnants_ballistics:void_core",

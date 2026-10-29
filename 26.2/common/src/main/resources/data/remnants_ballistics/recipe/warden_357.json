@@ -8,15 +8,9 @@
     "  W"
   ],
   "key": {
-    "S": {
-      "tag": "c:ingots/steel"
-    },
-    "P": {
-      "item": "remnants_ballistics:gun_parts"
-    },
-    "W": {
-      "tag": "minecraft:planks"
-    }
+    "S": "#c:ingots/steel",
+    "P": "remnants_ballistics:gun_parts",
+    "W": "#minecraft:planks"
   },
   "result": {
     "id": "remnants_ballistics:warden_357",

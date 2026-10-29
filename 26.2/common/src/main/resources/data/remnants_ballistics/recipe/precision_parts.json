@@ -7,18 +7,10 @@
     "QRQ"
   ],
   "key": {
-    "Q": {
-      "item": "minecraft:quartz"
-    },
-    "R": {
-      "item": "minecraft:redstone"
-    },
-    "G": {
-      "item": "minecraft:gold_ingot"
-    },
-    "P": {
-      "item": "remnants_ballistics:gun_parts"
-    }
+    "Q": "minecraft:quartz",
+    "R": "minecraft:redstone",
+    "G": "minecraft:gold_ingot",
+    "P": "remnants_ballistics:gun_parts"
   },
   "result": {
     "id": "remnants_ballistics:precision_parts",

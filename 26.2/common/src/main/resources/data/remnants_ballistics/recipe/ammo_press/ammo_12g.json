@@ -2,15 +2,14 @@
   "type": "remnants_ballistics:ammo_press",
   "ingredients": [
     {
-      "item": "remnants_ballistics:shotgun_hull",
+      "ingredient": "remnants_ballistics:shotgun_hull",
       "count": 4
     },
     {
-      "item": "minecraft:gunpowder",
-      "count": 1
+      "ingredient": "minecraft:gunpowder"
     },
     {
-      "item": "minecraft:iron_nugget",
+      "ingredient": "minecraft:iron_nugget",
       "count": 4
     }
   ],

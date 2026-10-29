@@ -2,15 +2,9 @@
   "type": "minecraft:crafting_shapeless",
   "category": "misc",
   "ingredients": [
-    {
-      "item": "remnants_ballistics:blueprint_advanced"
-    },
-    {
-      "item": "minecraft:paper"
-    },
-    {
-      "item": "minecraft:lapis_lazuli"
-    }
+    "remnants_ballistics:blueprint_advanced",
+    "minecraft:paper",
+    "minecraft:lapis_lazuli"
   ],
   "result": {
     "id": "remnants_ballistics:blueprint_advanced",

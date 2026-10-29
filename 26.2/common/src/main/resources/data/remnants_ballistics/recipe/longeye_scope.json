@@ -3,27 +3,13 @@
   "category": "equipment",
   "group": "remnants_ballistics_attachments",
   "ingredients": [
-    {
-      "tag": "c:ingots/steel"
-    },
-    {
-      "tag": "c:ingots/steel"
-    },
-    {
-      "tag": "c:ingots/steel"
-    },
-    {
-      "item": "minecraft:glass_pane"
-    },
-    {
-      "item": "minecraft:glass_pane"
-    },
-    {
-      "item": "remnants_ballistics:precision_parts"
-    },
-    {
-      "item": "minecraft:diamond"
-    }
+    "#c:ingots/steel",
+    "#c:ingots/steel",
+    "#c:ingots/steel",
+    "minecraft:glass_pane",
+    "minecraft:glass_pane",
+    "remnants_ballistics:precision_parts",
+    "minecraft:diamond"
   ],
   "result": {
     "id": "remnants_ballistics:longeye_scope",

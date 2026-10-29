@@ -3,18 +3,10 @@
   "category": "equipment",
   "group": "remnants_ballistics_attachments",
   "ingredients": [
-    {
-      "item": "remnants_ballistics:polymer_sheet"
-    },
-    {
-      "item": "minecraft:gold_ingot"
-    },
-    {
-      "item": "minecraft:gold_ingot"
-    },
-    {
-      "item": "minecraft:black_dye"
-    }
+    "remnants_ballistics:polymer_sheet",
+    "minecraft:gold_ingot",
+    "minecraft:gold_ingot",
+    "minecraft:black_dye"
   ],
   "result": {
     "id": "remnants_ballistics:skin_gilded",

@@ -8,21 +8,11 @@
     "Y  "
   ],
   "key": {
-    "A": {
-      "item": "remnants_ballistics:remnant_alloy"
-    },
-    "V": {
-      "item": "remnants_ballistics:void_core"
-    },
-    "Z": {
-      "item": "remnants_ballistics:blueprint_prototype"
-    },
-    "Q": {
-      "item": "remnants_ballistics:precision_parts"
-    },
-    "Y": {
-      "item": "remnants_ballistics:polymer_sheet"
-    }
+    "A": "remnants_ballistics:remnant_alloy",
+    "V": "remnants_ballistics:void_core",
+    "Z": "remnants_ballistics:blueprint_prototype",
+    "Q": "remnants_ballistics:precision_parts",
+    "Y": "remnants_ballistics:polymer_sheet"
   },
   "result": {
     "id": "remnants_ballistics:voidcaster",

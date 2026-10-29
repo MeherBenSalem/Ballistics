@@ -279,6 +279,44 @@ if not os.path.exists(os.path.join(RES, "logo.png")):
     problem("logo.png missing (neoforge.mods.toml logoFile)")
 
 # ------------------------------------------------------------------------------------------------------------------
+# 26.x workspaces (port_resources.py output): every item needs an item model definition whose models exist
+# ------------------------------------------------------------------------------------------------------------------
+
+
+def model_refs(node):
+    if isinstance(node, dict):
+        for key in ("model", "base"):
+            if isinstance(node.get(key), str):
+                yield node[key]
+        for v in node.values():
+            yield from model_refs(v)
+    elif isinstance(node, list):
+        for v in node:
+            yield from model_refs(v)
+
+
+for game in ("26.2", "26.3"):
+    res = os.path.join(ROOT, game, "common", "src", "main", "resources")
+    if not os.path.isdir(res):
+        continue
+    assets = os.path.join(res, "assets", NS)
+    for item in sorted(item_ids):
+        path = os.path.join(assets, "items", item.split(":", 1)[1] + ".json")
+        if not os.path.exists(path):
+            problem(f"{game}: item model definition {os.path.relpath(path, res)} missing")
+            continue
+        for ref in model_refs(load(path) or {}):
+            ns, rel = ref.split(":", 1)
+            if not os.path.exists(os.path.join(res, "assets", ns, "models", rel + ".json")):
+                problem(f"{game}: {os.path.relpath(path, res)} references missing model {ref}")
+    game_lang = load(os.path.join(assets, "lang", "en_us.json")) or {}
+    if f"key.category.{NS}.weapons" not in game_lang:
+        problem(f"{game}: key mapping category label missing")
+    pack = (load(os.path.join(res, "pack.mcmeta")) or {}).get("pack", {})
+    if "min_format" not in pack or "max_format" not in pack:
+        problem(f"{game}: pack.mcmeta needs min_format and max_format")
+
+# ------------------------------------------------------------------------------------------------------------------
 # Report
 # ------------------------------------------------------------------------------------------------------------------
 

@@ -7,12 +7,8 @@
     " S "
   ],
   "key": {
-    "S": {
-      "tag": "c:ingots/steel"
-    },
-    "N": {
-      "item": "minecraft:iron_nugget"
-    }
+    "S": "#c:ingots/steel",
+    "N": "minecraft:iron_nugget"
   },
   "result": {
     "id": "remnants_ballistics:gun_parts",

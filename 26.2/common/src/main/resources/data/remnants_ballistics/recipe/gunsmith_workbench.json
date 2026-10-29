@@ -7,15 +7,9 @@
     "I I"
   ],
   "key": {
-    "S": {
-      "tag": "c:ingots/steel"
-    },
-    "I": {
-      "item": "minecraft:iron_ingot"
-    },
-    "C": {
-      "item": "minecraft:crafting_table"
-    }
+    "S": "#c:ingots/steel",
+    "I": "minecraft:iron_ingot",
+    "C": "minecraft:crafting_table"
   },
   "result": {
     "id": "remnants_ballistics:gunsmith_workbench",

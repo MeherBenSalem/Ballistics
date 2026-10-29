@@ -125,7 +125,7 @@
   "itemGroup.remnants_ballistics.ammunition": "Ballistics: Ammunition & Materials",
   "itemGroup.remnants_ballistics.attachments": "Ballistics: Attachments",
   "itemGroup.remnants_ballistics.weapons": "Ballistics: Weapons",
-  "key.categories.remnants_ballistics": "Remnants: Ballistics",
+  "key.category.remnants_ballistics.weapons": "Remnants: Ballistics",
   "key.remnants_ballistics.fire_mode": "Switch Fire Mode",
   "key.remnants_ballistics.inspect": "Inspect Weapon",
   "key.remnants_ballistics.reload": "Reload",

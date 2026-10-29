@@ -2,16 +2,15 @@
   "type": "remnants_ballistics:ammo_press",
   "ingredients": [
     {
-      "item": "remnants_ballistics:casing",
+      "ingredient": "remnants_ballistics:casing",
       "count": 4
     },
     {
-      "item": "minecraft:gunpowder",
+      "ingredient": "minecraft:gunpowder",
       "count": 2
     },
     {
-      "tag": "c:ingots/steel",
-      "count": 1
+      "ingredient": "#c:ingots/steel"
     }
   ],
   "result": {

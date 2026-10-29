@@ -37,6 +37,7 @@ import net.minecraft.client.resources.model.geometry.BakedQuad;
 import net.minecraft.locale.Language;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.registries.Registries;
+import net.minecraft.data.AtlasIds;
 import net.minecraft.resources.Identifier;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerLevel;
@@ -402,7 +403,7 @@ final class ClientSmokeTest {
                 if (GunAnimations.INSTANCE.get(set, clip) == null) fail(def.name() + ": animation clip " + clip + " missing");
             }
         }
-        TextureAtlas items = mc.getAtlasManager().getAtlasOrThrow(TextureAtlas.LOCATION_ITEMS);
+        TextureAtlas items = mc.getAtlasManager().getAtlasOrThrow(AtlasIds.ITEMS);
         for (AttachmentDefinition att : Attachments.all()) {
             if (att.slot() == AttachmentSlot.SKIN) {
                 for (WeaponDefinition def : Weapons.all()) {

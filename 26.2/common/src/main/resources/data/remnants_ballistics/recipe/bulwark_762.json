@@ -8,21 +8,11 @@
     "WPW"
   ],
   "key": {
-    "S": {
-      "tag": "c:ingots/steel"
-    },
-    "Z": {
-      "item": "remnants_ballistics:blueprint_prototype"
-    },
-    "Q": {
-      "item": "remnants_ballistics:precision_parts"
-    },
-    "P": {
-      "item": "remnants_ballistics:gun_parts"
-    },
-    "W": {
-      "tag": "minecraft:planks"
-    }
+    "S": "#c:ingots/steel",
+    "Z": "remnants_ballistics:blueprint_prototype",
+    "Q": "remnants_ballistics:precision_parts",
+    "P": "remnants_ballistics:gun_parts",
+    "W": "#minecraft:planks"
   },
   "result": {
     "id": "remnants_ballistics:bulwark_762",

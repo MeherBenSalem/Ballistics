@@ -3,18 +3,10 @@
   "category": "equipment",
   "group": "remnants_ballistics_attachments",
   "ingredients": [
-    {
-      "item": "remnants_ballistics:polymer_sheet"
-    },
-    {
-      "item": "minecraft:sand"
-    },
-    {
-      "item": "minecraft:brown_dye"
-    },
-    {
-      "item": "minecraft:yellow_dye"
-    }
+    "remnants_ballistics:polymer_sheet",
+    "minecraft:sand",
+    "minecraft:brown_dye",
+    "minecraft:yellow_dye"
   ],
   "result": {
     "id": "remnants_ballistics:skin_desert",

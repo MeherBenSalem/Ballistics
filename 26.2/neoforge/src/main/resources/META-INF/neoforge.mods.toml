@@ -9,7 +9,7 @@ version="${version}"
 displayName="${mod_name}"
 authors="${mod_author}"
 displayURL="https://www.nightbeam.cloud"
-logoFile="logo.png"
+iconFile="logo.png"
 logoBlur=false
 description='''${description}'''
 

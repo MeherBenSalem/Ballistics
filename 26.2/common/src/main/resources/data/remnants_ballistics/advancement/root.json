@@ -13,7 +13,7 @@
     "show_toast": true,
     "announce_to_chat": true,
     "hidden": false,
-    "background": "minecraft:textures/block/polished_blackstone.png"
+    "background": "minecraft:block/polished_blackstone"
   },
   "criteria": {
     "steel": {

@@ -2,18 +2,10 @@
   "type": "minecraft:crafting_shapeless",
   "category": "misc",
   "ingredients": [
-    {
-      "item": "minecraft:paper"
-    },
-    {
-      "item": "minecraft:paper"
-    },
-    {
-      "item": "minecraft:red_dye"
-    },
-    {
-      "tag": "c:ingots/brass"
-    }
+    "minecraft:paper",
+    "minecraft:paper",
+    "minecraft:red_dye",
+    "#c:ingots/brass"
   ],
   "result": {
     "id": "remnants_ballistics:shotgun_hull",

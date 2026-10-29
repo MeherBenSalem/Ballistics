@@ -3,15 +3,9 @@
   "category": "equipment",
   "group": "remnants_ballistics_attachments",
   "ingredients": [
-    {
-      "tag": "c:ingots/steel"
-    },
-    {
-      "item": "remnants_ballistics:gun_parts"
-    },
-    {
-      "item": "minecraft:iron_nugget"
-    }
+    "#c:ingots/steel",
+    "remnants_ballistics:gun_parts",
+    "minecraft:iron_nugget"
   ],
   "result": {
     "id": "remnants_ballistics:flash_hider",

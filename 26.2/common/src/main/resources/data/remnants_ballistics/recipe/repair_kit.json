@@ -2,18 +2,10 @@
   "type": "minecraft:crafting_shapeless",
   "category": "equipment",
   "ingredients": [
-    {
-      "item": "remnants_ballistics:gun_parts"
-    },
-    {
-      "tag": "c:ingots/steel"
-    },
-    {
-      "item": "minecraft:iron_ingot"
-    },
-    {
-      "item": "minecraft:leather"
-    }
+    "remnants_ballistics:gun_parts",
+    "#c:ingots/steel",
+    "minecraft:iron_ingot",
+    "minecraft:leather"
   ],
   "result": {
     "id": "remnants_ballistics:repair_kit",

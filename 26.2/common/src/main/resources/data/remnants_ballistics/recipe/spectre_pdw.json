@@ -8,18 +8,10 @@
     " Y "
   ],
   "key": {
-    "S": {
-      "tag": "c:ingots/steel"
-    },
-    "X": {
-      "item": "remnants_ballistics:blueprint_advanced"
-    },
-    "Q": {
-      "item": "remnants_ballistics:precision_parts"
-    },
-    "Y": {
-      "item": "remnants_ballistics:polymer_sheet"
-    }
+    "S": "#c:ingots/steel",
+    "X": "remnants_ballistics:blueprint_advanced",
+    "Q": "remnants_ballistics:precision_parts",
+    "Y": "remnants_ballistics:polymer_sheet"
   },
   "result": {
     "id": "remnants_ballistics:spectre_pdw",

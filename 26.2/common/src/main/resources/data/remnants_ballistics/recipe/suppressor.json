@@ -3,21 +3,11 @@
   "category": "equipment",
   "group": "remnants_ballistics_attachments",
   "ingredients": [
-    {
-      "tag": "c:ingots/steel"
-    },
-    {
-      "tag": "c:ingots/steel"
-    },
-    {
-      "tag": "c:ingots/steel"
-    },
-    {
-      "tag": "minecraft:wool"
-    },
-    {
-      "item": "remnants_ballistics:polymer_sheet"
-    }
+    "#c:ingots/steel",
+    "#c:ingots/steel",
+    "#c:ingots/steel",
+    "#minecraft:wool",
+    "remnants_ballistics:polymer_sheet"
   ],
   "result": {
     "id": "remnants_ballistics:suppressor",
