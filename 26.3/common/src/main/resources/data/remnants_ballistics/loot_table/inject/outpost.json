@@ -1,0 +1,170 @@
+{
+  "type": "minecraft:chest",
+  "pools": [
+    {
+      "rolls": {
+        "type": "minecraft:uniform",
+        "min": 1,
+        "max": 3
+      },
+      "bonus_rolls": 0.0,
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "name": "remnants_ballistics:ammo_9mm",
+          "weight": 10,
+          "modifier": [
+            {
+              "type": "minecraft:set_count",
+              "count": {
+                "type": "minecraft:uniform",
+                "min": 6,
+                "max": 20
+              }
+            }
+          ]
+        },
+        {
+          "type": "minecraft:item",
+          "name": "remnants_ballistics:ammo_556",
+          "weight": 8,
+          "modifier": [
+            {
+              "type": "minecraft:set_count",
+              "count": {
+                "type": "minecraft:uniform",
+                "min": 6,
+                "max": 20
+              }
+            }
+          ]
+        },
+        {
+          "type": "minecraft:item",
+          "name": "remnants_ballistics:ammo_12g",
+          "weight": 6,
+          "modifier": [
+            {
+              "type": "minecraft:set_count",
+              "count": {
+                "type": "minecraft:uniform",
+                "min": 3,
+                "max": 10
+              }
+            }
+          ]
+        },
+        {
+          "type": "minecraft:item",
+          "name": "remnants_ballistics:gun_parts",
+          "weight": 8,
+          "modifier": [
+            {
+              "type": "minecraft:set_count",
+              "count": {
+                "type": "minecraft:uniform",
+                "min": 1,
+                "max": 3
+              }
+            }
+          ]
+        },
+        {
+          "type": "minecraft:item",
+          "name": "remnants_ballistics:casing",
+          "weight": 6,
+          "modifier": [
+            {
+              "type": "minecraft:set_count",
+              "count": {
+                "type": "minecraft:uniform",
+                "min": 4,
+                "max": 16
+              }
+            }
+          ]
+        },
+        {
+          "type": "minecraft:item",
+          "name": "remnants_ballistics:blueprint_advanced",
+          "weight": 2
+        },
+        {
+          "type": "minecraft:item",
+          "name": "remnants_ballistics:r9_sidearm",
+          "weight": 3,
+          "modifier": [
+            {
+              "type": "minecraft:set_damage",
+              "damage": {
+                "type": "minecraft:uniform",
+                "min": 0.35,
+                "max": 0.85
+              }
+            }
+          ]
+        },
+        {
+          "type": "minecraft:item",
+          "name": "remnants_ballistics:viper_9",
+          "weight": 2,
+          "modifier": [
+            {
+              "type": "minecraft:set_damage",
+              "damage": {
+                "type": "minecraft:uniform",
+                "min": 0.35,
+                "max": 0.85
+              }
+            }
+          ]
+        },
+        {
+          "type": "minecraft:item",
+          "name": "remnants_ballistics:thunderpump",
+          "weight": 2,
+          "modifier": [
+            {
+              "type": "minecraft:set_damage",
+              "damage": {
+                "type": "minecraft:uniform",
+                "min": 0.35,
+                "max": 0.85
+              }
+            }
+          ]
+        },
+        {
+          "type": "minecraft:item",
+          "name": "remnants_ballistics:raven_ak",
+          "weight": 1,
+          "modifier": [
+            {
+              "type": "minecraft:set_damage",
+              "damage": {
+                "type": "minecraft:uniform",
+                "min": 0.35,
+                "max": 0.85
+              }
+            }
+          ]
+        },
+        {
+          "type": "minecraft:item",
+          "name": "remnants_ballistics:holo_reflex",
+          "weight": 2
+        },
+        {
+          "type": "minecraft:item",
+          "name": "remnants_ballistics:compensator",
+          "weight": 2
+        },
+        {
+          "type": "minecraft:item",
+          "name": "remnants_ballistics:vertical_grip",
+          "weight": 2
+        }
+      ]
+    }
+  ]
+}

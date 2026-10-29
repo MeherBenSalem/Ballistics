@@ -1,6 +1,6 @@
 # Asset pipeline
 
-Every asset in the mod is generated from source in [`tools/assets`](../tools/assets): models, textures, icons, animations, sounds, GUIs, particles, translations, recipes, loot and tags. Nothing is hand-edited in `1.21.1/common/src/main/resources` (shared by the Fabric and NeoForge builds), and nothing is copied from Minecraft or other mods.
+Every asset in the mod is generated from source in [`tools/assets`](../tools/assets): models, textures, icons, animations, sounds, GUIs, particles, translations, recipes, loot and tags. Nothing is hand-edited in `1.21.1/common/src/main/resources` (shared by the Fabric and NeoForge builds), and nothing is copied from Minecraft or other mods. `generate.py` ends by running `port_resources.py`, which mirrors the result into `26.2/` and `26.3/` and rewrites what changed format there (item model definitions, recipe ingredients, advancements, loot conditions and modifiers, renamed vanilla ids, the key-mapping category label, the pack format); CI re-runs it and fails if the committed 26.x files differ.
 
 ```
 python3 tools/assets/generate.py            # everything (about 30 s)

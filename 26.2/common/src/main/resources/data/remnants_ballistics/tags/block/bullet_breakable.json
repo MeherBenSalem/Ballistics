@@ -1,0 +1,17 @@
+{
+  "replace": false,
+  "values": [
+    "#minecraft:impermeable",
+    "minecraft:glass_pane",
+    {
+      "id": "#c:glass_panes",
+      "required": false
+    },
+    {
+      "id": "#c:glass_blocks",
+      "required": false
+    },
+    "#minecraft:flower_pots",
+    "minecraft:sea_pickle"
+  ]
+}

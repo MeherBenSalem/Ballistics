@@ -58,6 +58,10 @@ jobs:
       - name: Test publisher metadata and transport
         run: node --test scripts/*.test.mjs
 
+      - name: Cross-check generated assets
+        run: python3 tools/assets/check_assets.py
+
+      # 1.21.1 builds on Java 21; the 26.x workspaces need Java 25.
       - uses: actions/setup-java@v4
         with:
           distribution: temurin
@@ -65,10 +69,33 @@ jobs:
 
       - uses: gradle/actions/setup-gradle@v4
 
-      - name: Build
+      - name: Build 1.21.1
         run: |
-          chmod +x gradlew 1.21.1/gradlew 2>/dev/null || true
-          ./gradlew buildAll --no-daemon
+          chmod +x 1.21.1/gradlew
+          (cd 1.21.1 && ./gradlew build --no-daemon)
+
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "25"
+
+      - name: Build 26.2 and 26.3
+        run: |
+          for game in 26.2 26.3; do
+            chmod +x "$game/gradlew"
+            (cd "$game" && ./gradlew build --no-daemon)
+          done
+
+      - name: Collect the release jars
+        env:
+          VERSION: ${{ steps.ver.outputs.version }}
+        run: |
+          mkdir -p releases
+          for game in 1.21.1 26.2 26.3; do
+            for loader in neoforge fabric; do
+              cp "$game/$loader/build/libs/remnants_ballistics-$loader-$game-$VERSION.jar" releases/
+            done
+          done
 
       - name: Preview release metadata
         env:

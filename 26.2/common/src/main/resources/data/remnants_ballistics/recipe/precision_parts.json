@@ -1,0 +1,19 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "pattern": [
+    "QRQ",
+    "GPG",
+    "QRQ"
+  ],
+  "key": {
+    "Q": "minecraft:quartz",
+    "R": "minecraft:redstone",
+    "G": "minecraft:gold_ingot",
+    "P": "remnants_ballistics:gun_parts"
+  },
+  "result": {
+    "id": "remnants_ballistics:precision_parts",
+    "count": 2
+  }
+}

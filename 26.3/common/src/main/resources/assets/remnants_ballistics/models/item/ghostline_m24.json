@@ -1,0 +1,144 @@
+{
+  "gui_light": "front",
+  "textures": {
+    "particle": "remnants_ballistics:item/icon/ghostline_m24"
+  },
+  "display": {
+    "thirdperson_righthand": {
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "translation": [
+        -0.0,
+        1.866,
+        -3.834
+      ],
+      "scale": [
+        0.4,
+        0.4,
+        0.4
+      ]
+    },
+    "thirdperson_lefthand": {
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "translation": [
+        -0.0,
+        1.866,
+        -3.834
+      ],
+      "scale": [
+        0.4,
+        0.4,
+        0.4
+      ]
+    },
+    "firstperson_righthand": {
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "translation": [
+        2.0,
+        3.332,
+        -7.793
+      ],
+      "scale": [
+        0.5,
+        0.5,
+        0.5
+      ]
+    },
+    "firstperson_lefthand": {
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "translation": [
+        2.0,
+        3.332,
+        -7.793
+      ],
+      "scale": [
+        0.5,
+        0.5,
+        0.5
+      ]
+    },
+    "ground": {
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "translation": [
+        -0.193,
+        0.218,
+        0.228
+      ],
+      "scale": [
+        0.19823788546255508,
+        0.19823788546255508,
+        0.19823788546255508
+      ]
+    },
+    "fixed": {
+      "rotation": [
+        0,
+        -90,
+        0
+      ],
+      "translation": [
+        -0.38,
+        0.363,
+        -0.322
+      ],
+      "scale": [
+        0.3303964757709251,
+        0.3303964757709251,
+        0.3303964757709251
+      ]
+    },
+    "head": {
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "translation": [
+        -0.585,
+        6.66,
+        0.69
+      ],
+      "scale": [
+        0.6,
+        0.6,
+        0.6
+      ]
+    },
+    "gui": {
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "translation": [
+        0,
+        0,
+        0
+      ],
+      "scale": [
+        1,
+        1,
+        1
+      ]
+    }
+  }
+}

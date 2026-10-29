@@ -1,0 +1,52 @@
+{
+  "display": {
+    "icon": {
+      "id": "remnants_ballistics:longshot_50"
+    },
+    "title": {
+      "translate": "advancements.remnants_ballistics.long_shot.title"
+    },
+    "description": {
+      "translate": "advancements.remnants_ballistics.long_shot.description"
+    },
+    "frame": "challenge",
+    "show_toast": true,
+    "announce_to_chat": true,
+    "hidden": false
+  },
+  "criteria": {
+    "kill": {
+      "trigger": "minecraft:player_killed_entity",
+      "conditions": {
+        "killing_blow": {
+          "tags": [
+            {
+              "id": "#remnants_ballistics:bullets",
+              "expected": true
+            }
+          ]
+        },
+        "entity": {
+          "type": "minecraft:entity_properties",
+          "entity": "this",
+          "predicate": {
+            "minecraft:distance": {
+              "absolute": {
+                "min": 100
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "requirements": [
+    [
+      "kill"
+    ]
+  ],
+  "parent": "remnants_ballistics:headshot",
+  "rewards": {
+    "experience": 150
+  }
+}

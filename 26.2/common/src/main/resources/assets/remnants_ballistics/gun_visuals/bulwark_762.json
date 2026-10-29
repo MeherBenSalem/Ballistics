@@ -1,0 +1,88 @@
+{
+  "animations": "remnants_ballistics:bulwark_762",
+  "scale": 0.45,
+  "pivot": [
+    8.0,
+    3.766,
+    14.539
+  ],
+  "hip": [
+    0.3,
+    -0.37,
+    -0.55
+  ],
+  "hip_rotation": [
+    2,
+    -7,
+    0
+  ],
+  "ads_distance": 0.34,
+  "sight": [
+    8,
+    12.85,
+    1.0
+  ],
+  "muzzle": [
+    8,
+    9.0,
+    -15.9
+  ],
+  "eject": [
+    9.7,
+    7.6,
+    7.5
+  ],
+  "left_hand": [
+    5.7,
+    9.0,
+    -4.8
+  ],
+  "mounts": {
+    "optic": [
+      8,
+      11.45,
+      6.0
+    ],
+    "muzzle": [
+      8,
+      9.0,
+      -13.8
+    ],
+    "underbarrel": [
+      8,
+      6.8,
+      -8.0
+    ],
+    "stock": [
+      8,
+      8.8,
+      13.6
+    ]
+  },
+  "pivots": {
+    "action": [
+      8,
+      10.7,
+      11.4
+    ],
+    "magazine": [
+      8,
+      6.6,
+      5.2
+    ]
+  },
+  "sprint": {
+    "position": [
+      0.04,
+      -0.1,
+      0.06
+    ],
+    "rotation": [
+      -18,
+      42,
+      14
+    ]
+  },
+  "shell": "casing",
+  "flash_size": 1.2
+}

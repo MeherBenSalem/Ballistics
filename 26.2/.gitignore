@@ -1,0 +1,43 @@
+# Gradle
+.gradle/
+**/build/
+!gradle/wrapper/gradle-wrapper.jar
+!1.21.1/gradle/wrapper/gradle-wrapper.jar
+
+# IDE
+.idea/
+*.iml
+*.iws
+*.ipr
+out/
+.vscode/
+.eclipse/
+.settings/
+.classpath
+.project
+.factorypath
+bin/
+local.properties
+
+# Secrets / local env
+.env
+.env.*
+
+# Minecraft run directories
+run/
+runs/
+**/src/generated/**/.cache/
+
+# Build artifacts
+releases/
+*.log
+*.log.gz
+
+# Python / Node tooling
+__pycache__/
+*.pyc
+node_modules/
+
+# OS
+.DS_Store
+Thumbs.db

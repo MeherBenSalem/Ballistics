@@ -1,0 +1,29 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "equipment",
+  "group": "remnants_ballistics_attachments",
+  "ingredients": [
+    "#c:ingots/steel",
+    "#c:ingots/steel",
+    "#c:ingots/steel",
+    "minecraft:glass_pane",
+    "minecraft:glass_pane",
+    "remnants_ballistics:precision_parts"
+  ],
+  "result": {
+    "id": "remnants_ballistics:ranger_scope",
+    "count": 1
+  },
+  "neoforge:conditions": [
+    {
+      "type": "remnants_ballistics:config",
+      "option": "attachment_crafting"
+    }
+  ],
+  "fabric:load_conditions": [
+    {
+      "condition": "remnants_ballistics:config",
+      "option": "attachment_crafting"
+    }
+  ]
+}

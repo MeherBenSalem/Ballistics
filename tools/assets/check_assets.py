@@ -15,6 +15,8 @@ import os
 import re
 import sys
 
+import port_resources
+
 HERE = os.path.dirname(os.path.abspath(__file__))
 ROOT = os.path.abspath(os.path.join(HERE, "..", ".."))
 NS = "remnants_ballistics"
@@ -277,6 +279,62 @@ for path in glob.glob(os.path.join(DATA, "tags", "**", "*.json"), recursive=True
             problem(f"{os.path.relpath(path, RES)}: unknown id {ref}")
 if not os.path.exists(os.path.join(RES, "logo.png")):
     problem("logo.png missing (neoforge.mods.toml logoFile)")
+
+# ------------------------------------------------------------------------------------------------------------------
+# 26.x workspaces (port_resources.py output): every item needs an item model definition whose models exist
+# ------------------------------------------------------------------------------------------------------------------
+
+
+def model_refs(node):
+    if isinstance(node, dict):
+        for key in ("model", "base"):
+            if isinstance(node.get(key), str):
+                yield node[key]
+        for v in node.values():
+            yield from model_refs(v)
+    elif isinstance(node, list):
+        for v in node:
+            yield from model_refs(v)
+
+
+def json_items(node):
+    if isinstance(node, dict):
+        for k, v in node.items():
+            yield k, v
+            yield from json_items(v)
+    elif isinstance(node, list):
+        for v in node:
+            yield from json_items(v)
+
+
+for game in ("26.2", "26.3"):
+    res = os.path.join(ROOT, game, "common", "src", "main", "resources")
+    if not os.path.isdir(res):
+        continue
+    assets = os.path.join(res, "assets", NS)
+    for item in sorted(item_ids):
+        path = os.path.join(assets, "items", item.split(":", 1)[1] + ".json")
+        if not os.path.exists(path):
+            problem(f"{game}: item model definition {os.path.relpath(path, res)} missing")
+            continue
+        for ref in model_refs(load(path) or {}):
+            ns, rel = ref.split(":", 1)
+            if not os.path.exists(os.path.join(res, "assets", ns, "models", rel + ".json")):
+                problem(f"{game}: {os.path.relpath(path, res)} references missing model {ref}")
+    game_lang = load(os.path.join(assets, "lang", "en_us.json")) or {}
+    if f"key.category.{NS}.weapons" not in game_lang:
+        problem(f"{game}: key mapping category label missing")
+    pack = (load(os.path.join(res, "pack.mcmeta")) or {}).get("pack", {})
+    if "min_format" not in pack or "max_format" not in pack:
+        problem(f"{game}: pack.mcmeta needs min_format and max_format")
+    if port_resources.TARGETS[game]["typed_loot"]:
+        # Loot conditions and item modifiers are keyed by "type"; fields hold one condition and "modifier" lists.
+        for sub in ("loot_table", "loot_modifiers"):
+            for path in sorted(glob.glob(os.path.join(res, "data", NS, sub, "**", "*.json"), recursive=True)):
+                old = sorted({k for k, v in json_items(load(path) or {})
+                              if k in ("conditions", "functions", "function") or (k == "condition" and isinstance(v, str))})
+                if old:
+                    problem(f"{game}: {os.path.relpath(path, res)} uses the pre-26.3 loot format ({', '.join(old)})")
 
 # ------------------------------------------------------------------------------------------------------------------
 # Report

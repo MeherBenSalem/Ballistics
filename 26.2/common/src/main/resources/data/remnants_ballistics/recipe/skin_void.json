@@ -1,0 +1,27 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "equipment",
+  "group": "remnants_ballistics_attachments",
+  "ingredients": [
+    "remnants_ballistics:polymer_sheet",
+    "minecraft:ender_pearl",
+    "minecraft:purple_dye",
+    "minecraft:purple_dye"
+  ],
+  "result": {
+    "id": "remnants_ballistics:skin_void",
+    "count": 1
+  },
+  "neoforge:conditions": [
+    {
+      "type": "remnants_ballistics:config",
+      "option": "attachment_crafting"
+    }
+  ],
+  "fabric:load_conditions": [
+    {
+      "condition": "remnants_ballistics:config",
+      "option": "attachment_crafting"
+    }
+  ]
+}

@@ -1,0 +1,62 @@
+plugins {
+    id 'multiloader-common'
+    id 'net.neoforged.moddev'
+}
+
+// Loader-independent code compiles against vanilla Minecraft only (NeoForm). Anything loader-specific goes through
+// com.nightbeam.remnants.ballistics.platform.Services, implemented in :fabric and :neoforge.
+neoForge {
+    neoFormVersion = neo_form_version
+    // Vanilla members the common code needs (Fabric: remnants_ballistics.accesswidener).
+    accessTransformers.from(file('src/main/resources/META-INF/accesstransformer.cfg').absolutePath)
+}
+
+repositories {
+    exclusiveContent {
+        forRepository {
+            maven {
+                name = 'Fabric'
+                url = 'https://maven.fabricmc.net'
+            }
+        }
+        filter { includeGroup('net.fabricmc') }
+    }
+}
+
+dependencies {
+    // Fabric and NeoForge both bundle Fabric's Mixin fork and MixinExtras, so common code may use them.
+    compileOnly "net.fabricmc:sponge-mixin:${mixin_version}"
+    compileOnly "io.github.llamalad7:mixinextras-common:${mixinextras_version}"
+    annotationProcessor "io.github.llamalad7:mixinextras-common:${mixinextras_version}"
+    // ModConfigSpec: built into NeoForge, provided on Fabric by Forge Config API Port.
+    compileOnly "fuzs.forgeconfigapiport:forgeconfigapiport-common-neoforgeapi:${forgeconfigapiport_version}"
+
+    testImplementation platform("org.junit:junit-bom:${junit_version}")
+    testImplementation 'org.junit.jupiter:junit-jupiter'
+    testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+}
+
+configurations {
+    commonJava {
+        canBeResolved = false
+        canBeConsumed = true
+    }
+    commonResources {
+        canBeResolved = false
+        canBeConsumed = true
+    }
+}
+
+artifacts {
+    commonJava sourceSets.main.java.sourceDirectories.singleFile
+    commonResources sourceSets.main.resources.sourceDirectories.singleFile
+}
+
+// Pure-Java unit tests (com.nightbeam.remnants.ballistics.core) do not need the game.
+tasks.named('test', Test).configure {
+    useJUnitPlatform()
+    testLogging {
+        events 'passed', 'failed', 'skipped'
+        exceptionFormat = 'full'
+    }
+}

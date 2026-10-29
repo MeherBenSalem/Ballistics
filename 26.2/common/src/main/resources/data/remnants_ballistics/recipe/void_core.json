@@ -1,0 +1,18 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "pattern": [
+    "AEA",
+    "EXE",
+    "AEA"
+  ],
+  "key": {
+    "A": "minecraft:amethyst_shard",
+    "E": "minecraft:ender_pearl",
+    "X": "minecraft:echo_shard"
+  },
+  "result": {
+    "id": "remnants_ballistics:void_core",
+    "count": 1
+  }
+}

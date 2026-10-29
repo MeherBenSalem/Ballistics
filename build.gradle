@@ -1,4 +1,4 @@
-// Root helper for the version workspaces. Each workspace (currently 1.21.1/) is an independent Gradle project;
+// Root helper for the version workspaces. Each workspace (1.21.1/, 26.2/, 26.3/) is an independent Gradle project;
 // these tasks drive it through its own wrapper and collect the release jars.
 
 String wrapperCmd(String rootDirName) {
@@ -13,25 +13,37 @@ String pythonCmd() {
     return System.getProperty('os.name').toLowerCase().contains('win') ? 'python' : 'python3'
 }
 
-tasks.register('build1211', Exec) {
-    group = 'build'
-    description = 'Build the 1.21.1 Fabric and NeoForge jars and run the unit tests.'
-    workingDir = file('1.21.1')
-    commandLine wrapperCmd('1.21.1'), 'build'
+// Minecraft version workspaces. Each has its own wrapper and toolchain (1.21.1: Java 21, 26.x: Java 25).
+def workspaces = ['1.21.1', '26.2', '26.3']
+String taskSuffix(String game) { game.replace('.', '') }
+
+workspaces.each { game ->
+    tasks.register("build${taskSuffix(game)}", Exec) {
+        group = 'build'
+        description = "Build the ${game} Fabric and NeoForge jars and run the unit tests."
+        workingDir = file(game)
+        commandLine wrapperCmd(game), 'build'
+    }
+
+    tasks.register("gameTest${taskSuffix(game)}", Exec) {
+        group = 'verification'
+        description = "Run the in-game GameTests on headless ${game} NeoForge and Fabric GameTest servers."
+        workingDir = file(game)
+        commandLine wrapperCmd(game), ':neoforge:runGameTestServer', ':fabric:runGameTestServer'
+    }
+
+    tasks.register("clean${taskSuffix(game)}", Exec) {
+        group = 'build'
+        description = "Clean the ${game} workspace."
+        workingDir = file(game)
+        commandLine wrapperCmd(game), 'clean'
+    }
 }
 
-tasks.register('gameTest1211', Exec) {
+tasks.register('gameTestAll') {
     group = 'verification'
-    description = 'Run the in-game GameTests on headless 1.21.1 NeoForge and Fabric GameTest servers.'
-    workingDir = file('1.21.1')
-    commandLine wrapperCmd('1.21.1'), ':neoforge:runGameTestServer', ':fabric:runGameTestServer'
-}
-
-tasks.register('clean1211', Exec) {
-    group = 'build'
-    description = 'Clean the 1.21.1 workspace.'
-    workingDir = file('1.21.1')
-    commandLine wrapperCmd('1.21.1'), 'clean'
+    description = 'Run the GameTests of every workspace on both loaders.'
+    dependsOn workspaces.collect { "gameTest${taskSuffix(it)}" }
 }
 
 tasks.register('generateAssets', Exec) {
@@ -55,11 +67,11 @@ tasks.register('generateDocs', Exec) {
 tasks.register('dist') {
     group = 'build'
     description = 'Build every workspace and copy the loader jars into releases/.'
-    dependsOn 'checkAssets', 'build1211'
+    dependsOn 'checkAssets', workspaces.collect { "build${taskSuffix(it)}" }
     doLast {
         def outDir = file('releases')
         outDir.mkdirs()
-        ['1.21.1/fabric', '1.21.1/neoforge'].each { modDir ->
+        workspaces.collectMany { ["${it}/fabric", "${it}/neoforge"] }.each { modDir ->
             def libsDir = file("${modDir}/build/libs")
             if (libsDir.exists()) {
                 fileTree(libsDir).matching {
@@ -92,7 +104,7 @@ tasks.register('build') {
 tasks.register('cleanAll') {
     group = 'build'
     description = 'Clean every workspace and releases/.'
-    dependsOn 'clean1211'
+    dependsOn workspaces.collect { "clean${taskSuffix(it)}" }
     doLast {
         def outDir = file('releases')
         if (outDir.exists()) {
@@ -110,7 +122,7 @@ tasks.register('syncVersion') {
         if (!v) {
             throw new GradleException('Pass -PmodVersion=x.y.z')
         }
-        ['1.21.1'].each { dir ->
+        workspaces.each { dir ->
             def file = file("${dir}/gradle.properties")
             if (!file.exists()) {
                 throw new GradleException("Missing ${file}")

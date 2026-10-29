@@ -1,0 +1,19 @@
+{
+  "model": {
+    "type": "minecraft:select",
+    "property": "minecraft:display_context",
+    "cases": [
+      {
+        "when": "gui",
+        "model": {
+          "type": "minecraft:model",
+          "model": "remnants_ballistics:item/icon/raven_ak"
+        }
+      }
+    ],
+    "fallback": {
+      "type": "remnants_ballistics:gun",
+      "base": "remnants_ballistics:item/raven_ak"
+    }
+  }
+}

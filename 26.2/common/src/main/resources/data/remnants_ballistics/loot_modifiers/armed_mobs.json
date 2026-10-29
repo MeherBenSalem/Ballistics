@@ -1,0 +1,28 @@
+{
+  "type": "remnants_ballistics:configurable_table",
+  "conditions": [
+    {
+      "condition": "minecraft:any_of",
+      "terms": [
+        {
+          "condition": "neoforge:loot_table_id",
+          "loot_table_id": "minecraft:entities/pillager"
+        },
+        {
+          "condition": "neoforge:loot_table_id",
+          "loot_table_id": "minecraft:entities/vindicator"
+        },
+        {
+          "condition": "neoforge:loot_table_id",
+          "loot_table_id": "minecraft:entities/piglin_brute"
+        }
+      ]
+    },
+    {
+      "condition": "minecraft:killed_by_player"
+    }
+  ],
+  "table": "remnants_ballistics:inject/armed_mob",
+  "category": "mob",
+  "chance": 0.25
+}

@@ -64,4 +64,9 @@ public final class FabricGameTests implements FabricGameTest {
     public void lootAndDamageDataLoaded(GameTestHelper helper) {
         BallisticsGameTests.lootAndDamageDataLoaded(helper);
     }
+
+    @GameTest(template = BallisticsGameTests.RANGE)
+    public void structureLootIsInjected(GameTestHelper helper) {
+        BallisticsGameTests.structureLootIsInjected(helper);
+    }
 }

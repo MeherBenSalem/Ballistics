@@ -1,0 +1,14 @@
+{
+  "replace": false,
+  "values": [
+    "remnants_ballistics:ammo_9mm",
+    "remnants_ballistics:ammo_magnum",
+    "remnants_ballistics:ammo_57",
+    "remnants_ballistics:ammo_556",
+    "remnants_ballistics:ammo_762",
+    "remnants_ballistics:ammo_12g",
+    "remnants_ballistics:ammo_308",
+    "remnants_ballistics:ammo_50bmg",
+    "remnants_ballistics:energy_cell"
+  ]
+}

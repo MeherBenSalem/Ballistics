@@ -1,0 +1,14 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "misc",
+  "ingredients": [
+    "remnants_ballistics:blueprint_prototype",
+    "minecraft:paper",
+    "minecraft:amethyst_shard",
+    "minecraft:ender_pearl"
+  ],
+  "result": {
+    "id": "remnants_ballistics:blueprint_prototype",
+    "count": 1
+  }
+}

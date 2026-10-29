@@ -1,0 +1,33 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "equipment",
+  "group": "remnants_ballistics_weapons",
+  "pattern": [
+    "SSS",
+    "ZQS",
+    "WPW"
+  ],
+  "key": {
+    "S": "#c:ingots/steel",
+    "Z": "remnants_ballistics:blueprint_prototype",
+    "Q": "remnants_ballistics:precision_parts",
+    "P": "remnants_ballistics:gun_parts",
+    "W": "#minecraft:planks"
+  },
+  "result": {
+    "id": "remnants_ballistics:bulwark_762",
+    "count": 1
+  },
+  "neoforge:conditions": [
+    {
+      "type": "remnants_ballistics:config",
+      "option": "weapon_crafting"
+    }
+  ],
+  "fabric:load_conditions": [
+    {
+      "condition": "remnants_ballistics:config",
+      "option": "weapon_crafting"
+    }
+  ]
+}

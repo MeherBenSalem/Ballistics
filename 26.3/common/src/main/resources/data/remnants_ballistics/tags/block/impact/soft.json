@@ -1,0 +1,24 @@
+{
+  "replace": false,
+  "values": [
+    "#minecraft:dirt",
+    "#minecraft:sand",
+    "minecraft:gravel",
+    "minecraft:clay",
+    "#minecraft:wool",
+    "minecraft:snow_block",
+    "minecraft:snow",
+    "#minecraft:leaves",
+    "minecraft:soul_sand",
+    "minecraft:soul_soil",
+    "minecraft:mud",
+    "minecraft:moss_block",
+    "minecraft:hay_block",
+    "minecraft:sponge",
+    "minecraft:wet_sponge",
+    "minecraft:slime_block",
+    "minecraft:honey_block",
+    "minecraft:farmland",
+    "minecraft:dirt_path"
+  ]
+}

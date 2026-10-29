@@ -4,7 +4,8 @@
     python3 tools/assets/generate.py --no-sound # skip audio synthesis (fast iteration)
 
 Outputs go to 1.21.1/common/src/main/resources (assets and data) and tools/assets/blockbench (one editable Blockbench-compatible
-model per weapon with parts as outliner groups). Re-running is deterministic.
+model per weapon with parts as outliner groups); port_resources.py then mirrors the resources into the 26.2 and 26.3
+workspaces in their formats. Re-running is deterministic.
 """
 from __future__ import annotations
 
@@ -356,6 +357,9 @@ def main():
     write_json(os.path.join(ASSETS, "lang", "en_us.json"), lang.build(JAVA_CONFIG, subtitles))
     for line in report:
         print(line)
+    # The other workspaces get the same content in their formats.
+    import port_resources
+    port_resources.main([sys.argv[0]])
 
 
 if __name__ == "__main__":

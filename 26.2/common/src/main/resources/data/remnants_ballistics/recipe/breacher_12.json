@@ -1,0 +1,32 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "equipment",
+  "group": "remnants_ballistics_weapons",
+  "pattern": [
+    "SSS",
+    "XQY",
+    "YSY"
+  ],
+  "key": {
+    "S": "#c:ingots/steel",
+    "X": "remnants_ballistics:blueprint_advanced",
+    "Q": "remnants_ballistics:precision_parts",
+    "Y": "remnants_ballistics:polymer_sheet"
+  },
+  "result": {
+    "id": "remnants_ballistics:breacher_12",
+    "count": 1
+  },
+  "neoforge:conditions": [
+    {
+      "type": "remnants_ballistics:config",
+      "option": "weapon_crafting"
+    }
+  ],
+  "fabric:load_conditions": [
+    {
+      "condition": "remnants_ballistics:config",
+      "option": "weapon_crafting"
+    }
+  ]
+}

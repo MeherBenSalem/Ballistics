@@ -1,0 +1,17 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "pattern": [
+    " S ",
+    "SNS",
+    " S "
+  ],
+  "key": {
+    "S": "#c:ingots/steel",
+    "N": "minecraft:iron_nugget"
+  },
+  "result": {
+    "id": "remnants_ballistics:gun_parts",
+    "count": 2
+  }
+}

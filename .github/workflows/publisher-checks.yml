@@ -8,6 +8,8 @@ on:
       - "tools/**"
       - "docs/**"
       - "1.21.1/**"
+      - "26.2/**"
+      - "26.3/**"
       - ".github/workflows/publish.yml"
       - ".github/workflows/publisher-checks.yml"
   pull_request:
@@ -16,6 +18,8 @@ on:
       - "tools/**"
       - "docs/**"
       - "1.21.1/**"
+      - "26.2/**"
+      - "26.3/**"
       - ".github/workflows/publish.yml"
       - ".github/workflows/publisher-checks.yml"
 
@@ -50,6 +54,11 @@ jobs:
           python-version: "3.12"
       - name: Cross-check generated assets against the Java registries
         run: python tools/assets/check_assets.py
+      - name: 26.x resources are up to date with the 1.21.1 sources
+        run: |
+          python tools/assets/port_resources.py
+          git status --porcelain -- 26.2 26.3
+          test -z "$(git status --porcelain -- 26.2 26.3)"
       - name: Reference docs are up to date
         run: |
           python tools/docs_gen.py
@@ -57,17 +66,22 @@ jobs:
 
   build:
     runs-on: ubuntu-latest
-    permissions:
-      contents: write
     strategy:
+      fail-fast: false
       matrix:
-        game: ['1.21.1']
+        include:
+          - game: '1.21.1'
+            java: '21'
+          - game: '26.2'
+            java: '25'
+          - game: '26.3'
+            java: '25'
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-java@v4
         with:
           distribution: temurin
-          java-version: '21'
+          java-version: ${{ matrix.java }}
       - uses: gradle/actions/setup-gradle@v4
       - name: Build both loaders and run unit tests
         id: build
@@ -115,7 +129,7 @@ jobs:
         if: always() && steps.build.outcome == 'success'
         run: |
           sudo apt-get update -qq
-          sudo apt-get install -y -qq xvfb libgl1-mesa-dri libglx-mesa0 > /dev/null
+          sudo apt-get install -y -qq xvfb libgl1-mesa-dri libglx-mesa0 libegl1 libegl-mesa0 > /dev/null
           pip install --quiet pillow
       - name: Boot the NeoForge client and exercise every weapon
         id: smoketest_neoforge
@@ -123,6 +137,9 @@ jobs:
         timeout-minutes: 30
         env:
           LIBGL_ALWAYS_SOFTWARE: '1'
+          # 26.3 opens its window with SDL3, which asks for an sRGB-capable framebuffer; Xvfb's GLX visuals have none,
+          # so go through EGL. GLFW (1.21.1, 26.2) ignores it.
+          SDL_VIDEO_FORCE_EGL: '1'
         run: |
           set -o pipefail
           mkdir -p "${{ matrix.game }}/neoforge/run/smoketest"
@@ -132,13 +149,16 @@ jobs:
       - name: Report the NeoForge client smoke test
         id: smokereport_neoforge
         if: always() && steps.build.outcome == 'success'
-        run: python3 scripts/smoketest_report.py --log smoketest-neoforge.log --run-dir "${{ matrix.game }}/neoforge/run/smoketest" --out smoketest --label NeoForge
+        run: python3 scripts/smoketest_report.py --log smoketest-neoforge.log --run-dir "${{ matrix.game }}/neoforge/run/smoketest" --out smoketest --label NeoForge --game "${{ matrix.game }}"
       - name: Boot the Fabric client and exercise every weapon
         id: smoketest_fabric
         if: always() && steps.build.outcome == 'success'
         timeout-minutes: 30
         env:
           LIBGL_ALWAYS_SOFTWARE: '1'
+          # 26.3 opens its window with SDL3, which asks for an sRGB-capable framebuffer; Xvfb's GLX visuals have none,
+          # so go through EGL. GLFW (1.21.1, 26.2) ignores it.
+          SDL_VIDEO_FORCE_EGL: '1'
         run: |
           set -o pipefail
           mkdir -p "${{ matrix.game }}/fabric/run/smoketest"
@@ -148,7 +168,7 @@ jobs:
       - name: Report the Fabric client smoke test
         id: smokereport_fabric
         if: always() && steps.build.outcome == 'success'
-        run: python3 scripts/smoketest_report.py --log smoketest-fabric.log --run-dir "${{ matrix.game }}/fabric/run/smoketest" --out smoketest --label Fabric
+        run: python3 scripts/smoketest_report.py --log smoketest-fabric.log --run-dir "${{ matrix.game }}/fabric/run/smoketest" --out smoketest --label Fabric --game "${{ matrix.game }}"
       - name: Verify the packaged jars
         id: verify
         if: always() && steps.build.outcome == 'success'
@@ -158,14 +178,14 @@ jobs:
           for loader in neoforge fabric; do
             cp "${{ matrix.game }}/$loader/build/libs/remnants_ballistics-$loader-${{ matrix.game }}-$VERSION.jar" releases/
           done
-          python3 scripts/verify_release_jars.py --version "$VERSION" --jar-dir releases --output releases/manifest.json
+          python3 scripts/verify_release_jars.py --version "$VERSION" --game "${{ matrix.game }}" --jar-dir releases --output "releases/manifest-${{ matrix.game }}.json"
       - uses: actions/upload-artifact@v4
         if: always() && steps.verify.outcome == 'success'
         with:
           name: verified-${{ matrix.game }}
           path: |
             releases/*.jar
-            releases/manifest.json
+            releases/manifest-*.json
       - uses: actions/upload-artifact@v4
         if: always() && steps.build.outcome == 'success'
         with:
@@ -176,17 +196,53 @@ jobs:
             smoketest-*.log
             ${{ matrix.game }}/*/run/smoketest/logs/
             ${{ matrix.game }}/*/run/smoketest/crash-reports/
-      - name: Publish the development build
-        if: always() && steps.verify.outcome == 'success' && github.event_name == 'push' && github.ref == 'refs/heads/main'
+      - name: Record the results for the development build
+        if: always() && steps.verify.outcome == 'success'
         env:
-          GH_TOKEN: ${{ github.token }}
           GAMETESTS: neoforge ${{ steps.gametest_neoforge.outcome }}, fabric ${{ steps.gametest_fabric.outcome }}
           SMOKETESTS: neoforge ${{ steps.smokereport_neoforge.outcome }}, fabric ${{ steps.smokereport_fabric.outcome }}
         run: |
+          mkdir -p smoketest
+          NEOFORGE=$(cat "smoketest/summary-${{ matrix.game }}-neoforge.txt" 2>/dev/null || echo "did not run")
+          FABRIC=$(cat "smoketest/summary-${{ matrix.game }}-fabric.txt" 2>/dev/null || echo "did not run")
+          echo "- ${{ matrix.game }}: GameTests ${GAMETESTS}; client smoke tests ${SMOKETESTS}. NeoForge: ${NEOFORGE} Fabric: ${FABRIC}" \
+            > "smoketest/result-${{ matrix.game }}.md"
+      - uses: actions/upload-artifact@v4
+        if: always() && steps.verify.outcome == 'success'
+        with:
+          name: dev-build-${{ matrix.game }}
+          path: |
+            releases/*.jar
+            releases/manifest-*.json
+            smoketest/*.jpg
+            smoketest/result-*.md
+
+  # One prerelease with the jars of every workspace that built and verified; the notes list each one's test results.
+  dev-build:
+    needs: build
+    if: always() && github.event_name == 'push' && github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          pattern: dev-build-*
+          path: dev-build
+          merge-multiple: true
+      - name: Publish the development build
+        env:
+          GH_TOKEN: ${{ github.token }}
+          GH_REPO: ${{ github.repository }}
+        run: |
           gh release delete dev-build --yes --cleanup-tag 2>/dev/null || true
-          NEOFORGE=$(cat smoketest/summary-neoforge.txt 2>/dev/null || echo "did not run")
-          FABRIC=$(cat smoketest/summary-fabric.txt 2>/dev/null || echo "did not run")
-          gh release create dev-build releases/*.jar releases/manifest.json --prerelease --target "$GITHUB_SHA" \
-            --title "Development build ${GITHUB_SHA::7}" \
-            --notes "Automatic build of \`main\` at ${GITHUB_SHA::7} (Fabric and NeoForge jars). Unit tests and jar verification passed; GameTests: ${GAMETESTS}; client smoke tests: ${SMOKETESTS}. NeoForge: ${NEOFORGE} Fabric: ${FABRIC} The smoke-*.jpg files are screenshots from those runs. For testing only; use the tagged releases for servers."
-          if ls smoketest/*.jpg > /dev/null 2>&1; then gh release upload dev-build smoketest/*.jpg --clobber; fi
+          {
+            echo "Automatic build of \`main\` at ${GITHUB_SHA::7} (Fabric and NeoForge jars for every supported Minecraft version). Unit tests and jar verification passed."
+            echo
+            cat dev-build/smoketest/result-*.md
+            echo
+            echo "The smoke-*.jpg files are screenshots from the client smoke tests. For testing only; use the tagged releases for servers."
+          } > notes.md
+          gh release create dev-build dev-build/releases/*.jar dev-build/releases/manifest-*.json --prerelease --target "$GITHUB_SHA" \
+            --title "Development build ${GITHUB_SHA::7}" --notes-file notes.md
+          if ls dev-build/smoketest/*.jpg > /dev/null 2>&1; then gh release upload dev-build dev-build/smoketest/*.jpg --clobber; fi

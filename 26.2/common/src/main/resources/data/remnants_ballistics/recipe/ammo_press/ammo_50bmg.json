@@ -1,0 +1,33 @@
+{
+  "type": "remnants_ballistics:ammo_press",
+  "ingredients": [
+    {
+      "ingredient": "remnants_ballistics:casing",
+      "count": 4
+    },
+    {
+      "ingredient": "minecraft:blaze_powder",
+      "count": 2
+    },
+    {
+      "ingredient": "minecraft:iron_ingot",
+      "count": 2
+    }
+  ],
+  "result": {
+    "id": "remnants_ballistics:ammo_50bmg",
+    "count": 4
+  },
+  "neoforge:conditions": [
+    {
+      "type": "remnants_ballistics:config",
+      "option": "ammo_crafting"
+    }
+  ],
+  "fabric:load_conditions": [
+    {
+      "condition": "remnants_ballistics:config",
+      "option": "ammo_crafting"
+    }
+  ]
+}

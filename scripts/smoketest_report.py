@@ -1,12 +1,13 @@
-"""Report a scripted client run (1.21.1/smoketest) as GitHub annotations and contact sheets.
+"""Report a scripted client run (<game>/smoketest) as GitHub annotations and contact sheets.
 
-    python3 scripts/smoketest_report.py --log smoketest-fabric.log --run-dir 1.21.1/fabric/run/smoketest --out smoketest --label Fabric
+    python3 scripts/smoketest_report.py --log smoketest-fabric.log --run-dir 1.21.1/fabric/run/smoketest --out smoketest \
+        --label Fabric --game 1.21.1
 
 Reads <run-dir>/smoketest/result.json written by the run. Emits an error annotation per failed check, a warning
 per distinct log line our mod (or the model, sound and texture loaders about our files) logged at WARN or above,
 and a summary notice. With Pillow installed, it also builds one JPEG contact sheet per weapon (hip, aim, fire,
-reload, inspect, third person) plus the title and screen captures, in <out>/ (named smoke-<label>-*.jpg when a loader
-label is given, so both loaders' runs can share one folder). Exits non-zero unless the run passed.
+reload, inspect, third person) plus the title and screen captures, in <out>/ (named smoke-[<game>-]<label>-*.jpg when
+a game and loader label are given, so every run can share one folder). Exits non-zero unless the run passed.
 """
 import argparse
 import json
@@ -96,11 +97,14 @@ def main():
     parser.add_argument('--run-dir', required=True)
     parser.add_argument('--out', required=True)
     parser.add_argument('--label', default='', help='loader name for titles and image names, e.g. Fabric')
+    parser.add_argument('--game', default='', help='Minecraft version for titles and image names, e.g. 26.2')
     args = parser.parse_args()
     os.makedirs(args.out, exist_ok=True)
-    title = f'Client smoke test ({args.label})' if args.label else 'Client smoke test'
-    log_title = f'Client log ({args.label} smoke test)' if args.label else 'Client log (smoke test)'
-    prefix = f'smoke-{args.label.lower()}-' if args.label else 'smoke-'
+    label = ' '.join(part for part in (args.label, args.game) if part)
+    title = f'Client smoke test ({label})' if label else 'Client smoke test'
+    log_title = f'Client log ({label} smoke test)' if label else 'Client log (smoke test)'
+    tag = '-'.join(part for part in (args.game, args.label.lower()) if part)
+    prefix = f'smoke-{tag}-' if tag else 'smoke-'
 
     warnings, crash = log_findings(args.log)
     for line in warnings[:30]:
@@ -122,7 +126,7 @@ def main():
                f"{len(result.get('screenshots', []))} screenshots, {len(sheets)} images, {len(warnings)} log warnings. "
                + '; '.join(result.get('notes', [])))
     annotate('notice', title, summary)
-    summary_name = f'summary-{args.label.lower()}.txt' if args.label else 'summary.txt'
+    summary_name = f'summary-{tag}.txt' if tag else 'summary.txt'
     with open(os.path.join(args.out, summary_name), 'w', encoding='utf-8') as f:
         f.write(summary + '\n')
     sys.exit(0 if result.get('status') == 'PASS' else 1)

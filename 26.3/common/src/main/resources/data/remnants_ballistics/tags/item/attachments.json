@@ -1,0 +1,28 @@
+{
+  "replace": false,
+  "values": [
+    "remnants_ballistics:holo_reflex",
+    "remnants_ballistics:tripoint_holo",
+    "remnants_ballistics:ranger_scope",
+    "remnants_ballistics:longeye_scope",
+    "remnants_ballistics:suppressor",
+    "remnants_ballistics:compensator",
+    "remnants_ballistics:muzzle_brake",
+    "remnants_ballistics:flash_hider",
+    "remnants_ballistics:shotgun_choke",
+    "remnants_ballistics:vertical_grip",
+    "remnants_ballistics:angled_grip",
+    "remnants_ballistics:stubby_grip",
+    "remnants_ballistics:extended_mag",
+    "remnants_ballistics:drum_mag",
+    "remnants_ballistics:quick_mag",
+    "remnants_ballistics:tactical_stock",
+    "remnants_ballistics:light_stock",
+    "remnants_ballistics:heavy_stock",
+    "remnants_ballistics:skin_desert",
+    "remnants_ballistics:skin_arctic",
+    "remnants_ballistics:skin_crimson",
+    "remnants_ballistics:skin_gilded",
+    "remnants_ballistics:skin_void"
+  ]
+}

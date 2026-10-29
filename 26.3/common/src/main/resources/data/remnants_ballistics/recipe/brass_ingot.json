@@ -1,0 +1,14 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "misc",
+  "ingredients": [
+    "minecraft:copper_ingot",
+    "minecraft:copper_ingot",
+    "minecraft:copper_ingot",
+    "minecraft:gold_nugget"
+  ],
+  "result": {
+    "id": "remnants_ballistics:brass_ingot",
+    "count": 3
+  }
+}

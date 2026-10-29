@@ -72,4 +72,9 @@ public final class NeoForgeGameTests {
     public static void lootAndDamageDataLoaded(GameTestHelper helper) {
         BallisticsGameTests.lootAndDamageDataLoaded(helper);
     }
+
+    @GameTest(template = RANGE)
+    public static void structureLootIsInjected(GameTestHelper helper) {
+        BallisticsGameTests.structureLootIsInjected(helper);
+    }
 }

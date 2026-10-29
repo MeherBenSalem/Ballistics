@@ -1,0 +1,21 @@
+{
+  "type": "remnants_ballistics:configurable_table",
+  "conditions": [
+    {
+      "condition": "minecraft:any_of",
+      "terms": [
+        {
+          "condition": "neoforge:loot_table_id",
+          "loot_table_id": "minecraft:chests/shipwreck_supply"
+        },
+        {
+          "condition": "neoforge:loot_table_id",
+          "loot_table_id": "minecraft:chests/buried_treasure"
+        }
+      ]
+    }
+  ],
+  "table": "remnants_ballistics:inject/shipwreck",
+  "category": "structure",
+  "chance": 0.5
+}
