@@ -28,28 +28,29 @@ A firearms mod for Minecraft built for multiplayer: sixteen hand-modelled weapon
 
 | Workspace | Minecraft | Loaders | Java |
 | --- | --- | --- | --- |
+| `1.20.1/` | 1.20.1 | Forge 47.1+ (built against 47.4.28), Fabric (Loader 0.16.14+) | 17 |
 | `1.21.1/` | 1.21.1 | NeoForge 21.1.264+, Fabric (Loader 0.16.14+) | 21 |
 | `26.2/` | 26.2 | NeoForge 26.2.0.93+, Fabric (Loader 0.19.5+) | 25 |
 | `26.3/` | 26.3 | NeoForge 26.3.0.99+, Fabric (Loader 0.19.5+) | 25 |
 
-Each version folder is an independent Gradle project with `common`, `fabric` and `neoforge` subprojects, like the other NightBeam mods: gameplay, rendering, assets and data live in `common`, and each loader project only adds its entry points, registration, networking and event hooks. The release version is `0.5.0` (`version=` in each workspace's `gradle.properties`; `./gradlew syncVersion -PmodVersion=x.y.z` sets all of them). See [the release notes](patchnotes/0.5.0.md).
+Each version folder is an independent Gradle project with `common`, `fabric` and `neoforge` subprojects (`forge` instead of `neoforge` on 1.20.1), like the other NightBeam mods: gameplay, rendering, assets and data live in `common`, and each loader project only adds its entry points, registration, networking and event hooks. The release version is `0.5.0` (`version=` in each workspace's `gradle.properties`; `./gradlew syncVersion -PmodVersion=x.y.z` sets all of them). See [the release notes](patchnotes/0.5.0.md).
 
 ## Requirements
 
-- JDK 21 to build `1.21.1/`, JDK 25 to build `26.2/` and `26.3/`
-- Minecraft 1.21.1, 26.2 or 26.3 with either:
-  - **NeoForge** (21.1.264+ on 1.21.1, 26.2.0.93+ on 26.2, 26.3.0.99+ on 26.3; no other mods required), or
-  - **Fabric** Loader (0.16.14+ on 1.21.1, 0.19.5+ on 26.x) with [Fabric API](https://modrinth.com/mod/fabric-api) and [Forge Config API Port](https://modrinth.com/mod/forge-config-api-port) (21.1.6+, 26.2.1+ or 26.3.1+). [Mod Menu](https://modrinth.com/mod/modmenu) is optional and opens the config screen.
+- JDK 21 to build `1.20.1/` and `1.21.1/` (`1.20.1/` compiles for, and runs the game on, Java 17, which Gradle provisions if it is not installed), JDK 25 to build `26.2/` and `26.3/`
+- Minecraft 1.20.1, 1.21.1, 26.2 or 26.3 with either:
+  - **Forge** 47.1+ on 1.20.1, or **NeoForge** (21.1.264+ on 1.21.1, 26.2.0.93+ on 26.2, 26.3.0.99+ on 26.3); no other mods required, or
+  - **Fabric** Loader (0.16.14+ on 1.20.1 and 1.21.1, 0.19.5+ on 26.x) with [Fabric API](https://modrinth.com/mod/fabric-api) and [Forge Config API Port](https://modrinth.com/mod/forge-config-api-port) (8.0.3+ on 1.20.1, 21.1.6+, 26.2.1+ or 26.3.1+). [Mod Menu](https://modrinth.com/mod/modmenu) is optional and opens the config screen (1.21.1 and 26.x; on 1.20.1 the configs are edited as TOML files).
 - Install on **both the server and every client**.
 
 ## Build
 
-From a workspace (`1.21.1`, `26.2` or `26.3`):
+From a workspace (`1.20.1`, `1.21.1`, `26.2` or `26.3`):
 
 ```
 cd 26.3
-./gradlew build                                              # Fabric and NeoForge jars + unit tests
-./gradlew :neoforge:runGameTestServer :fabric:runGameTestServer  # in-game GameTests on headless servers
+./gradlew build                                              # both loader jars + unit tests
+./gradlew :neoforge:runGameTestServer :fabric:runGameTestServer  # in-game GameTests on headless servers (:forge: on 1.20.1)
 ```
 
 From the repository root:
@@ -59,12 +60,12 @@ From the repository root:
 ./gradlew gameTestAll           # GameTests of every workspace on both loaders
 ```
 
-The release jars are `<game>/neoforge/build/libs/remnants_ballistics-neoforge-<game>-<version>.jar` and `<game>/fabric/build/libs/remnants_ballistics-fabric-<game>-<version>.jar`, one pair per workspace.
+The release jars are `<game>/neoforge/build/libs/remnants_ballistics-neoforge-<game>-<version>.jar` (on 1.20.1 `1.20.1/forge/build/libs/remnants_ballistics-forge-1.20.1-<version>.jar`, reobfuscated to Forge's SRG names; the development jar is in `forge/build/devlibs`) and `<game>/fabric/build/libs/remnants_ballistics-fabric-<game>-<version>.jar`, one pair per workspace.
 
 ## Run
 
 ```
-cd 26.3                         # or 1.21.1, 26.2
+cd 26.3                         # or 1.20.1 (use :forge: instead of :neoforge:), 1.21.1, 26.2
 ./gradlew :neoforge:runClient   # development client (or :fabric:runClient)
 ./gradlew :neoforge:runServer   # dedicated server (or :fabric:runServer; set online-mode=false in server.properties for dev clients)
 ./gradlew :neoforge:runClient2  # second client "Dev2" for two-player testing
@@ -86,11 +87,11 @@ Charge the Eclipse Railgun by holding fire. See [docs/CONTROLS.md](docs/CONTROLS
 
 ## Assets
 
-Every model, texture, icon, animation, sound, GUI and data file is generated from source by the scripts in [`tools/assets`](tools/assets) into `1.21.1/common/src/main/resources`, shared by both loaders, and ported to the 26.x formats in `26.2/` and `26.3/` by `tools/assets/port_resources.py`. All assets are original; the firearm sounds are generated with ElevenLabs. The asset set is cross-checked against the Java registries:
+Every model, texture, icon, animation, sound, GUI and data file is generated from source by the scripts in [`tools/assets`](tools/assets) into `1.21.1/common/src/main/resources`, shared by both loaders, and ported to the 1.20.1 formats in `1.20.1/` and to the 26.x formats in `26.2/` and `26.3/` by `tools/assets/port_resources.py`. All assets are original; the firearm sounds are generated with ElevenLabs. The asset set is cross-checked against the Java registries:
 
 ```
 python3 tools/assets/generate.py        # regenerate everything (needs Python 3, numpy, Pillow and ffmpeg)
-python3 tools/assets/port_resources.py  # only re-port to 26.2/26.3 (standard library only; generate.py runs it)
+python3 tools/assets/port_resources.py  # only re-port to 1.20.1/26.2/26.3 (standard library only; generate.py runs it)
 python3 tools/assets/check_assets.py    # validate (also run by ./gradlew buildAll)
 ```
 

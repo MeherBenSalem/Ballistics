@@ -4,14 +4,14 @@ Remnants: Ballistics is server-authoritative. Clients predict their own shots an
 
 ## Automated checks
 
-| Command (in a workspace: `1.21.1/`, `26.2/` or `26.3/`) | What it covers |
+| Command (in a workspace: `1.20.1/`, `1.21.1/`, `26.2/` or `26.3/`; `:forge:` instead of `:neoforge:` on 1.20.1) | What it covers |
 | --- | --- |
 | `./gradlew :common:test` | Minecraft-free core: spread determinism, ballistic drop, recoil, bloom, falloff, hit zones, reload maths, stat modifiers, the fire-rate limiter (steady fire, spam, jitter, idle-credit caps) |
 | `./gradlew :neoforge:runGameTestServer` and `:fabric:runGameTestServer` | GameTests on a headless server of each loader, driving the real server pipeline with a fake player. See below. |
 | `./gradlew :neoforge:runClientSmokeTest` and `:fabric:runClientSmokeTest` | A scripted client of each loader boots a world, fires, reloads and inspects every weapon, opens the stations and writes screenshots and `run/smoketest/smoketest/result.json` |
 | `python3 tools/assets/check_assets.py` (repository root) | Every registered item, block, sound, particle, model part, animation clip, translation and data reference resolves |
 
-The GameTests (`common/.../gametest/BallisticsGameTests.java`, registered by `NeoForgeGameTests` and `FabricGameTests`) cover:
+The GameTests (`common/.../gametest/BallisticsGameTests.java`, registered by `NeoForgeGameTests` (`ForgeGameTests` on 1.20.1) and `FabricGameTests`) cover:
 
 - an aimed rifle shot damages a target and uses one round;
 - bullets shatter glass;
@@ -24,12 +24,12 @@ The GameTests (`common/.../gametest/BallisticsGameTests.java`, registered by `Ne
 - the ammunition press recipe matches;
 - every weapon has a recipe;
 - loot tables and damage types are loaded;
-- vanilla structure chests also roll the mod's loot (NeoForge loot modifier, Fabric pool injection).
+- vanilla structure chests also roll the mod's loot (NeoForge or Forge loot modifier, Fabric pool injection).
 
 ## Local two-player setup
 
 ```
-cd 26.3                         # or 1.21.1, 26.2
+cd 26.3                         # or 1.20.1 (with :forge:), 1.21.1, 26.2
 ./gradlew :neoforge:runServer   # first run: accept run/eula.txt, set online-mode=false in run/server.properties
 ./gradlew :neoforge:runClient   # player "Dev"
 ./gradlew :neoforge:runClient2  # player "Dev2" (separate game directory run/client2)

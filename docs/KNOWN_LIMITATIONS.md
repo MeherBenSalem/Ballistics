@@ -6,8 +6,10 @@
 
 ## Platform
 
-- Minecraft **1.21.1**, **26.2** and **26.3** on **NeoForge** and **Fabric** are supported. There is no Forge build and no port to other Minecraft versions.
-- On Fabric the weapon HUD and crosshair are drawn from a mixin on the vanilla crosshair, and NeoForge's projectile-impact event has no Fabric counterpart, so other mods cannot cancel Voidcaster orb impacts there.
+- Minecraft **1.20.1** on **Forge** (47.1+) and **Fabric**, and **1.21.1**, **26.2** and **26.3** on **NeoForge** and **Fabric**, are supported. The 1.20.1 Forge jar also loads on NeoForge's 1.20.1 fork (47.1.x), but only Forge is tested in CI. There is no Forge build for newer versions and no port to other Minecraft versions.
+- On 1.20.1 there is no in-game config screen (neither Forge 1.20.1 nor Forge Config API Port 8 provide one); edit the TOML files in `config/` and `<world>/serverconfig/`.
+- 1.20.1 keeps a weapon's loaded rounds, fire mode and attachments in its NBT, 1.21.1 and later in data components. Moving a world from 1.20.1 to a newer version keeps the weapons, but they come back empty, in their default fire mode and with their factory attachments; fitted attachments are lost. Take attachments off before upgrading a world.
+- On Fabric the weapon HUD and crosshair are drawn from a mixin on the vanilla crosshair, and the NeoForge and Forge projectile-impact event has no Fabric counterpart, so other mods cannot cancel Voidcaster orb impacts there.
 - It is a mod, not a server plugin. It does not run on Paper, Spigot or Folia, and it must be installed on both the server and every client.
 
 ## Ballistics
