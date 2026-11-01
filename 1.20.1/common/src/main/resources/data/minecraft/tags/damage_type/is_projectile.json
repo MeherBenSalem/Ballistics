@@ -1,0 +1,8 @@
+{
+  "replace": false,
+  "values": [
+    "remnants_ballistics:bullet",
+    "remnants_ballistics:bullet_headshot",
+    "remnants_ballistics:energy"
+  ]
+}

@@ -4,16 +4,24 @@
     python3 tools/assets/port_resources.py 26.2     # one target
 
 tools/assets/generate.py writes 1.21.1/common/src/main/resources and runs this afterwards. Assets and data are copied,
-then rewritten for each target: item model definitions, weapon base models, recipe ingredients, advancement
-backgrounds and entity predicates, the key-mapping category label and the pack format. Hand-written files in the
-target workspace (META-INF, the access widener) are left alone. Standard library only, so CI can re-run it and diff
-the result.
+then rewritten for each target:
+
+- 26.x: item model definitions, weapon base models, recipe ingredients, advancement backgrounds and entity predicates,
+  the key-mapping category label and the pack format.
+- 1.20.1: plural data folders, Forge recipe conditions and loot-table-id conditions, recipe results, advancement icons and
+  item predicates, the pre-1.21 common ingot tags, vanilla ids that did not exist yet, the GameTest structure's data
+  version and the pack format.
+
+Hand-written files in the target workspace (META-INF, the access widener) are left alone. Standard library only, so CI
+can re-run it and diff the result.
 """
 from __future__ import annotations
 
+import gzip
 import json
 import os
 import shutil
+import struct
 import sys
 
 HERE = os.path.dirname(os.path.abspath(__file__))
@@ -28,6 +36,11 @@ GENERATED = ("assets", "data", "pack.mcmeta", "logo.png")
 TARGETS = {
     "26.2": {"resource": 88, "data": [107, 1], "typed_loot": False},
     "26.3": {"resource": 97, "data": [121, 0], "typed_loot": True},
+}
+# Pre-1.21 targets (Forge + Fabric): one pack format for resources and data, and the world data version that the
+# GameTest structure is saved with.
+LEGACY_TARGETS = {
+    "1.20.1": {"pack": 15, "data_version": 3465},
 }
 
 
@@ -303,14 +316,215 @@ def port_26(game):
     }})
 
 
+# ----------------------------------------------------------------------------------------------------------------
+# 1.20.1 (Minecraft 1.20.1, Forge 47 + Fabric)
+# ----------------------------------------------------------------------------------------------------------------
+
+# Registry folders were plural before 1.21 (tag folders too, for the registries that had them).
+LEGACY_DIRS = {"recipe": "recipes", "advancement": "advancements", "loot_table": "loot_tables", "structure": "structures"}
+LEGACY_TAG_DIRS = {"item": "items", "block": "blocks", "entity_type": "entity_types", "fluid": "fluids",
+                   "game_event": "game_events"}
+# Vanilla ids renamed after 1.20.1 (short grass was "grass" until 1.20.3).
+RENAMED_1201 = {"minecraft:short_grass": "minecraft:grass"}
+# Vanilla ids added after 1.20.1 (1.21's bogged and trial chambers): dropped from tags and loot targets.
+ADDED_AFTER_1201 = {"minecraft:bogged", "minecraft:chests/trial_chambers/corridor"}
+COOKING = {"minecraft:smelting", "minecraft:blasting", "minecraft:smoking", "minecraft:campfire_cooking"}
+
+
+def _c_tag_1201(path):
+    """1.21's common tags c:ingots/<metal> were c:<metal>_ingots on Fabric (and forge:ingots/<metal> on Forge)."""
+    if path.startswith("ingots/"):
+        return path[len("ingots/"):] + "_ingots"
+    return path
+
+
+def _ids_1201(node):
+    """Renames vanilla ids, rewrites common tag references and drops ids that 1.20.1 does not have."""
+    if isinstance(node, dict):
+        if node.get("loot_table_id") in ADDED_AFTER_1201:
+            return None
+        out = {}
+        for k, v in node.items():
+            v = _ids_1201(v)
+            if v is not None:
+                out[k] = v
+        return out
+    if isinstance(node, list):
+        return [v for v in (_ids_1201(v) for v in node) if v is not None]
+    if isinstance(node, str):
+        prefix = "#" if node.startswith("#") else ""
+        value = node[len(prefix):]
+        if value in ADDED_AFTER_1201:
+            return None
+        value = RENAMED_1201.get(value, value)
+        if value.startswith("c:"):
+            value = "c:" + _c_tag_1201(value[2:])
+        return prefix + value
+    return node
+
+
+def _item_stack_1201(result):
+    out = {"item": result["id"]}
+    if result.get("count", 1) != 1:
+        out["count"] = result["count"]
+    return out
+
+
+def recipe_1201(recipe):
+    out = {}
+    for key, value in recipe.items():
+        if key == "neoforge:conditions":
+            # Forge 1.20.1 reads top-level "conditions" with the same {"type": ...} entries.
+            out["conditions"] = value
+        elif key == "result" and isinstance(value, dict) and "id" in value:
+            # Cooking recipes name their result item as a plain string.
+            out[key] = value["id"] if recipe["type"] in COOKING else _item_stack_1201(value)
+        else:
+            out[key] = value
+    return out
+
+
+def _item_predicate_1201(predicate):
+    """Item predicates list item ids in an array, and a tag goes in "tag"."""
+    predicate = dict(predicate)
+    items = predicate.get("items")
+    if isinstance(items, str):
+        if items.startswith("#"):
+            del predicate["items"]
+            predicate["tag"] = items[1:]
+        else:
+            predicate["items"] = [items]
+    return predicate
+
+
+def advancement_1201(advancement):
+    advancement = json.loads(json.dumps(advancement))
+    icon = advancement.get("display", {}).get("icon")
+    if icon and "id" in icon:
+        advancement["display"]["icon"] = {"item": icon["id"], **{k: v for k, v in icon.items() if k not in ("id", "count")}}
+    for criterion in advancement.get("criteria", {}).values():
+        conditions = criterion.get("conditions", {})
+        if criterion.get("trigger") == "minecraft:inventory_changed" and "items" in conditions:
+            conditions["items"] = [_item_predicate_1201(p) for p in conditions["items"]]
+    return advancement
+
+
+def loot_modifier_1201(modifier):
+    """NeoForge's loot_table_id condition is Forge's on 1.20.1."""
+    text = json.dumps(modifier).replace('"neoforge:loot_table_id"', '"forge:loot_table_id"')
+    return json.loads(text)
+
+
+def tag_values_1201(tag):
+    tag = dict(tag)
+    tag["values"] = _ids_1201(tag["values"])
+    return tag
+
+
+def structure_1201(path, data_version):
+    """Re-stamps a GameTest structure with the target's data version (it would otherwise be "from the future")."""
+    with gzip.open(path, "rb") as f:
+        data = f.read()
+    marker = b"\x03" + struct.pack(">H", len("DataVersion")) + b"DataVersion"
+    at = data.index(marker) + len(marker)
+    data = data[:at] + struct.pack(">i", data_version) + data[at + 4:]
+    with gzip.GzipFile(path, "wb", mtime=0) as f:
+        f.write(data)
+
+
+def common_tags_1201(data):
+    """data/c/tags/item/ingots/<metal>.json -> c:<metal>_ingots (Fabric) and forge:ingots/<metal> (Forge). The Fabric
+    tag also pulls in Forge's, so recipes that use c:<metal>_ingots accept other mods' ingots on both loaders."""
+    src = os.path.join(data, "c", "tags", "item")
+    if not os.path.isdir(src):
+        return
+    for dirpath, _, files in os.walk(src):
+        for name in sorted(files):
+            rel = os.path.relpath(os.path.join(dirpath, name), src).replace(os.sep, "/")[:-len(".json")]
+            tag = read_json(os.path.join(dirpath, name))
+            write_json(os.path.join(data, "forge", "tags", "items", rel + ".json"), tag)
+            if rel.startswith("ingots/"):
+                fabric = dict(tag)
+                fabric["values"] = list(tag["values"]) + [{"id": "#forge:" + rel, "required": False}]
+                write_json(os.path.join(data, "c", "tags", "items", _c_tag_1201(rel) + ".json"), fabric)
+    shutil.rmtree(src)
+
+
+def port_1201(game):
+    target = resources(game)
+    formats = LEGACY_TARGETS[game]
+    for name in GENERATED:
+        path = os.path.join(target, name)
+        if os.path.isdir(path):
+            shutil.rmtree(path)
+        elif os.path.exists(path):
+            os.remove(path)
+    for name in ("assets", "logo.png"):
+        src = os.path.join(SOURCE, name)
+        if os.path.isdir(src):
+            shutil.copytree(src, os.path.join(target, name))
+        else:
+            shutil.copy2(src, os.path.join(target, name))
+
+    # Data: rename the registry folders while copying.
+    src_data = os.path.join(SOURCE, "data")
+    data = os.path.join(target, "data")
+    for dirpath, _, files in os.walk(src_data):
+        rel = os.path.relpath(dirpath, src_data).replace(os.sep, "/")
+        parts = rel.split("/")
+        if len(parts) >= 2:
+            parts[1] = LEGACY_DIRS.get(parts[1], parts[1])
+            if parts[1] == "tags" and len(parts) >= 3:
+                parts[2] = LEGACY_TAG_DIRS.get(parts[2], parts[2])
+        if parts[:3] == ["c", "tags", "items"]:
+            parts[2] = "item"  # converted by common_tags_1201 below
+        if parts[:1] == ["neoforge"]:
+            parts[0] = "forge"  # global_loot_modifiers.json
+        out_dir = os.path.join(data, *parts)
+        for name in sorted(files):
+            src = os.path.join(dirpath, name)
+            dst = os.path.join(out_dir, name)
+            os.makedirs(out_dir, exist_ok=True)
+            if not name.endswith(".json"):
+                shutil.copy2(src, dst)
+                continue
+            content = read_json(src)
+            registry = parts[1:2]
+            if registry == ["recipes"]:
+                content = recipe_1201(content)
+            elif registry == ["advancements"]:
+                content = advancement_1201(content)
+            elif registry == ["loot_modifiers"]:
+                content = loot_modifier_1201(content)
+            elif registry == ["tags"]:
+                content = tag_values_1201(content)
+            content = _ids_1201(content)
+            write_json(dst, content)
+    common_tags_1201(data)
+    for dirpath, _, files in os.walk(data):
+        for name in files:
+            if name.endswith(".nbt"):
+                structure_1201(os.path.join(dirpath, name), formats["data_version"])
+
+    pack = read_json(os.path.join(SOURCE, "pack.mcmeta"))["pack"]
+    write_json(os.path.join(target, "pack.mcmeta"), {"pack": {
+        "description": pack["description"],
+        "pack_format": formats["pack"],
+    }})
+
+
 def main(argv):
-    games = argv[1:] or sorted(TARGETS)
+    every = sorted(TARGETS) + sorted(LEGACY_TARGETS)
+    games = argv[1:] or every
     for game in games:
-        if game not in TARGETS:
-            raise SystemExit(f"Unknown target {game}; expected one of {', '.join(sorted(TARGETS))}")
+        if game not in every:
+            raise SystemExit(f"Unknown target {game}; expected one of {', '.join(every)}")
         if not os.path.isdir(os.path.join(ROOT, game)):
             continue
-        port_26(game)
+        if game in LEGACY_TARGETS:
+            port_1201(game)
+        else:
+            port_26(game)
         print(f"Ported resources to {game}")
 
 

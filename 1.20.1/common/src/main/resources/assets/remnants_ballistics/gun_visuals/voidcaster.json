@@ -1,0 +1,67 @@
+{
+  "animations": "remnants_ballistics:voidcaster",
+  "scale": 0.5,
+  "pivot": [
+    8.0,
+    3.766,
+    11.339
+  ],
+  "hip": [
+    0.29,
+    -0.34,
+    -0.55
+  ],
+  "hip_rotation": [
+    2,
+    -7,
+    0
+  ],
+  "ads_distance": 0.25,
+  "sight": [
+    8,
+    12.85,
+    9.5
+  ],
+  "muzzle": [
+    8,
+    9.0,
+    -11.4
+  ],
+  "eject": [
+    9.8,
+    9.0,
+    6.0
+  ],
+  "left_hand": [
+    8,
+    7.2,
+    -2.6
+  ],
+  "mounts": {},
+  "pivots": {
+    "action": [
+      8,
+      11.9,
+      8.0
+    ],
+    "magazine": [
+      8,
+      6.2,
+      2.4
+    ]
+  },
+  "sprint": {
+    "position": [
+      0.04,
+      -0.1,
+      0.06
+    ],
+    "rotation": [
+      -18,
+      42,
+      14
+    ]
+  },
+  "shell": "none",
+  "flash_size": 0.9
+}

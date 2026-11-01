@@ -1,0 +1,10 @@
+{
+  "replace": false,
+  "values": [
+    "remnants_ballistics:brass_ingot",
+    {
+      "id": "#forge:ingots/brass",
+      "required": false
+    }
+  ]
+}

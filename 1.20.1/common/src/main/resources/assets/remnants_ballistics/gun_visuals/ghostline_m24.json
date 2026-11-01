@@ -1,0 +1,88 @@
+{
+  "animations": "remnants_ballistics:ghostline_m24",
+  "scale": 0.46,
+  "pivot": [
+    8.0,
+    3.336,
+    17.586
+  ],
+  "hip": [
+    0.3,
+    -0.36,
+    -0.56
+  ],
+  "hip_rotation": [
+    2,
+    -7,
+    0
+  ],
+  "ads_distance": 0.26,
+  "sight": [
+    8,
+    12.949999999999998,
+    13.4
+  ],
+  "muzzle": [
+    8,
+    9.8,
+    -15.8
+  ],
+  "eject": [
+    9.4,
+    10.2,
+    9.2
+  ],
+  "left_hand": [
+    8,
+    6.4,
+    -3.0
+  ],
+  "mounts": {
+    "optic": [
+      8,
+      11.749999999999998,
+      9.2
+    ],
+    "muzzle": [
+      8,
+      9.8,
+      -13.6
+    ],
+    "underbarrel": [
+      8,
+      6.4,
+      -5.2
+    ],
+    "stock": [
+      8,
+      7.6,
+      18.0
+    ]
+  },
+  "pivots": {
+    "action": [
+      8,
+      9.8,
+      12.75
+    ],
+    "magazine": [
+      8,
+      5.8,
+      8.7
+    ]
+  },
+  "sprint": {
+    "position": [
+      0.04,
+      -0.1,
+      0.06
+    ],
+    "rotation": [
+      -18,
+      42,
+      14
+    ]
+  },
+  "shell": "casing",
+  "flash_size": 1.0
+}

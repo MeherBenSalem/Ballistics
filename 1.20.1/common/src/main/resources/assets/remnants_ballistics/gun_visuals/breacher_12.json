@@ -1,0 +1,93 @@
+{
+  "animations": "remnants_ballistics:breacher_12",
+  "scale": 0.5,
+  "pivot": [
+    8.0,
+    3.566,
+    13.739
+  ],
+  "hip": [
+    0.3,
+    -0.35,
+    -0.54
+  ],
+  "hip_rotation": [
+    2,
+    -7,
+    0
+  ],
+  "ads_distance": 0.26,
+  "sight": [
+    8,
+    13.0,
+    13.2
+  ],
+  "muzzle": [
+    8,
+    8.7,
+    -16.0
+  ],
+  "eject": [
+    9.7,
+    8.8,
+    7.6
+  ],
+  "left_hand": [
+    8,
+    6.4,
+    -4.0
+  ],
+  "mounts": {
+    "optic": [
+      8,
+      11.7,
+      8.8
+    ],
+    "muzzle": [
+      8,
+      8.7,
+      -12.4
+    ],
+    "underbarrel": [
+      8,
+      6.8,
+      -4.6
+    ],
+    "stock": [
+      8,
+      8.8,
+      14.2
+    ],
+    "magazine": [
+      8,
+      6.8,
+      4.1
+    ]
+  },
+  "pivots": {
+    "action": [
+      8,
+      8.8,
+      6.4
+    ],
+    "magazine": [
+      8,
+      6.8,
+      4.1
+    ]
+  },
+  "sprint": {
+    "position": [
+      0.04,
+      -0.1,
+      0.06
+    ],
+    "rotation": [
+      -18,
+      42,
+      14
+    ]
+  },
+  "shell": "shotshell",
+  "flash_size": 1.3
+}

@@ -1,0 +1,720 @@
+{
+  "gun.pistol.fire": {
+    "sounds": [
+      {
+        "name": "remnants_ballistics:gun/pistol_fire_1"
+      },
+      {
+        "name": "remnants_ballistics:gun/pistol_fire_2"
+      },
+      {
+        "name": "remnants_ballistics:gun/pistol_fire_3"
+      }
+    ],
+    "subtitle": "subtitles.remnants_ballistics.gun.pistol.fire"
+  },
+  "gun.magnum.fire": {
+    "sounds": [
+      {
+        "name": "remnants_ballistics:gun/magnum_fire_1"
+      },
+      {
+        "name": "remnants_ballistics:gun/magnum_fire_2"
+      },
+      {
+        "name": "remnants_ballistics:gun/magnum_fire_3"
+      }
+    ],
+    "subtitle": "subtitles.remnants_ballistics.gun.magnum.fire"
+  },
+  "gun.revolver.fire": {
+    "sounds": [
+      {
+        "name": "remnants_ballistics:gun/revolver_fire_1"
+      },
+      {
+        "name": "remnants_ballistics:gun/revolver_fire_2"
+      },
+      {
+        "name": "remnants_ballistics:gun/revolver_fire_3"
+      }
+    ],
+    "subtitle": "subtitles.remnants_ballistics.gun.revolver.fire"
+  },
+  "gun.smg.fire": {
+    "sounds": [
+      {
+        "name": "remnants_ballistics:gun/smg_fire_1"
+      },
+      {
+        "name": "remnants_ballistics:gun/smg_fire_2"
+      },
+      {
+        "name": "remnants_ballistics:gun/smg_fire_3"
+      }
+    ],
+    "subtitle": "subtitles.remnants_ballistics.gun.smg.fire"
+  },
+  "gun.pdw.fire": {
+    "sounds": [
+      {
+        "name": "remnants_ballistics:gun/pdw_fire_1"
+      },
+      {
+        "name": "remnants_ballistics:gun/pdw_fire_2"
+      },
+      {
+        "name": "remnants_ballistics:gun/pdw_fire_3"
+      }
+    ],
+    "subtitle": "subtitles.remnants_ballistics.gun.pdw.fire"
+  },
+  "gun.rifle.fire": {
+    "sounds": [
+      {
+        "name": "remnants_ballistics:gun/rifle_fire_1"
+      },
+      {
+        "name": "remnants_ballistics:gun/rifle_fire_2"
+      },
+      {
+        "name": "remnants_ballistics:gun/rifle_fire_3"
+      }
+    ],
+    "subtitle": "subtitles.remnants_ballistics.gun.rifle.fire"
+  },
+  "gun.ak.fire": {
+    "sounds": [
+      {
+        "name": "remnants_ballistics:gun/ak_fire_1"
+      },
+      {
+        "name": "remnants_ballistics:gun/ak_fire_2"
+      },
+      {
+        "name": "remnants_ballistics:gun/ak_fire_3"
+      }
+    ],
+    "subtitle": "subtitles.remnants_ballistics.gun.ak.fire"
+  },
+  "gun.burst.fire": {
+    "sounds": [
+      {
+        "name": "remnants_ballistics:gun/burst_fire_1"
+      },
+      {
+        "name": "remnants_ballistics:gun/burst_fire_2"
+      },
+      {
+        "name": "remnants_ballistics:gun/burst_fire_3"
+      }
+    ],
+    "subtitle": "subtitles.remnants_ballistics.gun.burst.fire"
+  },
+  "gun.shotgun.fire": {
+    "sounds": [
+      {
+        "name": "remnants_ballistics:gun/shotgun_fire_1"
+      },
+      {
+        "name": "remnants_ballistics:gun/shotgun_fire_2"
+      },
+      {
+        "name": "remnants_ballistics:gun/shotgun_fire_3"
+      }
+    ],
+    "subtitle": "subtitles.remnants_ballistics.gun.shotgun.fire"
+  },
+  "gun.pump.fire": {
+    "sounds": [
+      {
+        "name": "remnants_ballistics:gun/pump_fire_1"
+      },
+      {
+        "name": "remnants_ballistics:gun/pump_fire_2"
+      },
+      {
+        "name": "remnants_ballistics:gun/pump_fire_3"
+      }
+    ],
+    "subtitle": "subtitles.remnants_ballistics.gun.pump.fire"
+  },
+  "gun.sniper.fire": {
+    "sounds": [
+      {
+        "name": "remnants_ballistics:gun/sniper_fire_1"
+      },
+      {
+        "name": "remnants_ballistics:gun/sniper_fire_2"
+      },
+      {
+        "name": "remnants_ballistics:gun/sniper_fire_3"
+      }
+    ],
+    "subtitle": "subtitles.remnants_ballistics.gun.sniper.fire"
+  },
+  "gun.heavy_sniper.fire": {
+    "sounds": [
+      {
+        "name": "remnants_ballistics:gun/heavy_sniper_fire_1"
+      },
+      {
+        "name": "remnants_ballistics:gun/heavy_sniper_fire_2"
+      },
+      {
+        "name": "remnants_ballistics:gun/heavy_sniper_fire_3"
+      }
+    ],
+    "subtitle": "subtitles.remnants_ballistics.gun.heavy_sniper.fire"
+  },
+  "gun.lmg.fire": {
+    "sounds": [
+      {
+        "name": "remnants_ballistics:gun/lmg_fire_1"
+      },
+      {
+        "name": "remnants_ballistics:gun/lmg_fire_2"
+      },
+      {
+        "name": "remnants_ballistics:gun/lmg_fire_3"
+      }
+    ],
+    "subtitle": "subtitles.remnants_ballistics.gun.lmg.fire"
+  },
+  "gun.heavy_lmg.fire": {
+    "sounds": [
+      {
+        "name": "remnants_ballistics:gun/heavy_lmg_fire_1"
+      },
+      {
+        "name": "remnants_ballistics:gun/heavy_lmg_fire_2"
+      },
+      {
+        "name": "remnants_ballistics:gun/heavy_lmg_fire_3"
+      }
+    ],
+    "subtitle": "subtitles.remnants_ballistics.gun.heavy_lmg.fire"
+  },
+  "gun.voidcaster.fire": {
+    "sounds": [
+      {
+        "name": "remnants_ballistics:gun/voidcaster_fire_1"
+      },
+      {
+        "name": "remnants_ballistics:gun/voidcaster_fire_2"
+      },
+      {
+        "name": "remnants_ballistics:gun/voidcaster_fire_3"
+      }
+    ],
+    "subtitle": "subtitles.remnants_ballistics.gun.voidcaster.fire"
+  },
+  "gun.railgun.fire": {
+    "sounds": [
+      {
+        "name": "remnants_ballistics:gun/railgun_fire_1"
+      },
+      {
+        "name": "remnants_ballistics:gun/railgun_fire_2"
+      },
+      {
+        "name": "remnants_ballistics:gun/railgun_fire_3"
+      }
+    ],
+    "subtitle": "subtitles.remnants_ballistics.gun.railgun.fire"
+  },
+  "gun.suppressed.fire": {
+    "sounds": [
+      {
+        "name": "remnants_ballistics:gun/suppressed_fire_1"
+      },
+      {
+        "name": "remnants_ballistics:gun/suppressed_fire_2"
+      },
+      {
+        "name": "remnants_ballistics:gun/suppressed_fire_3"
+      }
+    ],
+    "subtitle": "subtitles.remnants_ballistics.gun.suppressed.fire"
+  },
+  "gun.distant.fire": {
+    "sounds": [
+      {
+        "name": "remnants_ballistics:gun/distant_fire_1"
+      },
+      {
+        "name": "remnants_ballistics:gun/distant_fire_2"
+      },
+      {
+        "name": "remnants_ballistics:gun/distant_fire_3"
+      }
+    ],
+    "subtitle": "subtitles.remnants_ballistics.gun.distant.fire"
+  },
+  "gun.railgun.charge": {
+    "sounds": [
+      {
+        "name": "remnants_ballistics:gun/railgun_charge"
+      }
+    ],
+    "subtitle": "subtitles.remnants_ballistics.gun.railgun.charge"
+  },
+  "gun.mag_out": {
+    "sounds": [
+      {
+        "name": "remnants_ballistics:gun/mag_out_1"
+      },
+      {
+        "name": "remnants_ballistics:gun/mag_out_2"
+      }
+    ],
+    "subtitle": "subtitles.remnants_ballistics.gun.mag_out"
+  },
+  "gun.mag_in": {
+    "sounds": [
+      {
+        "name": "remnants_ballistics:gun/mag_in_1"
+      },
+      {
+        "name": "remnants_ballistics:gun/mag_in_2"
+      }
+    ],
+    "subtitle": "subtitles.remnants_ballistics.gun.mag_in"
+  },
+  "gun.slide_back": {
+    "sounds": [
+      {
+        "name": "remnants_ballistics:gun/slide_back_1"
+      },
+      {
+        "name": "remnants_ballistics:gun/slide_back_2"
+      }
+    ],
+    "subtitle": "subtitles.remnants_ballistics.gun.slide_back"
+  },
+  "gun.slide_release": {
+    "sounds": [
+      {
+        "name": "remnants_ballistics:gun/slide_release_1"
+      },
+      {
+        "name": "remnants_ballistics:gun/slide_release_2"
+      }
+    ],
+    "subtitle": "subtitles.remnants_ballistics.gun.slide_release"
+  },
+  "gun.bolt_open": {
+    "sounds": [
+      {
+        "name": "remnants_ballistics:gun/bolt_open_1"
+      },
+      {
+        "name": "remnants_ballistics:gun/bolt_open_2"
+      }
+    ],
+    "subtitle": "subtitles.remnants_ballistics.gun.bolt_open"
+  },
+  "gun.bolt_close": {
+    "sounds": [
+      {
+        "name": "remnants_ballistics:gun/bolt_close_1"
+      },
+      {
+        "name": "remnants_ballistics:gun/bolt_close_2"
+      }
+    ],
+    "subtitle": "subtitles.remnants_ballistics.gun.bolt_close"
+  },
+  "gun.pump_back": {
+    "sounds": [
+      {
+        "name": "remnants_ballistics:gun/pump_back_1"
+      },
+      {
+        "name": "remnants_ballistics:gun/pump_back_2"
+      }
+    ],
+    "subtitle": "subtitles.remnants_ballistics.gun.pump_back"
+  },
+  "gun.pump_forward": {
+    "sounds": [
+      {
+        "name": "remnants_ballistics:gun/pump_forward_1"
+      },
+      {
+        "name": "remnants_ballistics:gun/pump_forward_2"
+      }
+    ],
+    "subtitle": "subtitles.remnants_ballistics.gun.pump_forward"
+  },
+  "gun.shell_insert": {
+    "sounds": [
+      {
+        "name": "remnants_ballistics:gun/shell_insert_1"
+      },
+      {
+        "name": "remnants_ballistics:gun/shell_insert_2"
+      }
+    ],
+    "subtitle": "subtitles.remnants_ballistics.gun.shell_insert"
+  },
+  "gun.cylinder_open": {
+    "sounds": [
+      {
+        "name": "remnants_ballistics:gun/cylinder_open_1"
+      },
+      {
+        "name": "remnants_ballistics:gun/cylinder_open_2"
+      }
+    ],
+    "subtitle": "subtitles.remnants_ballistics.gun.cylinder_open"
+  },
+  "gun.cylinder_close": {
+    "sounds": [
+      {
+        "name": "remnants_ballistics:gun/cylinder_close_1"
+      },
+      {
+        "name": "remnants_ballistics:gun/cylinder_close_2"
+      }
+    ],
+    "subtitle": "subtitles.remnants_ballistics.gun.cylinder_close"
+  },
+  "gun.cell_out": {
+    "sounds": [
+      {
+        "name": "remnants_ballistics:gun/cell_out_1"
+      },
+      {
+        "name": "remnants_ballistics:gun/cell_out_2"
+      }
+    ],
+    "subtitle": "subtitles.remnants_ballistics.gun.cell_out"
+  },
+  "gun.cell_in": {
+    "sounds": [
+      {
+        "name": "remnants_ballistics:gun/cell_in_1"
+      },
+      {
+        "name": "remnants_ballistics:gun/cell_in_2"
+      }
+    ],
+    "subtitle": "subtitles.remnants_ballistics.gun.cell_in"
+  },
+  "gun.cover_open": {
+    "sounds": [
+      {
+        "name": "remnants_ballistics:gun/cover_open_1"
+      },
+      {
+        "name": "remnants_ballistics:gun/cover_open_2"
+      }
+    ],
+    "subtitle": "subtitles.remnants_ballistics.gun.cover_open"
+  },
+  "gun.cover_close": {
+    "sounds": [
+      {
+        "name": "remnants_ballistics:gun/cover_close_1"
+      },
+      {
+        "name": "remnants_ballistics:gun/cover_close_2"
+      }
+    ],
+    "subtitle": "subtitles.remnants_ballistics.gun.cover_close"
+  },
+  "gun.casing_drop": {
+    "sounds": [
+      {
+        "name": "remnants_ballistics:gun/casing_drop_1"
+      },
+      {
+        "name": "remnants_ballistics:gun/casing_drop_2"
+      }
+    ],
+    "subtitle": "subtitles.remnants_ballistics.gun.casing_drop"
+  },
+  "gun.shell_drop": {
+    "sounds": [
+      {
+        "name": "remnants_ballistics:gun/shell_drop_1"
+      },
+      {
+        "name": "remnants_ballistics:gun/shell_drop_2"
+      }
+    ],
+    "subtitle": "subtitles.remnants_ballistics.gun.shell_drop"
+  },
+  "gun.dry_fire": {
+    "sounds": [
+      {
+        "name": "remnants_ballistics:gun/dry_fire_1"
+      },
+      {
+        "name": "remnants_ballistics:gun/dry_fire_2"
+      }
+    ],
+    "subtitle": "subtitles.remnants_ballistics.gun.dry_fire"
+  },
+  "gun.fire_mode": {
+    "sounds": [
+      {
+        "name": "remnants_ballistics:gun/fire_mode_1"
+      },
+      {
+        "name": "remnants_ballistics:gun/fire_mode_2"
+      }
+    ],
+    "subtitle": "subtitles.remnants_ballistics.gun.fire_mode"
+  },
+  "gun.jammed": {
+    "sounds": [
+      {
+        "name": "remnants_ballistics:gun/jammed_1"
+      },
+      {
+        "name": "remnants_ballistics:gun/jammed_2"
+      }
+    ],
+    "subtitle": "subtitles.remnants_ballistics.gun.jammed"
+  },
+  "gun.equip": {
+    "sounds": [
+      {
+        "name": "remnants_ballistics:gun/equip_1"
+      },
+      {
+        "name": "remnants_ballistics:gun/equip_2"
+      }
+    ],
+    "subtitle": "subtitles.remnants_ballistics.gun.equip"
+  },
+  "gun.aim_in": {
+    "sounds": [
+      {
+        "name": "remnants_ballistics:gun/aim_in_1"
+      },
+      {
+        "name": "remnants_ballistics:gun/aim_in_2"
+      }
+    ],
+    "subtitle": "subtitles.remnants_ballistics.gun.aim_in"
+  },
+  "gun.aim_out": {
+    "sounds": [
+      {
+        "name": "remnants_ballistics:gun/aim_out_1"
+      },
+      {
+        "name": "remnants_ballistics:gun/aim_out_2"
+      }
+    ],
+    "subtitle": "subtitles.remnants_ballistics.gun.aim_out"
+  },
+  "gun.inspect": {
+    "sounds": [
+      {
+        "name": "remnants_ballistics:gun/inspect_1"
+      },
+      {
+        "name": "remnants_ballistics:gun/inspect_2"
+      }
+    ],
+    "subtitle": "subtitles.remnants_ballistics.gun.inspect"
+  },
+  "impact.stone": {
+    "sounds": [
+      {
+        "name": "remnants_ballistics:impact/stone_1"
+      },
+      {
+        "name": "remnants_ballistics:impact/stone_2"
+      },
+      {
+        "name": "remnants_ballistics:impact/stone_3"
+      }
+    ],
+    "subtitle": "subtitles.remnants_ballistics.impact.stone"
+  },
+  "impact.metal": {
+    "sounds": [
+      {
+        "name": "remnants_ballistics:impact/metal_1"
+      },
+      {
+        "name": "remnants_ballistics:impact/metal_2"
+      },
+      {
+        "name": "remnants_ballistics:impact/metal_3"
+      }
+    ],
+    "subtitle": "subtitles.remnants_ballistics.impact.metal"
+  },
+  "impact.wood": {
+    "sounds": [
+      {
+        "name": "remnants_ballistics:impact/wood_1"
+      },
+      {
+        "name": "remnants_ballistics:impact/wood_2"
+      },
+      {
+        "name": "remnants_ballistics:impact/wood_3"
+      }
+    ],
+    "subtitle": "subtitles.remnants_ballistics.impact.wood"
+  },
+  "impact.glass": {
+    "sounds": [
+      {
+        "name": "remnants_ballistics:impact/glass_1"
+      },
+      {
+        "name": "remnants_ballistics:impact/glass_2"
+      },
+      {
+        "name": "remnants_ballistics:impact/glass_3"
+      }
+    ],
+    "subtitle": "subtitles.remnants_ballistics.impact.glass"
+  },
+  "impact.dirt": {
+    "sounds": [
+      {
+        "name": "remnants_ballistics:impact/dirt_1"
+      },
+      {
+        "name": "remnants_ballistics:impact/dirt_2"
+      },
+      {
+        "name": "remnants_ballistics:impact/dirt_3"
+      }
+    ],
+    "subtitle": "subtitles.remnants_ballistics.impact.dirt"
+  },
+  "impact.water": {
+    "sounds": [
+      {
+        "name": "remnants_ballistics:impact/water_1"
+      },
+      {
+        "name": "remnants_ballistics:impact/water_2"
+      },
+      {
+        "name": "remnants_ballistics:impact/water_3"
+      }
+    ],
+    "subtitle": "subtitles.remnants_ballistics.impact.water"
+  },
+  "impact.flesh": {
+    "sounds": [
+      {
+        "name": "remnants_ballistics:impact/flesh_1"
+      },
+      {
+        "name": "remnants_ballistics:impact/flesh_2"
+      },
+      {
+        "name": "remnants_ballistics:impact/flesh_3"
+      }
+    ],
+    "subtitle": "subtitles.remnants_ballistics.impact.flesh"
+  },
+  "impact.energy": {
+    "sounds": [
+      {
+        "name": "remnants_ballistics:impact/energy_1"
+      },
+      {
+        "name": "remnants_ballistics:impact/energy_2"
+      },
+      {
+        "name": "remnants_ballistics:impact/energy_3"
+      }
+    ],
+    "subtitle": "subtitles.remnants_ballistics.impact.energy"
+  },
+  "impact.ricochet": {
+    "sounds": [
+      {
+        "name": "remnants_ballistics:impact/ricochet_1"
+      },
+      {
+        "name": "remnants_ballistics:impact/ricochet_2"
+      },
+      {
+        "name": "remnants_ballistics:impact/ricochet_3"
+      }
+    ],
+    "subtitle": "subtitles.remnants_ballistics.impact.ricochet"
+  },
+  "impact.whiz": {
+    "sounds": [
+      {
+        "name": "remnants_ballistics:impact/whiz_1"
+      },
+      {
+        "name": "remnants_ballistics:impact/whiz_2"
+      },
+      {
+        "name": "remnants_ballistics:impact/whiz_3"
+      }
+    ],
+    "subtitle": "subtitles.remnants_ballistics.impact.whiz"
+  },
+  "ui.hitmarker": {
+    "sounds": [
+      {
+        "name": "remnants_ballistics:ui/hitmarker"
+      }
+    ],
+    "subtitle": "subtitles.remnants_ballistics.ui.hitmarker"
+  },
+  "ui.headshot": {
+    "sounds": [
+      {
+        "name": "remnants_ballistics:ui/headshot"
+      }
+    ],
+    "subtitle": "subtitles.remnants_ballistics.ui.headshot"
+  },
+  "ui.kill": {
+    "sounds": [
+      {
+        "name": "remnants_ballistics:ui/kill"
+      }
+    ],
+    "subtitle": "subtitles.remnants_ballistics.ui.kill"
+  },
+  "block.gunsmith.use": {
+    "sounds": [
+      {
+        "name": "remnants_ballistics:block/gunsmith_use_1"
+      },
+      {
+        "name": "remnants_ballistics:block/gunsmith_use_2"
+      }
+    ],
+    "subtitle": "subtitles.remnants_ballistics.block.gunsmith.use"
+  },
+  "block.ammo_press.use": {
+    "sounds": [
+      {
+        "name": "remnants_ballistics:block/ammo_press_use_1"
+      },
+      {
+        "name": "remnants_ballistics:block/ammo_press_use_2"
+      }
+    ],
+    "subtitle": "subtitles.remnants_ballistics.block.ammo_press.use"
+  },
+  "entity.void_orb.hum": {
+    "sounds": [
+      {
+        "name": "remnants_ballistics:entity/void_orb_hum"
+      }
+    ],
+    "subtitle": "subtitles.remnants_ballistics.entity.void_orb.hum"
+  }
+}

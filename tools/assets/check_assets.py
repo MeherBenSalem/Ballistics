@@ -337,6 +337,40 @@ for game in ("26.2", "26.3"):
                     problem(f"{game}: {os.path.relpath(path, res)} uses the pre-26.3 loot format ({', '.join(old)})")
 
 # ------------------------------------------------------------------------------------------------------------------
+# 1.20.1 workspace (port_resources.py output): pre-1.21 data layout and formats, Forge conditions
+# ------------------------------------------------------------------------------------------------------------------
+
+for game, formats in port_resources.LEGACY_TARGETS.items():
+    res = os.path.join(ROOT, game, "common", "src", "main", "resources")
+    if not os.path.isdir(res):
+        continue
+    data = os.path.join(res, "data")
+    for folder in ("recipe", "advancement", "loot_table", "structure"):
+        if os.path.isdir(os.path.join(data, NS, folder)):
+            problem(f"{game}: data/{NS}/{folder} uses the 1.21 folder name")
+    for item in sorted(item_ids):
+        if not os.path.exists(os.path.join(res, "assets", NS, "models", "item", item.split(":", 1)[1] + ".json")):
+            problem(f"{game}: item model for {item} missing")
+    if not os.path.exists(os.path.join(data, "forge", "loot_modifiers", "global_loot_modifiers.json")):
+        problem(f"{game}: data/forge/loot_modifiers/global_loot_modifiers.json missing")
+    for path in sorted(glob.glob(os.path.join(data, "**", "*.json"), recursive=True)):
+        rel = os.path.relpath(path, res)
+        content = load(path) or {}
+        keys = {k for k, _ in json_items(content)}
+        values = {v for _, v in json_items(content) if isinstance(v, str)}
+        if "neoforge:conditions" in keys or "neoforge:loot_table_id" in values:
+            problem(f"{game}: {rel} still uses NeoForge conditions")
+        if any(v.startswith(("c:ingots/", "#c:ingots/")) for v in values):
+            problem(f"{game}: {rel} uses the 1.21 common ingot tags")
+        if f"{os.sep}recipes{os.sep}" in path and isinstance(content.get("result"), dict) and "id" in content["result"]:
+            problem(f"{game}: {rel} names its result with the 1.21 \"id\" key")
+        if f"{os.sep}advancements{os.sep}" in path and "id" in content.get("display", {}).get("icon", {}):
+            problem(f"{game}: {rel} names its icon with the 1.21 \"id\" key")
+    pack = (load(os.path.join(res, "pack.mcmeta")) or {}).get("pack", {})
+    if pack.get("pack_format") != formats["pack"]:
+        problem(f"{game}: pack.mcmeta needs pack_format {formats['pack']}")
+
+# ------------------------------------------------------------------------------------------------------------------
 # Report
 # ------------------------------------------------------------------------------------------------------------------
 
