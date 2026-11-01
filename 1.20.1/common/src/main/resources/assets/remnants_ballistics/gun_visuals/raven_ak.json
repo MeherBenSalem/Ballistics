@@ -1,0 +1,93 @@
+{
+  "animations": "remnants_ballistics:raven_ak",
+  "scale": 0.5,
+  "pivot": [
+    8.0,
+    3.759,
+    13.401
+  ],
+  "hip": [
+    0.3,
+    -0.35,
+    -0.54
+  ],
+  "hip_rotation": [
+    2,
+    -7,
+    0
+  ],
+  "ads_distance": 0.34,
+  "sight": [
+    8,
+    12.55,
+    0.4
+  ],
+  "muzzle": [
+    8,
+    8.7,
+    -15.8
+  ],
+  "eject": [
+    9.7,
+    8.6,
+    7.6
+  ],
+  "left_hand": [
+    8,
+    6.4,
+    -3.6
+  ],
+  "mounts": {
+    "optic": [
+      8,
+      10.95,
+      9.0
+    ],
+    "muzzle": [
+      8,
+      8.7,
+      -13.6
+    ],
+    "underbarrel": [
+      8,
+      6.6,
+      -4.0
+    ],
+    "stock": [
+      8,
+      8.6,
+      14.2
+    ],
+    "magazine": [
+      8,
+      6.9,
+      4.8
+    ]
+  },
+  "pivots": {
+    "action": [
+      8,
+      8.5,
+      7.8
+    ],
+    "magazine": [
+      8,
+      6.9,
+      4.8
+    ]
+  },
+  "sprint": {
+    "position": [
+      0.04,
+      -0.1,
+      0.06
+    ],
+    "rotation": [
+      -18,
+      42,
+      14
+    ]
+  },
+  "shell": "casing",
+  "flash_size": 1.0
+}

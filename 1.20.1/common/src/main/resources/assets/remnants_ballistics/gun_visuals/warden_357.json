@@ -1,0 +1,78 @@
+{
+  "animations": "remnants_ballistics:warden_357",
+  "scale": 0.58,
+  "pivot": [
+    8,
+    2.704,
+    14.931
+  ],
+  "hip": [
+    0.27,
+    -0.3,
+    -0.58
+  ],
+  "hip_rotation": [
+    0,
+    -4,
+    0
+  ],
+  "ads_distance": 0.5,
+  "sight": [
+    8,
+    11.7,
+    11.2
+  ],
+  "muzzle": [
+    8,
+    9.6,
+    -6.6
+  ],
+  "eject": [
+    9.7,
+    9.5,
+    8
+  ],
+  "left_hand": [
+    7.3,
+    1.4,
+    13.4
+  ],
+  "mounts": {
+    "optic": [
+      8,
+      11.3,
+      8.0
+    ],
+    "muzzle": [
+      8,
+      9.6,
+      -6.6
+    ]
+  },
+  "pivots": {
+    "action": [
+      8,
+      7.15,
+      7.7
+    ],
+    "magazine": [
+      8,
+      8.7,
+      10.5
+    ]
+  },
+  "sprint": {
+    "position": [
+      0.0,
+      -0.12,
+      0.08
+    ],
+    "rotation": [
+      -28,
+      20,
+      12
+    ]
+  },
+  "shell": "none",
+  "flash_size": 1.1
+}

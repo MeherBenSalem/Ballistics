@@ -1,0 +1,23 @@
+{
+  "replace": false,
+  "values": [
+    "#minecraft:logs",
+    "#minecraft:planks",
+    "#minecraft:wooden_slabs",
+    "#minecraft:wooden_stairs",
+    "#minecraft:wooden_fences",
+    "#minecraft:fence_gates",
+    "#minecraft:wooden_doors",
+    "#minecraft:wooden_trapdoors",
+    "minecraft:chest",
+    "minecraft:trapped_chest",
+    "minecraft:barrel",
+    "minecraft:crafting_table",
+    "minecraft:bookshelf",
+    "minecraft:chiseled_bookshelf",
+    "minecraft:lectern",
+    "minecraft:composter",
+    "minecraft:note_block",
+    "minecraft:jukebox"
+  ]
+}

@@ -1,0 +1,67 @@
+{
+  "animations": "remnants_ballistics:eclipse_railgun",
+  "scale": 0.46,
+  "pivot": [
+    8.0,
+    3.566,
+    12.389
+  ],
+  "hip": [
+    0.3,
+    -0.36,
+    -0.55
+  ],
+  "hip_rotation": [
+    2,
+    -7,
+    0
+  ],
+  "ads_distance": 0.22,
+  "sight": [
+    8,
+    12.2,
+    13.2
+  ],
+  "muzzle": [
+    8,
+    8.5,
+    -16.0
+  ],
+  "eject": [
+    9.8,
+    9.0,
+    6.0
+  ],
+  "left_hand": [
+    8,
+    4.9,
+    -5.0
+  ],
+  "mounts": {},
+  "pivots": {
+    "action": [
+      8,
+      8.5,
+      -2.1
+    ],
+    "magazine": [
+      8,
+      6.8,
+      13.4
+    ]
+  },
+  "sprint": {
+    "position": [
+      0.04,
+      -0.1,
+      0.06
+    ],
+    "rotation": [
+      -18,
+      42,
+      14
+    ]
+  },
+  "shell": "none",
+  "flash_size": 1.6
+}

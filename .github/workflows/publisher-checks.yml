@@ -7,6 +7,7 @@ on:
       - "scripts/**"
       - "tools/**"
       - "docs/**"
+      - "1.20.1/**"
       - "1.21.1/**"
       - "26.2/**"
       - "26.3/**"
@@ -17,6 +18,7 @@ on:
       - "scripts/**"
       - "tools/**"
       - "docs/**"
+      - "1.20.1/**"
       - "1.21.1/**"
       - "26.2/**"
       - "26.3/**"
@@ -54,11 +56,11 @@ jobs:
           python-version: "3.12"
       - name: Cross-check generated assets against the Java registries
         run: python tools/assets/check_assets.py
-      - name: 26.x resources are up to date with the 1.21.1 sources
+      - name: Ported resources (1.20.1, 26.x) are up to date with the 1.21.1 sources
         run: |
           python tools/assets/port_resources.py
-          git status --porcelain -- 26.2 26.3
-          test -z "$(git status --porcelain -- 26.2 26.3)"
+          git status --porcelain -- 1.20.1 26.2 26.3
+          test -z "$(git status --porcelain -- 1.20.1 26.2 26.3)"
       - name: Reference docs are up to date
         run: |
           python tools/docs_gen.py
@@ -69,13 +71,27 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
+        # modloader: the non-Fabric loader project of the workspace (Forge on 1.20.1, NeoForge from 1.21.1).
         include:
+          - game: '1.20.1'
+            # Gradle and Loom run on 21; the workspace toolchain (compile, game runs) is 17.
+            java: |
+              17
+              21
+            modloader: forge
+            modloader_label: Forge
           - game: '1.21.1'
             java: '21'
+            modloader: neoforge
+            modloader_label: NeoForge
           - game: '26.2'
             java: '25'
+            modloader: neoforge
+            modloader_label: NeoForge
           - game: '26.3'
             java: '25'
+            modloader: neoforge
+            modloader_label: NeoForge
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-java@v4
@@ -93,12 +109,12 @@ jobs:
       - name: Report build errors
         if: failure() && steps.build.outcome == 'failure'
         run: python3 scripts/ci_annotate.py build-output.log "Build errors (${{ matrix.game }})"
-      - name: Run GameTests on a headless NeoForge server
-        id: gametest_neoforge
+      - name: Run GameTests on a headless ${{ matrix.modloader_label }} server
+        id: gametest_loader
         run: |
           set -o pipefail
           cd "${{ matrix.game }}"
-          ./gradlew :neoforge:runGameTestServer --no-daemon 2>&1 | tee "$GITHUB_WORKSPACE/gametest-neoforge.log"
+          ./gradlew :${{ matrix.modloader }}:runGameTestServer --no-daemon 2>&1 | tee "$GITHUB_WORKSPACE/gametest-${{ matrix.modloader }}.log"
       - name: Run GameTests on a headless Fabric server
         id: gametest_fabric
         if: always() && steps.build.outcome == 'success'
@@ -109,14 +125,14 @@ jobs:
       - name: Report GameTest results
         if: always() && steps.build.outcome == 'success'
         run: |
-          for loader in neoforge fabric; do
+          for loader in ${{ matrix.modloader }} fabric; do
             log="gametest-$loader.log"
             if [ ! -f "$log" ]; then continue; fi
             grep -hoE '(All [0-9]+ required tests passed|[0-9]+ required tests failed)[^"]*' "$log" \
               | head -1 | sed "s/^/::notice title=GameTests ($loader, ${{ matrix.game }})::/" || true
           done
-          if [ "${{ steps.gametest_neoforge.outcome }}" = failure ]; then
-            python3 scripts/ci_annotate.py gametest-neoforge.log "GameTest failures (neoforge, ${{ matrix.game }})"
+          if [ "${{ steps.gametest_loader.outcome }}" = failure ]; then
+            python3 scripts/ci_annotate.py gametest-${{ matrix.modloader }}.log "GameTest failures (${{ matrix.modloader }}, ${{ matrix.game }})"
           fi
           if [ "${{ steps.gametest_fabric.outcome }}" = failure ]; then
             python3 scripts/ci_annotate.py gametest-fabric.log "GameTest failures (fabric, ${{ matrix.game }})"
@@ -131,8 +147,8 @@ jobs:
           sudo apt-get update -qq
           sudo apt-get install -y -qq xvfb libgl1-mesa-dri libglx-mesa0 libegl1 libegl-mesa0 > /dev/null
           pip install --quiet pillow
-      - name: Boot the NeoForge client and exercise every weapon
-        id: smoketest_neoforge
+      - name: Boot the ${{ matrix.modloader_label }} client and exercise every weapon
+        id: smoketest_loader
         if: always() && steps.build.outcome == 'success'
         timeout-minutes: 30
         env:
@@ -142,14 +158,14 @@ jobs:
           SDL_VIDEO_FORCE_EGL: '1'
         run: |
           set -o pipefail
-          mkdir -p "${{ matrix.game }}/neoforge/run/smoketest"
-          cp scripts/smoketest-options.txt "${{ matrix.game }}/neoforge/run/smoketest/options.txt"
+          mkdir -p "${{ matrix.game }}/${{ matrix.modloader }}/run/smoketest"
+          cp scripts/smoketest-options.txt "${{ matrix.game }}/${{ matrix.modloader }}/run/smoketest/options.txt"
           cd "${{ matrix.game }}"
-          xvfb-run -a -s "-screen 0 1280x720x24" ./gradlew :neoforge:runClientSmokeTest --no-daemon 2>&1 | tee "$GITHUB_WORKSPACE/smoketest-neoforge.log"
-      - name: Report the NeoForge client smoke test
-        id: smokereport_neoforge
+          xvfb-run -a -s "-screen 0 1280x720x24" ./gradlew :${{ matrix.modloader }}:runClientSmokeTest --no-daemon 2>&1 | tee "$GITHUB_WORKSPACE/smoketest-${{ matrix.modloader }}.log"
+      - name: Report the ${{ matrix.modloader_label }} client smoke test
+        id: smokereport_loader
         if: always() && steps.build.outcome == 'success'
-        run: python3 scripts/smoketest_report.py --log smoketest-neoforge.log --run-dir "${{ matrix.game }}/neoforge/run/smoketest" --out smoketest --label NeoForge --game "${{ matrix.game }}"
+        run: python3 scripts/smoketest_report.py --log smoketest-${{ matrix.modloader }}.log --run-dir "${{ matrix.game }}/${{ matrix.modloader }}/run/smoketest" --out smoketest --label ${{ matrix.modloader_label }} --game "${{ matrix.game }}"
       - name: Boot the Fabric client and exercise every weapon
         id: smoketest_fabric
         if: always() && steps.build.outcome == 'success'
@@ -175,7 +191,7 @@ jobs:
         run: |
           VERSION=$(grep '^version=' "${{ matrix.game }}/gradle.properties" | cut -d= -f2)
           mkdir -p releases
-          for loader in neoforge fabric; do
+          for loader in ${{ matrix.modloader }} fabric; do
             cp "${{ matrix.game }}/$loader/build/libs/remnants_ballistics-$loader-${{ matrix.game }}-$VERSION.jar" releases/
           done
           python3 scripts/verify_release_jars.py --version "$VERSION" --game "${{ matrix.game }}" --jar-dir releases --output "releases/manifest-${{ matrix.game }}.json"
@@ -199,13 +215,13 @@ jobs:
       - name: Record the results for the development build
         if: always() && steps.verify.outcome == 'success'
         env:
-          GAMETESTS: neoforge ${{ steps.gametest_neoforge.outcome }}, fabric ${{ steps.gametest_fabric.outcome }}
-          SMOKETESTS: neoforge ${{ steps.smokereport_neoforge.outcome }}, fabric ${{ steps.smokereport_fabric.outcome }}
+          GAMETESTS: ${{ matrix.modloader }} ${{ steps.gametest_loader.outcome }}, fabric ${{ steps.gametest_fabric.outcome }}
+          SMOKETESTS: ${{ matrix.modloader }} ${{ steps.smokereport_loader.outcome }}, fabric ${{ steps.smokereport_fabric.outcome }}
         run: |
           mkdir -p smoketest
-          NEOFORGE=$(cat "smoketest/summary-${{ matrix.game }}-neoforge.txt" 2>/dev/null || echo "did not run")
+          LOADER=$(cat "smoketest/summary-${{ matrix.game }}-${{ matrix.modloader }}.txt" 2>/dev/null || echo "did not run")
           FABRIC=$(cat "smoketest/summary-${{ matrix.game }}-fabric.txt" 2>/dev/null || echo "did not run")
-          echo "- ${{ matrix.game }}: GameTests ${GAMETESTS}; client smoke tests ${SMOKETESTS}. NeoForge: ${NEOFORGE} Fabric: ${FABRIC}" \
+          echo "- ${{ matrix.game }}: GameTests ${GAMETESTS}; client smoke tests ${SMOKETESTS}. ${{ matrix.modloader_label }}: ${LOADER} Fabric: ${FABRIC}" \
             > "smoketest/result-${{ matrix.game }}.md"
       - uses: actions/upload-artifact@v4
         if: always() && steps.verify.outcome == 'success'
@@ -237,7 +253,7 @@ jobs:
         run: |
           gh release delete dev-build --yes --cleanup-tag 2>/dev/null || true
           {
-            echo "Automatic build of \`main\` at ${GITHUB_SHA::7} (Fabric and NeoForge jars for every supported Minecraft version). Unit tests and jar verification passed."
+            echo "Automatic build of \`main\` at ${GITHUB_SHA::7} (Fabric jars plus Forge (1.20.1) or NeoForge (1.21.1, 26.x) jars for every supported Minecraft version). Unit tests and jar verification passed."
             echo
             cat dev-build/smoketest/result-*.md
             echo

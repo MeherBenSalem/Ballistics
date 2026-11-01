@@ -98,6 +98,12 @@ public record AmmoPressRecipe(List<CountedIngredient> ingredients, ItemStack res
         return list;
     }
 
+    /** Crafted at the ammo press only: the vanilla recipe book has no category for it (and would log one warning each). */
+    @Override
+    public boolean isSpecial() {
+        return true;
+    }
+
     @Override
     public ItemStack getToastSymbol() {
         return new ItemStack(ModItems.AMMO_PRESS.get());

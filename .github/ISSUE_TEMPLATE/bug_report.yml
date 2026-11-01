@@ -14,10 +14,10 @@ body:
     validations:
       required: true
   - type: input
-    id: neoforge-version
+    id: loader-version
     attributes:
-      label: NeoForge version
-      placeholder: "21.1.264"
+      label: Mod loader and version
+      placeholder: "NeoForge 21.1.264, Forge 47.4.28 or Fabric Loader 0.16.14"
     validations:
       required: true
   - type: input

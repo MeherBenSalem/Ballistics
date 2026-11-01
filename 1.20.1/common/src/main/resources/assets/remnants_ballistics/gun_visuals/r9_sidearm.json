@@ -1,0 +1,83 @@
+{
+  "animations": "remnants_ballistics:r9_sidearm",
+  "scale": 0.6,
+  "pivot": [
+    8.0,
+    3.089,
+    13.854
+  ],
+  "hip": [
+    0.27,
+    -0.29,
+    -0.56
+  ],
+  "hip_rotation": [
+    0,
+    -4,
+    0
+  ],
+  "ads_distance": 0.46,
+  "sight": [
+    8,
+    12.2,
+    14
+  ],
+  "muzzle": [
+    8,
+    10.0,
+    -0.55
+  ],
+  "eject": [
+    9.6,
+    10.9,
+    6.8
+  ],
+  "left_hand": [
+    7.4,
+    1.4,
+    12.0
+  ],
+  "mounts": {
+    "optic": [
+      8,
+      11.6,
+      9.5
+    ],
+    "muzzle": [
+      8,
+      10.0,
+      -0.55
+    ],
+    "magazine": [
+      8,
+      1.5,
+      12.2
+    ]
+  },
+  "pivots": {
+    "action": [
+      8,
+      10,
+      8
+    ],
+    "magazine": [
+      8,
+      1.5,
+      12.2
+    ]
+  },
+  "sprint": {
+    "position": [
+      0.0,
+      -0.12,
+      0.08
+    ],
+    "rotation": [
+      -28,
+      20,
+      12
+    ]
+  },
+  "shell": "casing",
+  "flash_size": 0.8
+}

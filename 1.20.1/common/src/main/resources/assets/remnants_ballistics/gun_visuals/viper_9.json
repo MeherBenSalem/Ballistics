@@ -1,0 +1,93 @@
+{
+  "animations": "remnants_ballistics:viper_9",
+  "scale": 0.54,
+  "pivot": [
+    8.0,
+    2.766,
+    10.639
+  ],
+  "hip": [
+    0.29,
+    -0.33,
+    -0.56
+  ],
+  "hip_rotation": [
+    2,
+    -7,
+    0
+  ],
+  "ads_distance": 0.27,
+  "sight": [
+    8,
+    12.9,
+    10.1
+  ],
+  "muzzle": [
+    8,
+    9.0,
+    -10.5
+  ],
+  "eject": [
+    9.6,
+    9.3,
+    4.8
+  ],
+  "left_hand": [
+    8,
+    7.0,
+    -4.2
+  ],
+  "mounts": {
+    "optic": [
+      8,
+      11.799999999999999,
+      6.0
+    ],
+    "muzzle": [
+      8,
+      9.0,
+      -9.4
+    ],
+    "underbarrel": [
+      8,
+      7.2,
+      -4.6
+    ],
+    "stock": [
+      8,
+      9.0,
+      11.6
+    ],
+    "magazine": [
+      8,
+      4.8,
+      2.4
+    ]
+  },
+  "pivots": {
+    "action": [
+      8,
+      10.1,
+      -6.0
+    ],
+    "magazine": [
+      8,
+      4.8,
+      2.4
+    ]
+  },
+  "sprint": {
+    "position": [
+      0.04,
+      -0.1,
+      0.06
+    ],
+    "rotation": [
+      -18,
+      42,
+      14
+    ]
+  },
+  "shell": "casing",
+  "flash_size": 0.8
+}

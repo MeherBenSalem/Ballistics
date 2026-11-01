@@ -1,0 +1,134 @@
+{
+  "type": "minecraft:chest",
+  "pools": [
+    {
+      "rolls": {
+        "type": "minecraft:uniform",
+        "min": 1,
+        "max": 2
+      },
+      "bonus_rolls": 0.0,
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "name": "remnants_ballistics:ammo_9mm",
+          "weight": 10,
+          "functions": [
+            {
+              "function": "minecraft:set_count",
+              "count": {
+                "type": "minecraft:uniform",
+                "min": 4,
+                "max": 16
+              }
+            }
+          ]
+        },
+        {
+          "type": "minecraft:item",
+          "name": "remnants_ballistics:ammo_762",
+          "weight": 6,
+          "functions": [
+            {
+              "function": "minecraft:set_count",
+              "count": {
+                "type": "minecraft:uniform",
+                "min": 4,
+                "max": 12
+              }
+            }
+          ]
+        },
+        {
+          "type": "minecraft:item",
+          "name": "remnants_ballistics:casing",
+          "weight": 8,
+          "functions": [
+            {
+              "function": "minecraft:set_count",
+              "count": {
+                "type": "minecraft:uniform",
+                "min": 4,
+                "max": 16
+              }
+            }
+          ]
+        },
+        {
+          "type": "minecraft:item",
+          "name": "remnants_ballistics:gun_parts",
+          "weight": 6,
+          "functions": [
+            {
+              "function": "minecraft:set_count",
+              "count": {
+                "type": "minecraft:uniform",
+                "min": 1,
+                "max": 3
+              }
+            }
+          ]
+        },
+        {
+          "type": "minecraft:item",
+          "name": "remnants_ballistics:warden_357",
+          "weight": 2,
+          "functions": [
+            {
+              "function": "minecraft:set_damage",
+              "damage": {
+                "type": "minecraft:uniform",
+                "min": 0.35,
+                "max": 0.85
+              }
+            }
+          ]
+        },
+        {
+          "type": "minecraft:item",
+          "name": "remnants_ballistics:raven_ak",
+          "weight": 1,
+          "functions": [
+            {
+              "function": "minecraft:set_damage",
+              "damage": {
+                "type": "minecraft:uniform",
+                "min": 0.35,
+                "max": 0.85
+              }
+            }
+          ]
+        },
+        {
+          "type": "minecraft:item",
+          "name": "remnants_ballistics:ammo_magnum",
+          "weight": 4,
+          "functions": [
+            {
+              "function": "minecraft:set_count",
+              "count": {
+                "type": "minecraft:uniform",
+                "min": 3,
+                "max": 8
+              }
+            }
+          ]
+        },
+        {
+          "type": "minecraft:item",
+          "name": "remnants_ballistics:flash_hider",
+          "weight": 2
+        },
+        {
+          "type": "minecraft:item",
+          "name": "remnants_ballistics:stubby_grip",
+          "weight": 2
+        },
+        {
+          "type": "minecraft:empty",
+          "weight": 6
+        }
+      ]
+    }
+  ]
+}

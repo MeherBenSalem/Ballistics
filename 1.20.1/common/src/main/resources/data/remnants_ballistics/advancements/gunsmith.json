@@ -1,0 +1,37 @@
+{
+  "display": {
+    "icon": {
+      "item": "remnants_ballistics:gunsmith_workbench"
+    },
+    "title": {
+      "translate": "advancements.remnants_ballistics.gunsmith.title"
+    },
+    "description": {
+      "translate": "advancements.remnants_ballistics.gunsmith.description"
+    },
+    "frame": "task",
+    "show_toast": true,
+    "announce_to_chat": true,
+    "hidden": false
+  },
+  "criteria": {
+    "bench": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "items": [
+              "remnants_ballistics:gunsmith_workbench"
+            ]
+          }
+        ]
+      }
+    }
+  },
+  "requirements": [
+    [
+      "bench"
+    ]
+  ],
+  "parent": "remnants_ballistics:root"
+}

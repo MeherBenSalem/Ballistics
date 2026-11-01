@@ -1,0 +1,780 @@
+{
+  "format_version": "1.8.0",
+  "animations": {
+    "animation.remnants_ballistics.warden_357.idle": {
+      "loop": true,
+      "animation_length": 3.2,
+      "bones": {
+        "gun": {
+          "rotation": {
+            "0": {
+              "post": [
+                0.0,
+                0.0,
+                0.0
+              ],
+              "lerp_mode": "catmullrom"
+            },
+            "0.8": {
+              "post": [
+                0.45,
+                0.15,
+                0.1
+              ],
+              "lerp_mode": "catmullrom"
+            },
+            "1.6": {
+              "post": [
+                0.1,
+                -0.1,
+                -0.08
+              ],
+              "lerp_mode": "catmullrom"
+            },
+            "2.4": {
+              "post": [
+                -0.35,
+                0.05,
+                0.05
+              ],
+              "lerp_mode": "catmullrom"
+            },
+            "3.2": {
+              "post": [
+                0.0,
+                0.0,
+                0.0
+              ],
+              "lerp_mode": "catmullrom"
+            }
+          },
+          "position": {
+            "0": {
+              "post": [
+                0.0,
+                0.0,
+                0.0
+              ],
+              "lerp_mode": "catmullrom"
+            },
+            "1.6": {
+              "post": [
+                0.0,
+                -0.14,
+                0.04
+              ],
+              "lerp_mode": "catmullrom"
+            },
+            "3.2": {
+              "post": [
+                0.0,
+                0.0,
+                0.0
+              ],
+              "lerp_mode": "catmullrom"
+            }
+          }
+        }
+      }
+    },
+    "animation.remnants_ballistics.warden_357.equip": {
+      "animation_length": 0.5,
+      "bones": {
+        "gun": {
+          "rotation": {
+            "0": {
+              "post": [
+                -55.0,
+                18.0,
+                -14.0
+              ],
+              "lerp_mode": "catmullrom"
+            },
+            "0.35": {
+              "post": [
+                3.0,
+                -1.0,
+                1.0
+              ],
+              "lerp_mode": "catmullrom"
+            },
+            "0.5": {
+              "post": [
+                0.0,
+                0.0,
+                0.0
+              ],
+              "lerp_mode": "catmullrom"
+            }
+          },
+          "position": {
+            "0": {
+              "post": [
+                2.0,
+                -7.0,
+                3.0
+              ],
+              "lerp_mode": "catmullrom"
+            },
+            "0.35": {
+              "post": [
+                0.0,
+                0.3,
+                -0.2
+              ],
+              "lerp_mode": "catmullrom"
+            },
+            "0.5": {
+              "post": [
+                0.0,
+                0.0,
+                0.0
+              ],
+              "lerp_mode": "catmullrom"
+            }
+          }
+        }
+      }
+    },
+    "animation.remnants_ballistics.warden_357.fire": {
+      "animation_length": 0.3,
+      "bones": {
+        "gun": {
+          "position": {
+            "0": {
+              "post": [
+                0.0,
+                0.0,
+                0.0
+              ],
+              "lerp_mode": "catmullrom"
+            },
+            "0.054": {
+              "post": [
+                0.0,
+                0.12,
+                1.2
+              ],
+              "lerp_mode": "catmullrom"
+            },
+            "0.3": {
+              "post": [
+                0.0,
+                0.0,
+                0.0
+              ],
+              "lerp_mode": "catmullrom"
+            }
+          },
+          "rotation": {
+            "0": {
+              "post": [
+                0.0,
+                0.0,
+                0.0
+              ],
+              "lerp_mode": "catmullrom"
+            },
+            "0.06": {
+              "post": [
+                12.0,
+                1.44,
+                0.96
+              ],
+              "lerp_mode": "catmullrom"
+            },
+            "0.3": {
+              "post": [
+                0.0,
+                0.0,
+                0.0
+              ],
+              "lerp_mode": "catmullrom"
+            }
+          }
+        }
+      }
+    },
+    "animation.remnants_ballistics.warden_357.inspect": {
+      "animation_length": 3.4,
+      "bones": {
+        "gun": {
+          "rotation": {
+            "0": {
+              "post": [
+                0.0,
+                0.0,
+                0.0
+              ],
+              "lerp_mode": "catmullrom"
+            },
+            "0.7": {
+              "post": [
+                -6.0,
+                -28.0,
+                38.0
+              ],
+              "lerp_mode": "catmullrom"
+            },
+            "1.6": {
+              "post": [
+                -4.0,
+                -24.0,
+                34.0
+              ],
+              "lerp_mode": "catmullrom"
+            },
+            "2.2": {
+              "post": [
+                8.0,
+                22.0,
+                -18.0
+              ],
+              "lerp_mode": "catmullrom"
+            },
+            "2.8": {
+              "post": [
+                6.0,
+                18.0,
+                -14.0
+              ],
+              "lerp_mode": "catmullrom"
+            },
+            "3.4": {
+              "post": [
+                0.0,
+                0.0,
+                0.0
+              ],
+              "lerp_mode": "catmullrom"
+            }
+          },
+          "position": {
+            "0": {
+              "post": [
+                0.0,
+                0.0,
+                0.0
+              ],
+              "lerp_mode": "catmullrom"
+            },
+            "0.7": {
+              "post": [
+                -1.5,
+                1.0,
+                -1.0
+              ],
+              "lerp_mode": "catmullrom"
+            },
+            "1.6": {
+              "post": [
+                -1.2,
+                1.2,
+                -1.0
+              ],
+              "lerp_mode": "catmullrom"
+            },
+            "2.2": {
+              "post": [
+                1.0,
+                0.6,
+                -0.5
+              ],
+              "lerp_mode": "catmullrom"
+            },
+            "3.4": {
+              "post": [
+                0.0,
+                0.0,
+                0.0
+              ],
+              "lerp_mode": "catmullrom"
+            }
+          }
+        }
+      }
+    },
+    "animation.remnants_ballistics.warden_357.reload_start": {
+      "animation_length": 0.6,
+      "bones": {
+        "gun": {
+          "rotation": {
+            "0": {
+              "post": [
+                0.0,
+                0.0,
+                0.0
+              ],
+              "lerp_mode": "catmullrom"
+            },
+            "0.35": {
+              "post": [
+                12.0,
+                10.0,
+                -26.0
+              ],
+              "lerp_mode": "catmullrom"
+            },
+            "0.6": {
+              "post": [
+                12.0,
+                10.0,
+                -26.0
+              ],
+              "lerp_mode": "catmullrom"
+            }
+          },
+          "position": {
+            "0": {
+              "post": [
+                0.0,
+                0.0,
+                0.0
+              ],
+              "lerp_mode": "catmullrom"
+            },
+            "0.35": {
+              "post": [
+                -1.0,
+                1.0,
+                -1.0
+              ],
+              "lerp_mode": "catmullrom"
+            },
+            "0.6": {
+              "post": [
+                -1.0,
+                1.0,
+                -1.0
+              ],
+              "lerp_mode": "catmullrom"
+            }
+          }
+        },
+        "action": {
+          "rotation": {
+            "0": {
+              "post": [
+                0.0,
+                0.0,
+                0.0
+              ],
+              "lerp_mode": "catmullrom"
+            },
+            "0.12": {
+              "post": [
+                0.0,
+                0.0,
+                0.0
+              ],
+              "lerp_mode": "catmullrom"
+            },
+            "0.3": {
+              "post": [
+                0.0,
+                0.0,
+                78.0
+              ],
+              "lerp_mode": "catmullrom"
+            },
+            "0.6": {
+              "post": [
+                0.0,
+                0.0,
+                78.0
+              ],
+              "lerp_mode": "catmullrom"
+            }
+          }
+        },
+        "left_arm": {
+          "position": {
+            "0": {
+              "post": [
+                0.0,
+                0.0,
+                0.0
+              ],
+              "lerp_mode": "catmullrom"
+            },
+            "0.25": {
+              "post": [
+                -0.8,
+                7.25,
+                -2.7
+              ],
+              "lerp_mode": "catmullrom"
+            },
+            "0.6": {
+              "post": [
+                -0.8,
+                5.25,
+                -1.7
+              ],
+              "lerp_mode": "catmullrom"
+            }
+          }
+        }
+      },
+      "sound_effects": {
+        "0.14": [
+          {
+            "effect": "remnants_ballistics:gun.cylinder_open"
+          }
+        ]
+      }
+    },
+    "animation.remnants_ballistics.warden_357.reload_insert": {
+      "animation_length": 0.45,
+      "bones": {
+        "gun": {
+          "rotation": {
+            "0": {
+              "post": [
+                12.0,
+                10.0,
+                -26.0
+              ],
+              "lerp_mode": "catmullrom"
+            },
+            "0.25": {
+              "post": [
+                13.5,
+                10.0,
+                -26.0
+              ],
+              "lerp_mode": "catmullrom"
+            },
+            "0.45": {
+              "post": [
+                12.0,
+                10.0,
+                -26.0
+              ],
+              "lerp_mode": "catmullrom"
+            }
+          },
+          "position": {
+            "0": {
+              "post": [
+                -1.0,
+                1.0,
+                -1.0
+              ],
+              "lerp_mode": "catmullrom"
+            },
+            "0.45": {
+              "post": [
+                -1.0,
+                1.0,
+                -1.0
+              ],
+              "lerp_mode": "catmullrom"
+            }
+          }
+        },
+        "action": {
+          "rotation": {
+            "0": {
+              "post": [
+                0.0,
+                0.0,
+                78.0
+              ],
+              "lerp_mode": "catmullrom"
+            },
+            "0.45": {
+              "post": [
+                0.0,
+                0.0,
+                78.0
+              ],
+              "lerp_mode": "catmullrom"
+            }
+          }
+        },
+        "left_arm": {
+          "position": {
+            "0": {
+              "post": [
+                -0.8,
+                5.25,
+                -1.7
+              ],
+              "lerp_mode": "catmullrom"
+            },
+            "0.15": {
+              "post": [
+                -0.8,
+                7.25,
+                -0.2
+              ],
+              "lerp_mode": "catmullrom"
+            },
+            "0.25": {
+              "post": [
+                -0.8,
+                7.25,
+                -1.5
+              ],
+              "lerp_mode": "catmullrom"
+            },
+            "0.45": {
+              "post": [
+                -0.8,
+                5.25,
+                -1.7
+              ],
+              "lerp_mode": "catmullrom"
+            }
+          }
+        }
+      },
+      "sound_effects": {
+        "0.24": [
+          {
+            "effect": "remnants_ballistics:gun.shell_insert"
+          }
+        ]
+      }
+    },
+    "animation.remnants_ballistics.warden_357.reload_end": {
+      "animation_length": 0.6,
+      "bones": {
+        "gun": {
+          "rotation": {
+            "0": {
+              "post": [
+                12.0,
+                10.0,
+                -26.0
+              ],
+              "lerp_mode": "catmullrom"
+            },
+            "0.2": {
+              "post": [
+                8.0,
+                10.0,
+                -20.0
+              ],
+              "lerp_mode": "catmullrom"
+            },
+            "0.6": {
+              "post": [
+                0.0,
+                0.0,
+                0.0
+              ],
+              "lerp_mode": "catmullrom"
+            }
+          },
+          "position": {
+            "0": {
+              "post": [
+                -1.0,
+                1.0,
+                -1.0
+              ],
+              "lerp_mode": "catmullrom"
+            },
+            "0.6": {
+              "post": [
+                0.0,
+                0.0,
+                0.0
+              ],
+              "lerp_mode": "catmullrom"
+            }
+          }
+        },
+        "action": {
+          "rotation": {
+            "0": [
+              0.0,
+              0.0,
+              78.0
+            ],
+            "0.16": [
+              0.0,
+              0.0,
+              0.0
+            ]
+          }
+        },
+        "left_arm": {
+          "position": {
+            "0": {
+              "post": [
+                -0.8,
+                5.25,
+                -1.7
+              ],
+              "lerp_mode": "catmullrom"
+            },
+            "0.12": {
+              "post": [
+                -0.8,
+                7.25,
+                -2.7
+              ],
+              "lerp_mode": "catmullrom"
+            },
+            "0.18": {
+              "post": [
+                0.7,
+                7.25,
+                -2.7
+              ],
+              "lerp_mode": "catmullrom"
+            },
+            "0.5": {
+              "post": [
+                0.0,
+                0.0,
+                0.0
+              ],
+              "lerp_mode": "catmullrom"
+            }
+          }
+        }
+      },
+      "sound_effects": {
+        "0.14": [
+          {
+            "effect": "remnants_ballistics:gun.cylinder_close"
+          }
+        ]
+      }
+    },
+    "animation.remnants_ballistics.warden_357.reload": {
+      "animation_length": 1.65,
+      "bones": {
+        "gun": {
+          "rotation": {
+            "0": {
+              "post": [
+                0.0,
+                0.0,
+                0.0
+              ],
+              "lerp_mode": "catmullrom"
+            },
+            "0.35": {
+              "post": [
+                12.0,
+                10.0,
+                -26.0
+              ],
+              "lerp_mode": "catmullrom"
+            },
+            "0.6": {
+              "post": [
+                12.0,
+                10.0,
+                -26.0
+              ],
+              "lerp_mode": "catmullrom"
+            }
+          },
+          "position": {
+            "0": {
+              "post": [
+                0.0,
+                0.0,
+                0.0
+              ],
+              "lerp_mode": "catmullrom"
+            },
+            "0.35": {
+              "post": [
+                -1.0,
+                1.0,
+                -1.0
+              ],
+              "lerp_mode": "catmullrom"
+            },
+            "0.6": {
+              "post": [
+                -1.0,
+                1.0,
+                -1.0
+              ],
+              "lerp_mode": "catmullrom"
+            }
+          }
+        },
+        "action": {
+          "rotation": {
+            "0": {
+              "post": [
+                0.0,
+                0.0,
+                0.0
+              ],
+              "lerp_mode": "catmullrom"
+            },
+            "0.12": {
+              "post": [
+                0.0,
+                0.0,
+                0.0
+              ],
+              "lerp_mode": "catmullrom"
+            },
+            "0.3": {
+              "post": [
+                0.0,
+                0.0,
+                78.0
+              ],
+              "lerp_mode": "catmullrom"
+            },
+            "0.6": {
+              "post": [
+                0.0,
+                0.0,
+                78.0
+              ],
+              "lerp_mode": "catmullrom"
+            }
+          }
+        },
+        "left_arm": {
+          "position": {
+            "0": {
+              "post": [
+                0.0,
+                0.0,
+                0.0
+              ],
+              "lerp_mode": "catmullrom"
+            },
+            "0.25": {
+              "post": [
+                -0.8,
+                7.25,
+                -2.7
+              ],
+              "lerp_mode": "catmullrom"
+            },
+            "0.6": {
+              "post": [
+                -0.8,
+                5.25,
+                -1.7
+              ],
+              "lerp_mode": "catmullrom"
+            }
+          }
+        }
+      },
+      "sound_effects": {
+        "0.14": [
+          {
+            "effect": "remnants_ballistics:gun.cylinder_open"
+          }
+        ]
+      }
+    }
+  }
+}

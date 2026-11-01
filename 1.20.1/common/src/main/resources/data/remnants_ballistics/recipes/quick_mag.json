@@ -1,0 +1,37 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "equipment",
+  "group": "remnants_ballistics_attachments",
+  "ingredients": [
+    {
+      "tag": "c:steel_ingots"
+    },
+    {
+      "tag": "c:steel_ingots"
+    },
+    {
+      "item": "remnants_ballistics:polymer_sheet"
+    },
+    {
+      "item": "remnants_ballistics:polymer_sheet"
+    },
+    {
+      "item": "minecraft:string"
+    }
+  ],
+  "result": {
+    "item": "remnants_ballistics:quick_mag"
+  },
+  "conditions": [
+    {
+      "type": "remnants_ballistics:config",
+      "option": "attachment_crafting"
+    }
+  ],
+  "fabric:load_conditions": [
+    {
+      "condition": "remnants_ballistics:config",
+      "option": "attachment_crafting"
+    }
+  ]
+}
