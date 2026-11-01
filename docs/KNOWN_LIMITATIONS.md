@@ -2,7 +2,7 @@
 
 ## Release status
 
-0.5.0 is a **pre-release**. The Minecraft-free core is covered by unit tests, the generated assets are cross-checked against the code, and the GameTests exercise the server pipeline. The first public builds should still be treated as beta, and server owners should keep backups.
+0.6.0 is a **pre-release**. The Minecraft-free core is covered by unit tests, the generated assets are cross-checked against the code, and the GameTests exercise the server pipeline. The first public builds should still be treated as beta, and server owners should keep backups.
 
 ## Platform
 

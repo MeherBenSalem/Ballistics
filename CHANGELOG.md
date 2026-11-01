@@ -2,7 +2,9 @@
 
 Full release notes live in [`patchnotes/`](patchnotes/README.md).
 
-## Unreleased — Minecraft 1.20.1
+## 0.6.0 — Minecraft 1.20.1
+
+See [patchnotes/0.6.0.md](patchnotes/0.6.0.md).
 
 - Forge and Fabric builds for **Minecraft 1.20.1** from a new `1.20.1/` workspace (Java 17; Forge 47.1+, or Fabric Loader 0.16.14+ with Fabric API and Forge Config API Port 8.0.3+), with the same weapons, attachments, stations, crafting, loot, advancements, animations, HUD and multiplayer behaviour as the other versions. Weapon state is stored in the item's NBT there, and the configs are edited as TOML files (1.20.1 has no in-game config screen).
 - Assets and data are ported to the 1.20.1 formats by `tools/assets/port_resources.py`; the common ingot tags are `c:steel_ingots` / `c:brass_ingots` (which include `forge:ingots/steel` / `forge:ingots/brass`).

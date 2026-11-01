@@ -33,7 +33,7 @@ A firearms mod for Minecraft built for multiplayer: sixteen hand-modelled weapon
 | `26.2/` | 26.2 | NeoForge 26.2.0.93+, Fabric (Loader 0.19.5+) | 25 |
 | `26.3/` | 26.3 | NeoForge 26.3.0.99+, Fabric (Loader 0.19.5+) | 25 |
 
-Each version folder is an independent Gradle project with `common`, `fabric` and `neoforge` subprojects (`forge` instead of `neoforge` on 1.20.1), like the other NightBeam mods: gameplay, rendering, assets and data live in `common`, and each loader project only adds its entry points, registration, networking and event hooks. The release version is `0.5.0` (`version=` in each workspace's `gradle.properties`; `./gradlew syncVersion -PmodVersion=x.y.z` sets all of them). See [the release notes](patchnotes/0.5.0.md).
+Each version folder is an independent Gradle project with `common`, `fabric` and `neoforge` subprojects (`forge` instead of `neoforge` on 1.20.1), like the other NightBeam mods: gameplay, rendering, assets and data live in `common`, and each loader project only adds its entry points, registration, networking and event hooks. The release version is `0.6.0` (`version=` in each workspace's `gradle.properties`; `./gradlew syncVersion -PmodVersion=x.y.z` sets all of them). See [the release notes](patchnotes/0.6.0.md).
 
 ## Requirements
 
