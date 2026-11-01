@@ -5,12 +5,11 @@ import path from "node:path";
 import { spawnSync } from "node:child_process";
 import { fileURLToPath, pathToFileURL } from "node:url";
 import test from "node:test";
-import { DEPENDENCY_PROJECTS, GAMES, LOADER_IDS, curseforgeRelations, modrinthDependencies,
+import { DEPENDENCY_PROJECTS, GAMES, LOADER_IDS, TARGETS, curseforgeRelations, modrinthDependencies,
   modrinthMetadata, parseJar, releaseType } from "./release_metadata.mjs";
 import { parseArgs, uploadPlatforms } from "./upload_platforms.mjs";
 
 const ROOT = fileURLToPath(new URL("../", import.meta.url));
-const TARGETS = GAMES.flatMap((game) => [["fabric", game], ["neoforge", game]]);
 // Mock CurseForge game version ids, distinct per game so a wrong mapping fails.
 const CF_GAME_IDS = Object.fromEntries(GAMES.map((game, i) => [game, 9000 + i]));
 const VERSION = "0.3.0";
@@ -32,11 +31,13 @@ function sourceDependencies(loader, game) {
     const source = JSON.parse(fs.readFileSync(path.join(ROOT, game, "fabric/src/main/resources/fabric.mod.json"), "utf8"));
     return Object.keys(source.depends).filter((mod) => !["fabricloader", "minecraft", "java"].includes(mod));
   }
-  const source = fs.readFileSync(path.join(ROOT, game, "neoforge/src/main/resources/META-INF/neoforge.mods.toml"), "utf8");
+  const descriptor = loader === "forge" ? "forge/src/main/resources/META-INF/mods.toml"
+    : "neoforge/src/main/resources/META-INF/neoforge.mods.toml";
+  const source = fs.readFileSync(path.join(ROOT, game, descriptor), "utf8");
   return source.split(/\[\[dependencies\./).slice(1).flatMap((block) => {
     const mod = block.match(/modId\s*=\s*"([^"]+)"/)?.[1];
     const required = /mandatory\s*=\s*true|type\s*=\s*"required"/.test(block);
-    return required && !["neoforge", "minecraft"].includes(mod) ? [mod] : [];
+    return required && ![loader, "minecraft"].includes(mod) ? [mod] : [];
   });
 }
 
@@ -70,6 +71,7 @@ test("invalid targets, mismatched versions and missing arguments fail closed", (
     assert.throws(() => parseJar(name));
   }
   assert.deepEqual(parseJar(jarName("neoforge", "26.2")).game, "26.2");
+  assert.deepEqual(parseJar(jarName("forge", "1.20.1")).loader, "forge");
   assert.throws(() => parseJar(jarName("neoforge", "1.21.1"), "0.3.1"), /does not match/);
   assert.throws(() => modrinthDependencies("neoforge", "1.22"), /Unsupported/);
   assert.throws(() => parseArgs(["node", "script", "--version"]), /Missing value/);
@@ -101,8 +103,10 @@ test("dry-run emits complete payloads without credentials or network", async (t)
   const fabric = JSON.parse(cf.find(([, name]) => name.includes("-fabric-"))[2]);
   assert.deepEqual(fabric.metadata.relations.projects.map((p) => p.slug), ["fabric-api", "forge-config-api-port"]);
   // CurseForge rejects an empty relations.projects array, so a jar without dependencies sends no relations at all.
-  const neoforge = JSON.parse(cf.find(([, name]) => name.includes("-neoforge-"))[2]);
-  assert.equal("relations" in neoforge.metadata, false);
+  for (const loader of ["neoforge", "forge"]) {
+    const preview = JSON.parse(cf.find(([, name]) => name.includes(`-${loader}-`))[2]);
+    assert.equal("relations" in preview.metadata, false);
+  }
 });
 
 test("CLI dry-run never reads local.env, jar bytes or calls fetch", (t) => {

@@ -1,5 +1,5 @@
-// Root helper for the version workspaces. Each workspace (1.21.1/, 26.2/, 26.3/) is an independent Gradle project;
-// these tasks drive it through its own wrapper and collect the release jars.
+// Root helper for the version workspaces. Each workspace (1.20.1/, 1.21.1/, 26.2/, 26.3/) is an independent Gradle
+// project; these tasks drive it through its own wrapper and collect the release jars.
 
 String wrapperCmd(String rootDirName) {
     File root = file(rootDirName)
@@ -13,23 +13,31 @@ String pythonCmd() {
     return System.getProperty('os.name').toLowerCase().contains('win') ? 'python' : 'python3'
 }
 
-// Minecraft version workspaces. Each has its own wrapper and toolchain (1.21.1: Java 21, 26.x: Java 25).
-def workspaces = ['1.21.1', '26.2', '26.3']
+// Minecraft version workspaces and their loader projects. Each has its own wrapper and toolchain (1.20.1: Java 17,
+// 1.21.1: Java 21, 26.x: Java 25). 1.20.1 ships Forge instead of NeoForge.
+def loaders = [
+        '1.20.1': ['forge', 'fabric'],
+        '1.21.1': ['neoforge', 'fabric'],
+        '26.2'  : ['neoforge', 'fabric'],
+        '26.3'  : ['neoforge', 'fabric'],
+]
+def workspaces = loaders.keySet() as List
+def loaderNames = [forge: 'Forge', neoforge: 'NeoForge', fabric: 'Fabric']
 String taskSuffix(String game) { game.replace('.', '') }
 
 workspaces.each { game ->
     tasks.register("build${taskSuffix(game)}", Exec) {
         group = 'build'
-        description = "Build the ${game} Fabric and NeoForge jars and run the unit tests."
+        description = "Build the ${game} ${loaders[game].collect { loaderNames[it] }.join(' and ')} jars and run the unit tests."
         workingDir = file(game)
         commandLine wrapperCmd(game), 'build'
     }
 
     tasks.register("gameTest${taskSuffix(game)}", Exec) {
         group = 'verification'
-        description = "Run the in-game GameTests on headless ${game} NeoForge and Fabric GameTest servers."
+        description = "Run the in-game GameTests on headless ${game} ${loaders[game].collect { loaderNames[it] }.join(' and ')} GameTest servers."
         workingDir = file(game)
-        commandLine wrapperCmd(game), ':neoforge:runGameTestServer', ':fabric:runGameTestServer'
+        commandLine([wrapperCmd(game)] + loaders[game].collect { ":${it}:runGameTestServer" })
     }
 
     tasks.register("clean${taskSuffix(game)}", Exec) {
@@ -71,7 +79,7 @@ tasks.register('dist') {
     doLast {
         def outDir = file('releases')
         outDir.mkdirs()
-        workspaces.collectMany { ["${it}/fabric", "${it}/neoforge"] }.each { modDir ->
+        workspaces.collectMany { game -> loaders[game].collect { "${game}/${it}" } }.each { modDir ->
             def libsDir = file("${modDir}/build/libs")
             if (libsDir.exists()) {
                 fileTree(libsDir).matching {
