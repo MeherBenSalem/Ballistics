@@ -16,7 +16,13 @@ sourceSets {
 // Forge 1.20.1 runs on SRG names: the jar task's output is reobfuscated (build/libs), the Mojang-named jar goes to
 // build/devlibs.
 legacyForge {
-    version = "${minecraft_version}-${forge_version}"
+    enable {
+        forgeVersion = "${minecraft_version}-${forge_version}"
+        // Always recompile Minecraft (ModDevGradle skips it when CI=true). The binary jar names every method parameter
+        // "o" in its local variable tables, and with the Mixin annotation processor on the classpath javac reads those
+        // names: anonymous subclasses (the menus' Slot overrides) then get constructors with duplicate parameters.
+        disableRecompilation = false
+    }
     validateAccessTransformers = true
     accessTransformers.from(project(':common').file('src/main/resources/META-INF/accesstransformer.cfg').absolutePath)
 
