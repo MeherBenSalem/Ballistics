@@ -5,7 +5,7 @@ import path from "node:path";
 import { spawnSync } from "node:child_process";
 import { fileURLToPath, pathToFileURL } from "node:url";
 import test from "node:test";
-import { DEPENDENCY_PROJECTS, GAMES, LOADER_IDS, TARGETS, curseforgeRelations, modrinthDependencies,
+import { CURSEFORGE_ID, DEPENDENCY_PROJECTS, GAMES, LOADER_IDS, MODRINTH_ID, TARGETS, curseforgeRelations, modrinthDependencies,
   modrinthMetadata, parseJar, releaseType } from "./release_metadata.mjs";
 import { parseArgs, uploadPlatforms } from "./upload_platforms.mjs";
 
@@ -205,12 +205,21 @@ test("CurseForge-only needs no Modrinth token and retains legacy lookup fallback
   assert.equal(records.filter((r) => r.platform === "curseforge").length, TARGETS.length);
 });
 
-test("live mode without project ids, credentials or after an API rejection stops publication", async (t) => {
+test("CurseForge uploads without a Core API key use the upload API's version list", async (t) => {
+  const records = [];
+  const { CURSEFORGE_API_KEY, ...env } = tokens;
+  await uploadPlatforms({ version: VERSION, jarDir: fixture(t), curseforgeOnly: true }, {
+    env, fetchImpl: mockTransport(records, { modernLookupFails: true }), log: silent,
+  });
+  assert.equal(records.filter((r) => r.platform === "curseforge").length, TARGETS.length);
+});
+
+test("live mode without credentials or after an API rejection stops publication", async (t) => {
   const jarDir = fixture(t);
   let called = false;
-  await assert.rejects(uploadPlatforms({ version: VERSION, jarDir }, {
-    env: { MODRINTH_TOKEN: "x", CURSEFORGE_TOKEN: "x", CURSEFORGE_API_KEY: "x" }, fetchImpl: () => { called = true; }, log: silent,
-  }), /Set MODRINTH_ID and CURSEFORGE_ID/);
+  // The project ids default to the published projects; the environment can override them.
+  assert.match(MODRINTH_ID, /^[A-Za-z0-9]{8}$/);
+  assert.match(CURSEFORGE_ID, /^\d+$/);
   await assert.rejects(uploadPlatforms({ version: VERSION, jarDir }, {
     env: ids, fetchImpl: () => { called = true; }, log: silent,
   }), /Set MODRINTH_TOKEN/);

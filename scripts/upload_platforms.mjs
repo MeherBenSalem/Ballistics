@@ -109,10 +109,9 @@ export async function uploadPlatforms(args, {
     throw new Error("Set MODRINTH_ID and CURSEFORGE_ID (environment or release_metadata.mjs)");
   }
   const { MODRINTH_TOKEN, CURSEFORGE_TOKEN, CURSEFORGE_API_KEY } = env;
-  if ((!args.curseforgeOnly && !MODRINTH_TOKEN) || !CURSEFORGE_TOKEN || !CURSEFORGE_API_KEY) {
-    throw new Error(args.curseforgeOnly
-      ? "Set CURSEFORGE_TOKEN, CURSEFORGE_API_KEY"
-      : "Set MODRINTH_TOKEN, CURSEFORGE_TOKEN, CURSEFORGE_API_KEY");
+  // CURSEFORGE_API_KEY is optional: without it, game versions are resolved from the upload API's version list only.
+  if ((!args.curseforgeOnly && !MODRINTH_TOKEN) || !CURSEFORGE_TOKEN) {
+    throw new Error(args.curseforgeOnly ? "Set CURSEFORGE_TOKEN" : "Set MODRINTH_TOKEN, CURSEFORGE_TOKEN");
   }
 
   log(`Uploading ${MOD_TITLE} ${version} (${jars.length} jars) → Modrinth ${modrinthId}, CF ${curseforgeId}`);
@@ -153,7 +152,7 @@ export async function uploadPlatforms(args, {
   const serverId = findLegacy("Server");
 
   const resolveGameId = async (game) => {
-    const verRes = await fetchImpl(
+    const verRes = !CURSEFORGE_API_KEY ? { ok: false } : await fetchImpl(
       `https://api.curseforge.com/v1/minecraft/version/${encodeURIComponent(game)}`,
       { headers: { "x-api-key": CURSEFORGE_API_KEY, Accept: "application/json" } },
     );

@@ -3,9 +3,9 @@
 # Repo secrets:
 #   MODRINTH_TOKEN
 #   CURSEFORGE_TOKEN
-#   CURSEFORGE_API_KEY
+#   CURSEFORGE_API_KEY (optional: CurseForge Core API key for game version lookups)
 #
-# Repo variables:
+# Repo variables (optional; override the project ids in scripts/release_metadata.mjs):
 #   MODRINTH_ID
 #   CURSEFORGE_ID
 #
@@ -127,5 +127,4 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          test -n "${MODRINTH_ID:-}" && test -n "${CURSEFORGE_ID:-}"
           node scripts/upload_platforms.mjs --version "$VERSION" --jar-dir releases --require-all-targets --changelog-file "patchnotes/$VERSION.md"
