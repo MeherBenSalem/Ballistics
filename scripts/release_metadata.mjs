@@ -2,8 +2,8 @@ import path from "node:path";
 
 // Store project IDs. Fill these in once the Modrinth and CurseForge projects exist, or provide MODRINTH_ID /
 // CURSEFORGE_ID in the environment (the publish workflow passes the repository variables of the same names).
-export const MODRINTH_ID = "";
-export const CURSEFORGE_ID = "";
+export const MODRINTH_ID = "17zx2MIo";
+export const CURSEFORGE_ID = "1759493";
 export const MOD_ID = "remnants_ballistics";
 export const MOD_TITLE = "Remnants: Ballistics";
 // CurseForge "modloader" game-version ids.
