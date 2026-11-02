@@ -3,7 +3,7 @@
 # Repo secrets:
 #   MODRINTH_TOKEN
 #   CURSEFORGE_TOKEN
-#   CURSEFORGE_API_KEY
+#   CURSEFORGE_API_KEY (optional: CurseForge Core API key for game version lookups)
 #
 # Repo variables (optional; override the project ids in scripts/release_metadata.mjs):
 #   MODRINTH_ID

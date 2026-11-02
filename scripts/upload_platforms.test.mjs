@@ -205,6 +205,15 @@ test("CurseForge-only needs no Modrinth token and retains legacy lookup fallback
   assert.equal(records.filter((r) => r.platform === "curseforge").length, TARGETS.length);
 });
 
+test("CurseForge uploads without a Core API key use the upload API's version list", async (t) => {
+  const records = [];
+  const { CURSEFORGE_API_KEY, ...env } = tokens;
+  await uploadPlatforms({ version: VERSION, jarDir: fixture(t), curseforgeOnly: true }, {
+    env, fetchImpl: mockTransport(records, { modernLookupFails: true }), log: silent,
+  });
+  assert.equal(records.filter((r) => r.platform === "curseforge").length, TARGETS.length);
+});
+
 test("live mode without credentials or after an API rejection stops publication", async (t) => {
   const jarDir = fixture(t);
   let called = false;
