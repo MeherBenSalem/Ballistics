@@ -1,5 +1,7 @@
 ![Remnants: Ballistics](https://raw.githubusercontent.com/MeherBenSalem/Ballistics/main/marketing/images/banner.png)
 
+**[Discord](https://discord.gg/TJc3CxR4jK) · [The modpack](https://www.curseforge.com/minecraft/modpacks/remnants-ashen-legacy) · [Support NightBeam](https://nightbeam.dev/support) · [NightBeam Pro](https://nightbeam.dev/memberships) · [All projects](https://nightbeam.dev/projects)**
+
 ## Firearms built for multiplayer
 
 **Remnants: Ballistics** adds **sixteen hand-built firearms** to Minecraft, from a service pistol to a capacitor-driven railgun. The ballistics engine is **server-authoritative**: your client predicts every shot so firing feels instant, and the server re-checks ammunition, timing, spread and hits with lag-compensated hitboxes before anything is decided. Fit attachments at a **Gunsmith Workbench**, press your own ammunition, and hunt blueprints through vanilla structures.
@@ -51,7 +53,7 @@
 
 ![Build it your way](https://raw.githubusercontent.com/MeherBenSalem/Ballistics/main/marketing/images/card-gunsmith.png)
 
-Put a weapon in the **Gunsmith Workbench** and fill its six slots: optic, muzzle, underbarrel, magazine, stock and finish. A rotating 3D preview and a stat panel show every change before you take the weapon out. Attachments live on the weapon itself, so they show in first and third person, on the ground and in item frames.
+Put a weapon in the **Gunsmith Workbench** and fill its six slots: optic, muzzle, underbarrel, magazine, stock and finish. A rotating 3D preview and a stat panel show every change before you take the weapon out. Attachments live on the weapon itself, so they show from your own view and in third person, on the ground and in item frames.
 
 ![23 attachments, real trade-offs](https://raw.githubusercontent.com/MeherBenSalem/Ballistics/main/marketing/images/card-attachments.png)
 
@@ -71,10 +73,10 @@ Each attachment trades something away. A suppressor is 75% quieter and hides you
 
 1. **Materials:** smelt Iron into **Steel**, alloy Copper and Gold into **Brass**, and craft casings, hulls, polymer, **Gun Parts** and **Precision Parts**.
 2. **Stations:** build a **Gunsmith Workbench** and an **Ammunition Press**. The press turns casings, propellant and projectiles into all nine ammunition types.
-3. **Tiers 1–2** need only materials. **Tier 3** needs an **Advanced Weapon Blueprint**; **tiers 4–5** need a **Prototype Weapon Blueprint**, and the top weapons need **Remnant Alloy** and **Void Cores**. Blueprints come back after crafting and can be copied for friends.
+3. **Tiers 1–2** need just materials. **Tier 3** needs an **Advanced Weapon Blueprint**; **tiers 4–5** need a **Prototype Weapon Blueprint**, and the top weapons need **Remnant Alloy** and **Void Cores**. Blueprints come back after crafting and can be copied for friends.
 4. **Loot:** weapons, attachments, blueprints and themed finishes turn up in 25 vanilla loot tables, from village weaponsmiths and pillager outposts to bastions, ancient cities and end cities. Armed pillagers, vindicators and piglin brutes drop ammunition when you take them down.
 
-Twelve advancements track the way, from forging your first steel to a 100-block kill.
+Twelve advancements track the way, from forging steel to a 100-block kill.
 
 ![Multiplayer](https://raw.githubusercontent.com/MeherBenSalem/Ballistics/main/marketing/images/header-multiplayer.png)
 
@@ -120,7 +122,7 @@ Attack fires, Use aims (hold, or toggle in the config), `R` reloads, `V` switche
 Yes. Every weapon, attachment and ammunition type is in the creative tabs. Server owners can also disable whole recipe groups and rely on loot.
 
 **Do bullets break my builds?**
-Only glass and panes break, and only when `breakGlass` is on (the default). Non-player shooters respect the `mobGriefing` game rule.
+Glass and panes are all that break, and just when `breakGlass` is on (the default). Non-player shooters respect the `mobGriefing` game rule.
 
 **Will it work with my shader pack?**
 It is untested with Iris and Oculus. Muzzle flashes use standard additive rendering, which most packs support.
@@ -154,3 +156,15 @@ Use a Weapon Repair Kit at the Gunsmith Workbench, or Gun Parts in an anvil.
 ---
 
 The images on this page are renders of the mod's own models, textures and GUI art made with the project's offline renderer, not in-game screenshots. Remnants: Ballistics is licensed under Apache-2.0. The Barlow Condensed and Inter fonts used in this artwork are licensed under the SIL Open Font License 1.1. All weapons are fictional designs.
+
+---
+
+### More from NightBeam Studio
+
+- **[Remnants: Ashen Legacy](https://www.curseforge.com/minecraft/modpacks/remnants-ashen-legacy)**: the story-driven soulslike RPG modpack built on NightBeam's mods
+- **[Premium server plugins](https://nightbeam.dev/store)**: anti-cheat, ranked PvP, SMP setups and more on BuiltByBit
+- **[NightBeam Pro](https://nightbeam.dev/memberships)**: the model library and NightBeam Forge credits, from $5 a month
+- **[Discord](https://discord.gg/TJc3CxR4jK)**: support, bug reports, suggestions and early looks
+- **[Support NightBeam](https://nightbeam.dev/support)**: help keep every mod free
+
+**Follow:** [YouTube](https://www.youtube.com/@nightbeamstudio) · [Instagram](https://www.instagram.com/nightbeamstudio/) · [X](https://x.com/NightBeamLLC) · [Facebook](https://www.facebook.com/profile.php?id=61574823331471) · [Source and issues](https://github.com/MeherBenSalem/Ballistics)
