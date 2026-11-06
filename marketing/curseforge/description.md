@@ -1,6 +1,6 @@
 ![Remnants: Ballistics](https://raw.githubusercontent.com/MeherBenSalem/Ballistics/main/marketing/images/banner.png)
 
-**[Discord](https://discord.gg/TJc3CxR4jK) · [Source and issues](https://github.com/MeherBenSalem/Ballistics)**
+**[Docs](https://nightbeam.dev/docs/remnants-ballistics) · [Discord](https://discord.gg/TJc3CxR4jK) · [Source and issues](https://github.com/MeherBenSalem/Ballistics)**
 
 ## Firearms built for multiplayer
 
