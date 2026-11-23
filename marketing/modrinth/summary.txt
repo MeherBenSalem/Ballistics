@@ -1,0 +1,1 @@
+Sixteen detailed firearms with server-side bullet physics: aim down real sights, fit attachments at a Gunsmith Workbench and press your own ammunition.

@@ -21,6 +21,10 @@ MOD_ID = 'remnants_ballistics'
 LOADERS = {'1.20.1': ('forge', 'fabric'), '1.21.1': ('neoforge', 'fabric'), '26.2': ('neoforge', 'fabric'),
            '26.3': ('neoforge', 'fabric')}
 GAMES = list(LOADERS)
+# Minecraft versionRange in mods.toml / neoforge.mods.toml: inside each game's own line (NightBeam convention; keep in
+# sync with minecraft_version_range in <game>/gradle.properties and scripts/check_targets.py). Fabric pins the exact game.
+MINECRAFT_RANGES = {'1.20.1': '[1.20.1, 1.20.2)', '1.21.1': '[1.21.1, 1.21.2)', '26.2': '[26.2, 26.3)',
+                    '26.3': '[26.3, 26.4)'}
 # Resource and data pack format each game loads; pack.mcmeta must accept both.
 PACK_FORMATS = {'1.20.1': (15, 15), '1.21.1': (34, 48), '26.2': (88, 107), '26.3': (97, 121)}
 # Runtime requirements besides the loader, Minecraft and Java (keep in sync with release_metadata.mjs).
@@ -56,7 +60,7 @@ def verify_neoforge(z, names, game, version):
     deps = descriptor['dependencies'][MOD_ID]
     required = {d['modId'] for d in deps if d.get('mandatory') or d.get('type') == 'required'}
     assert required == {'neoforge', 'minecraft'} | REQUIRED['neoforge'], f'unexpected required dependencies {required}'
-    assert next(d['versionRange'] for d in deps if d['modId'] == 'minecraft') == f'[{game}]'
+    assert next(d['versionRange'] for d in deps if d['modId'] == 'minecraft') == MINECRAFT_RANGES[game]
     assert 'fabric.mod.json' not in names, 'Fabric metadata in the NeoForge jar'
 
 
@@ -68,7 +72,7 @@ def verify_forge(z, names, game, version):
     deps = descriptor['dependencies'][MOD_ID]
     required = {d['modId'] for d in deps if d.get('mandatory') or d.get('type') == 'required'}
     assert required == {'forge', 'minecraft'} | REQUIRED['forge'], f'unexpected required dependencies {required}'
-    assert next(d['versionRange'] for d in deps if d['modId'] == 'minecraft') == f'[{game}]'
+    assert next(d['versionRange'] for d in deps if d['modId'] == 'minecraft') == MINECRAFT_RANGES[game]
     assert 'META-INF/accesstransformer.cfg' in names
     # Forge runs on SRG names: the shipped jar must be the reobfuscated one (not build/devlibs), and every mixin config
     # listed in the manifest needs its refmap.

@@ -1,29 +1,36 @@
-name: Publisher checks
+# CI for Remnants: Ballistics (NightBeam convention; Bosses calls this workflow publisher-checks.yml, the name it had
+# here before). On every push to main that touches code, metadata or scripts, and by hand:
+#   validate  publisher script syntax and tests (the same-day guard, release metadata, a mocked upload) and
+#             scripts/check_targets.py workspaces: exactly the 8 targets, one shared version= and Minecraft ranges
+#             inside each line;
+#   assets    generated assets, ported resources and reference docs are up to date;
+#   build     each workspace (1.20.1 Fabric + Forge; 1.21.1, 26.2, 26.3 Fabric + NeoForge): both loader jars, unit
+#             tests, GameTests on headless servers, a client smoke test and the packaged-jar audit;
+#   jars      exactly the 8 convention jars, and a token-free dry run of scripts/upload_platforms.mjs on them;
+#   dev-build a GitHub prerelease named dev-build with those jars, for testing only.
+# It never uploads anything to Modrinth or CurseForge; that is publish.yml.
+
+name: CI
 
 on:
   push:
     branches: [main]
     paths:
-      - "scripts/**"
-      - "tools/**"
-      - "docs/**"
       - "1.20.1/**"
       - "1.21.1/**"
       - "26.2/**"
       - "26.3/**"
-      - ".github/workflows/publish.yml"
-      - ".github/workflows/publisher-checks.yml"
-  pull_request:
-    paths:
       - "scripts/**"
       - "tools/**"
       - "docs/**"
-      - "1.20.1/**"
-      - "1.21.1/**"
-      - "26.2/**"
-      - "26.3/**"
-      - ".github/workflows/publish.yml"
-      - ".github/workflows/publisher-checks.yml"
+      - "build.gradle"
+      - "settings.gradle"
+      - "gradle.properties"
+      - "gradle/**"
+      - "gradlew"
+      - "gradlew.bat"
+      - ".github/workflows/**"
+  workflow_dispatch:
 
 permissions:
   contents: read
@@ -41,11 +48,11 @@ jobs:
           node-version: ${{ matrix.node }}
       - name: Check publisher syntax
         run: |
-          node --check scripts/release_metadata.mjs
-          node --check scripts/upload_platforms.mjs
-          node --check scripts/upload_platforms.test.mjs
-      - name: Test metadata, offline preview and mocked upload transport
+          for f in scripts/*.mjs; do node --check "$f"; done
+      - name: Test the same-day guard, metadata, offline preview and mocked upload transport
         run: node --test scripts/*.test.mjs
+      - name: Check the 8 targets, one version and metadata ranges
+        run: python3 scripts/check_targets.py workspaces
 
   assets:
     runs-on: ubuntu-latest
@@ -232,6 +239,34 @@ jobs:
             releases/manifest-*.json
             smoketest/*.jpg
             smoketest/result-*.md
+
+  # The 8 jars the workspaces built and verified: exactly one per supported loader + Minecraft pair, and readable by
+  # the upload script (it takes loader and Minecraft version from each jar name, as the Publish upload step does).
+  jars:
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      # Each verified-<game> artifact holds that workspace's two jars at its root (upload-artifact drops releases/).
+      - uses: actions/download-artifact@v4
+        with:
+          pattern: verified-*
+          path: ci-jars
+          merge-multiple: true
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+      - name: Check the 8 jars
+        shell: bash
+        run: |
+          set -euo pipefail
+          version="$(python3 scripts/check_targets.py version)"
+          dir=ci-jars
+          [ -d ci-jars/releases ] && dir=ci-jars/releases
+          python3 scripts/check_targets.py jars --version "$version" --dir "$dir"
+          # Without tokens this dry run makes no network call.
+          node scripts/upload_platforms.mjs --version "$version" --jar-dir "$dir" --require-all-targets \
+            --changelog-file "patchnotes/$version.md" --dry-run > /dev/null
 
   # One prerelease with the jars of every workspace that built and verified; the notes list each one's test results.
   dev-build:

@@ -1,46 +1,81 @@
 # Gradle
 .gradle/
-**/build/
+build/
 !gradle/wrapper/gradle-wrapper.jar
-!1.21.1/gradle/wrapper/gradle-wrapper.jar
 
-# IDE
-.idea/
-*.iml
-*.iws
-*.ipr
-out/
-.vscode/
-.eclipse/
+# Eclipse
+.metadata/
 .settings/
 .classpath
 .project
-.factorypath
 bin/
-local.properties
 
-# Secrets / local env
-.env
-.env.*
+# IntelliJ IDEA
+.idea/
+*.iws
+*.iml
+*.ipr
+out/
 
-# Minecraft run directories
+# VS Code / Cursor
+.vscode/
+*.code-workspace
+.cursor/
+
+# MacOS
+.DS_Store
+
+# Windows
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+
+# Logs
+logs/
+*.log
+build_log.txt
+build_output.txt
+dep_warning.txt
+debug.log
+
+# Run folders
 run/
 runs/
-**/src/generated/**/.cache/
+/test/
 
-# Build artifacts
-releases/
-*.log
-*.log.gz
+# Archives / built artifacts (do not commit jars, except the release jars the publish workflow uploads)
+*.jar
+!releases/*.jar
+*.war
+*.zip
+*.tar
+*.tar.gz
+dist/
 
-# Python / Node tooling
+# Keep the Gradle wrapper jar
+!**/gradle/wrapper/gradle-wrapper.jar
+
+# Env / secrets
+.env
+.env.*
+!.env.example
+
+# Temp
+input.txt
+output.txt
+
+# Python
 __pycache__/
+
+# This repo
+.eclipse/
+.factorypath
+local.properties
+*.log.gz
 *.pyc
 node_modules/
-
-# OS
-.DS_Store
-Thumbs.db
-
-build/
-target/
+**/src/generated/**/.cache/
+# The jar audit's manifests (scripts/verify_release_jars.py --output) next to the collected jars
+releases/manifest*.json
+hs_err_pid*
+replay_pid*.log

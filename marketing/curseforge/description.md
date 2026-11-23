@@ -6,7 +6,7 @@
 
 **Remnants: Ballistics** adds **sixteen hand-built firearms** to Minecraft, from a service pistol to a capacitor-driven railgun. The ballistics engine is **server-authoritative**: your client predicts every shot so firing feels instant, and the server re-checks ammunition, timing, spread and hits with lag-compensated hitboxes before anything is decided. Fit attachments at a **Gunsmith Workbench**, press your own ammunition, and hunt blueprints through vanilla structures.
 
-**0.3.0 "First Shots"** is a pre-release for **NeoForge on Minecraft 1.21.1**.
+Runs on **Fabric** and **Forge** for **Minecraft 1.20.1**, and on **Fabric** and **NeoForge** for **Minecraft 1.21.1, 26.2 and 26.3**.
 
 ![divider](https://raw.githubusercontent.com/MeherBenSalem/Ballistics/main/marketing/images/divider.png)
 
@@ -107,13 +107,25 @@ Three config files, all editable in game from the mod list:
 
 | Minecraft | Loader | Java | Also install |
 | --- | --- | --- | --- |
+| 1.20.1 | Forge 47.1+ | 17+ | Nothing |
+| 1.20.1 | Fabric Loader 0.16.14+ | 17+ | Fabric API, Forge Config API Port 8.0.3+ |
 | 1.21.1 | NeoForge 21.1.264+ | 21+ | Nothing |
+| 1.21.1 | Fabric Loader 0.16.14+ | 21+ | Fabric API, Forge Config API Port 21.1.6+ |
+| 26.2 | NeoForge 26.2.0.93+ | 25+ | Nothing |
+| 26.2 | Fabric Loader 0.19.5+ | 25+ | Fabric API, Forge Config API Port 26.2.1+ |
+| 26.3 | NeoForge 26.3.0.99+ | 25+ | Nothing |
+| 26.3 | Fabric Loader 0.19.5+ | 25+ | Fabric API, Forge Config API Port 26.3.1+ |
 
-- Install Remnants: Ballistics on **both the server and every client**, at the same version.
-- 0.3.0 is a **pre-release**. Back up your worlds and report anything odd on GitHub.
+- Download the file for **your Minecraft version and loader**. Its name says both: `remnants_ballistics-<loader>-<minecraft>-<version>.jar`.
+- Install Remnants: Ballistics on **both the server and every client**, at the same version and with the same loader.
+- [Mod Menu](https://modrinth.com/mod/modmenu) is optional on Fabric and opens the config screen (1.21.1 and 26.x; on 1.20.1 the configs are edited as TOML files).
+- Remnants: Ballistics is still in **beta** (0.x). Back up your worlds and report anything odd on GitHub.
 - Remnants: Ballistics is a mod. It does not work as a Paper, Spigot or Folia plugin.
 
 ![Questions](https://raw.githubusercontent.com/MeherBenSalem/Ballistics/main/marketing/images/header-faq.png)
+
+**Which Minecraft versions and loaders are supported?**
+Minecraft 1.20.1 on Fabric and Forge, and Minecraft 1.21.1, 26.2 and 26.3 on Fabric and NeoForge. Other versions and loaders are not supported.
 
 **What are the controls?**
 Attack fires, Use aims (hold, or toggle in the config), `R` reloads, `V` switches fire mode and `I` inspects. Hold fire to charge the railgun. Reload, fire mode and inspect can be rebound under Controls.

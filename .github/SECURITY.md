@@ -2,10 +2,14 @@
 
 ## Supported versions
 
-| Version | Supported |
-| --- | --- |
-| 0.3.x | Yes |
-| < 0.3 | No |
+Security fixes are applied to the latest release of Remnants: Ballistics for the supported Minecraft targets:
+
+- Minecraft 1.20.1 (Fabric, Forge)
+- Minecraft 1.21.1 (Fabric, NeoForge)
+- Minecraft 26.2 (Fabric, NeoForge)
+- Minecraft 26.3 (Fabric, NeoForge)
+
+Older releases and other Minecraft versions or loaders do not receive fixes.
 
 ## Reporting a vulnerability
 

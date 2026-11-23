@@ -6,11 +6,16 @@ const path = require('path');
 const fs = require('fs');
 const { chromium } = require('playwright');
 
+// Printed on the banner. Keep in sync with the compatibility table and the FAQ in curseforge/description.md
+// (NightBeam convention: 1.20.1 Fabric + Forge; 1.21.1, 26.2 and 26.3 Fabric + NeoForge).
+const VERSIONS = ['1.20.1', '1.21.1', '26.2', '26.3'];
+const LOADERS = ['Fabric', 'Forge', 'NeoForge'];
+
 const root = path.resolve(__dirname, '..', '..');
 const out = path.join(root, 'marketing', 'images');
 const renders = path.join(__dirname, 'renders');
 const fonts = path.join(__dirname, 'fonts');
-const textures = path.join(root, '1.21.1', 'src', 'main', 'resources', 'assets', 'remnants_ballistics', 'textures');
+const textures = path.join(root, '1.21.1', 'common', 'src', 'main', 'resources', 'assets', 'remnants_ballistics', 'textures');
 const url = (file) => 'file://' + file;
 const render = (name) => url(path.join(renders, name));
 const icon = (name) => url(path.join(textures, 'item', 'icon', name + '.png'));
@@ -135,12 +140,14 @@ const assets = {
     <div class="grid"></div><div class="vignette"></div>
     <img src="${render('build-arx_16.png')}" style="position:absolute;right:30px;top:60px;width:900px;filter:drop-shadow(0 30px 40px rgba(0,0,0,.7))">
     <img src="${render('hero-ghostline_m24.png')}" style="position:absolute;right:430px;bottom:24px;width:560px;opacity:.96;filter:drop-shadow(0 20px 30px rgba(0,0,0,.7))">
-    <div style="position:absolute;left:90px;top:120px">
-      <div class="kicker">NeoForge · Minecraft 1.21.1</div>
+    <div style="position:absolute;left:90px;top:96px">
+      <div class="kicker">${LOADERS.join(' · ')}</div>
       <div class="display" style="font-size:150px;line-height:.9;margin-top:22px">Remnants</div>
       <div class="display accent" style="font-size:96px;line-height:.95;letter-spacing:.12em">Ballistics</div>
       <div style="font-size:27px;color:var(--text);margin-top:26px;max-width:640px;line-height:1.35">
         16 weapons · gunsmithing · server-authoritative ballistics built for multiplayer</div>
+      <div class="display" style="font-size:30px;font-weight:600;color:var(--dim);letter-spacing:.08em;margin-top:30px">
+        Minecraft ${VERSIONS.join(' · ')}</div>
     </div>`),
 
   icon: () => page(512, 512, `

@@ -26,14 +26,23 @@ A firearms mod for Minecraft built for multiplayer: sixteen hand-modelled weapon
 
 ## Supported versions
 
-| Workspace | Minecraft | Loaders | Java |
-| --- | --- | --- | --- |
-| `1.20.1/` | 1.20.1 | Forge 47.1+ (built against 47.4.28), Fabric (Loader 0.16.14+) | 17 |
-| `1.21.1/` | 1.21.1 | NeoForge 21.1.264+, Fabric (Loader 0.16.14+) | 21 |
-| `26.2/` | 26.2 | NeoForge 26.2.0.93+, Fabric (Loader 0.19.5+) | 25 |
-| `26.3/` | 26.3 | NeoForge 26.3.0.99+, Fabric (Loader 0.19.5+) | 25 |
+These are the only supported targets (the NightBeam convention): 8 jars per release, all with the same version.
 
-Each version folder is an independent Gradle project with `common`, `fabric` and `neoforge` subprojects (`forge` instead of `neoforge` on 1.20.1), like the other NightBeam mods: gameplay, rendering, assets and data live in `common`, and each loader project only adds its entry points, registration, networking and event hooks. The release version is `0.6.0` (`version=` in each workspace's `gradle.properties`; `./gradlew syncVersion -PmodVersion=x.y.z` sets all of them). See [the release notes](patchnotes/0.6.0.md).
+| Minecraft | Loaders | Java | Folder |
+| --- | --- | --- | --- |
+| 1.20.1 | Forge, Fabric | 17 bytecode (build on 21) | `1.20.1/{common,forge,fabric}` |
+| 1.21.1 | NeoForge, Fabric | 21 | `1.21.1/{common,neoforge,fabric}` |
+| 26.2 | NeoForge, Fabric | 25 | `26.2/{common,neoforge,fabric}` |
+| 26.3 | NeoForge, Fabric | 25 | `26.3/{common,neoforge,fabric}` |
+
+| Minecraft | Forge / NeoForge jar | Fabric jar |
+| --- | --- | --- |
+| 1.20.1 | Forge 47.1+ (built against 47.4.28) | Loader 0.16.14+, Fabric API, Forge Config API Port 8.0.3+ |
+| 1.21.1 | NeoForge 21.1.264+ | Loader 0.16.14+, Fabric API, Forge Config API Port 21.1.6+ |
+| 26.2 | NeoForge 26.2.0.93+ | Loader 0.19.5+, Fabric API, Forge Config API Port 26.2.1+ |
+| 26.3 | NeoForge 26.3.0.99+ | Loader 0.19.5+, Fabric API, Forge Config API Port 26.3.1+ |
+
+Jar names are `remnants_ballistics-<loader>-<minecraft>-<version>.jar`; match both the Minecraft version and the loader. Each version folder is an independent Gradle project with `common`, `fabric` and `neoforge` subprojects (`forge` instead of `neoforge` on 1.20.1), like the other NightBeam mods: gameplay, rendering, assets and data live in `common`, and each loader project only adds its entry points, registration, networking and event hooks. The release version is `0.6.0` (`version=` in each workspace's `gradle.properties`; `./gradlew syncVersion -PmodVersion=x.y.z` sets all of them). See [the release notes](patchnotes/0.6.0.md).
 
 ## Requirements
 
@@ -45,6 +54,15 @@ Each version folder is an independent Gradle project with `common`, `fabric` and
 
 ## Build
 
+From the repository root:
+
+```
+./gradlew buildAll              # checks the generated assets, builds every workspace, copies the 8 loader jars to releases/
+./gradlew build263              # one workspace (keys: 1201, 1211, 262, 263)
+./gradlew gameTestAll           # GameTests of every workspace on both loaders
+./gradlew checkVersions         # fails unless every workspace has the same version=
+```
+
 From a workspace (`1.20.1`, `1.21.1`, `26.2` or `26.3`):
 
 ```
@@ -53,14 +71,11 @@ cd 26.3
 ./gradlew :neoforge:runGameTestServer :fabric:runGameTestServer  # in-game GameTests on headless servers (:forge: on 1.20.1)
 ```
 
-From the repository root:
+The root build hands the 26.x workspaces `JAVA_HOME_25_X64` (or `-Pjava25Home=<jdk>`) and the others `JAVA_HOME_21_X64` (or `-Pjava21Home=<jdk>`); without them each workspace uses the current `JAVA_HOME`. The release jars are `<game>/neoforge/build/libs/remnants_ballistics-neoforge-<game>-<version>.jar` (on 1.20.1 `1.20.1/forge/build/libs/remnants_ballistics-forge-1.20.1-<version>.jar`, reobfuscated to Forge's SRG names; the development jar is in `forge/build/devlibs`) and `<game>/fabric/build/libs/remnants_ballistics-fabric-<game>-<version>.jar`, one pair per workspace. `python3 scripts/check_targets.py workspaces` checks the 8 targets, the shared version and the Minecraft ranges (each loader's metadata stays inside its own Minecraft line). Release notes for a version live in `patchnotes/<version>.md`.
 
-```
-./gradlew buildAll              # checks the generated assets, builds every workspace, copies jars to releases/
-./gradlew gameTestAll           # GameTests of every workspace on both loaders
-```
+## Releasing
 
-The release jars are `<game>/neoforge/build/libs/remnants_ballistics-neoforge-<game>-<version>.jar` (on 1.20.1 `1.20.1/forge/build/libs/remnants_ballistics-forge-1.20.1-<version>.jar`, reobfuscated to Forge's SRG names; the development jar is in `forge/build/devlibs`) and `<game>/fabric/build/libs/remnants_ballistics-fabric-<game>-<version>.jar`, one pair per workspace.
+CI (`.github/workflows/ci.yml`) builds and tests every workspace on every push to `main` that touches the build, checks that exactly the 8 jars come out, and refreshes the `dev-build` prerelease on GitHub for testing. Publishing to Modrinth and CurseForge is `.github/workflows/publish.yml`, run by hand (`version`, `dry_run`) or by a `v*.*.*` tag; it never runs on a plain push. It refuses a second release of the mod on the same day (Africa/Tunis), takes the jars from `releases/`, the GitHub Release or a build from source, fails unless exactly the 8 jars are found and verified, and uploads each with `patchnotes/<version>.md` as its changelog. It needs the secrets `MODRINTH_TOKEN`, `CURSEFORGE_TOKEN`, `CURSEFORGE_API_KEY` and the variables `MODRINTH_ID`, `CURSEFORGE_ID` (it falls back to this project's IDs, `17zx2MIo` and `1759493`). Prove a change with a dry run first: `gh workflow run publish.yml -f version=<version> -f dry_run=true`.
 
 ## Run
 
