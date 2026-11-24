@@ -5,8 +5,8 @@ import path from "node:path";
 import { spawnSync } from "node:child_process";
 import { fileURLToPath, pathToFileURL } from "node:url";
 import test from "node:test";
-import { CURSEFORGE_ID, DEPENDENCY_PROJECTS, GAMES, LOADER_IDS, MODRINTH_ID, TARGETS, curseforgeRelations, modrinthDependencies,
-  modrinthMetadata, parseJar, releaseType } from "./release_metadata.mjs";
+import { CURSEFORGE_ID, DEPENDENCY_PROJECTS, GAMES, LOADER_IDS, TARGETS, assertTarget, curseforgeRelations,
+  parseJar, releaseType } from "./release_metadata.mjs";
 import { parseArgs, uploadPlatforms } from "./upload_platforms.mjs";
 
 const ROOT = fileURLToPath(new URL("../", import.meta.url));
@@ -15,8 +15,8 @@ const CF_GAME_IDS = Object.fromEntries(GAMES.map((game, i) => [game, 9000 + i]))
 const VERSION = "0.3.0";
 const jarName = (loader, game, version = VERSION) => `remnants_ballistics-${loader}-${game}-${version}.jar`;
 const silent = () => {};
-const ids = { MODRINTH_ID: "mrTest01", CURSEFORGE_ID: "424242" };
-const tokens = { ...ids, MODRINTH_TOKEN: "mock-token", CURSEFORGE_TOKEN: "mock-token", CURSEFORGE_API_KEY: "mock-key" };
+const ids = { CURSEFORGE_ID: "424242" };
+const tokens = { ...ids, CURSEFORGE_TOKEN: "mock-token", CURSEFORGE_API_KEY: "mock-key" };
 
 function fixture(t, version = VERSION) {
   const dir = fs.mkdtempSync(path.join(os.tmpdir(), "ballistics-publisher-"));
@@ -45,17 +45,12 @@ test("the payload matches the runtime requirements in each loader's metadata", (
   for (const [loader, game] of TARGETS) {
     assert.deepEqual(sourceDependencies(loader, game).sort(), Object.keys(DEPENDENCY_PROJECTS[loader]).sort());
     const release = parseJar(jarName(loader, game), VERSION);
-    const body = modrinthMetadata(release, { version: VERSION, changelog: "Test", projectId: ids.MODRINTH_ID });
-    assert.deepEqual(body.dependencies.map((d) => d.project_id),
-      Object.values(DEPENDENCY_PROJECTS[loader]).map((p) => p.modrinth));
-    assert.ok(body.dependencies.every((d) => d.dependency_type === "required"));
-    assert.deepEqual(body.loaders, [loader]);
-    assert.deepEqual(body.game_versions, [game]);
-    assert.equal(body.version_number, `${VERSION}+${loader}-${game}`);
-    assert.equal(body.version_type, "beta");
-    assert.equal(body.project_id, ids.MODRINTH_ID);
-    assert.deepEqual(body.file_parts, ["file_0"]);
-    assert.equal(body.primary_file, "file_0");
+    assert.equal(release.loader, loader);
+    assert.equal(release.game, game);
+    const relations = curseforgeRelations(loader, game);
+    assert.deepEqual(relations?.projects.map((p) => p.slug) ?? [],
+      Object.values(DEPENDENCY_PROJECTS[loader]).map((p) => p.curseforge));
+    assert.ok((relations?.projects ?? []).every((p) => p.type === "requiredDependency"));
   }
 });
 
@@ -73,7 +68,7 @@ test("invalid targets, mismatched versions and missing arguments fail closed", (
   assert.deepEqual(parseJar(jarName("neoforge", "26.2")).game, "26.2");
   assert.deepEqual(parseJar(jarName("forge", "1.20.1")).loader, "forge");
   assert.throws(() => parseJar(jarName("neoforge", "1.21.1"), "0.3.1"), /does not match/);
-  assert.throws(() => modrinthDependencies("neoforge", "1.22"), /Unsupported/);
+  assert.throws(() => assertTarget("neoforge", "1.22"), /Unsupported/);
   assert.throws(() => parseArgs(["node", "script", "--version"]), /Missing value/);
   assert.throws(() => parseArgs(["node", "script", "--version", VERSION, "--jar-dir", "--dry-run"]), /Missing value/);
   assert.throws(() => parseArgs(["node", "script", "--version", "bad"]), /release version/);
@@ -90,7 +85,7 @@ test("dry-run emits complete payloads without credentials or network", async (t)
     log: (...values) => logs.push(values),
   });
   assert.equal(calls, 0);
-  assert.equal(logs.filter(([label]) => label === "[dry-run] Modrinth").length, TARGETS.length);
+  assert.equal(logs.filter(([label]) => String(label).includes("Modrinth")).length, 0);
   const cf = logs.filter(([label]) => label === "[dry-run] CurseForge");
   assert.equal(cf.length, TARGETS.length);
   for (const [, name, json] of cf) {
@@ -113,7 +108,7 @@ test("CLI dry-run never reads local.env, jar bytes or calls fetch", (t) => {
   const dir = fixture(t);
   const desktop = path.join(dir, "Desktop");
   fs.mkdirSync(desktop);
-  fs.writeFileSync(path.join(desktop, "local.env"), "MODRINTH_TOKEN=not-a-token\n");
+  fs.writeFileSync(path.join(desktop, "local.env"), "CURSEFORGE_TOKEN=not-a-token\n");
   const preload = path.join(dir, "forbid-io.mjs");
   fs.writeFileSync(preload, `import fs from 'node:fs';
     const original = fs.readFileSync;
@@ -123,12 +118,13 @@ test("CLI dry-run never reads local.env, jar bytes or calls fetch", (t) => {
     };
     globalThis.fetch = () => { throw new Error('Forbidden network'); };`);
   const env = { ...process.env, USERPROFILE: dir };
-  for (const key of ["MODRINTH_TOKEN", "CURSEFORGE_TOKEN", "CURSEFORGE_API_KEY"]) delete env[key];
+  for (const key of ["CURSEFORGE_TOKEN", "CURSEFORGE_API_KEY"]) delete env[key];
   const child = spawnSync(process.execPath, ["--import", pathToFileURL(preload).href,
     path.join(ROOT, "scripts/upload_platforms.mjs"), "--version", VERSION, "--jar-dir", dir, "--require-all-targets", "--dry-run"],
   { encoding: "utf8", env });
   assert.equal(child.status, 0, child.stderr);
-  assert.equal((child.stdout.match(/\[dry-run\] Modrinth/g) || []).length, TARGETS.length);
+  assert.equal((child.stdout.match(/\[dry-run\] CurseForge/g) || []).length, TARGETS.length);
+  assert.doesNotMatch(child.stdout, /Modrinth/);
   assert.doesNotMatch(child.stdout, /Loaded secrets|not-a-token/);
 });
 
@@ -146,21 +142,8 @@ test("full-release and regular-file preflight stops before any upload", async (t
   assert.equal(calls, 0);
 });
 
-function mockTransport(records, { modrinthFailure = false, modernLookupFails = false } = {}) {
+function mockTransport(records, { curseforgeFailure = false, modernLookupFails = false } = {}) {
   return async (url, options = {}) => {
-    if (url === "https://api.modrinth.com/v2/version") {
-      assert.equal(options.method, "POST");
-      assert.ok(options.body instanceof FormData);
-      assert.deepEqual([...options.body.keys()], ["data", "file_0"]);
-      const body = JSON.parse(options.body.get("data"));
-      const file = options.body.get("file_0");
-      assert.equal(await file.text(), "fixture jar");
-      assert.deepEqual(body, modrinthMetadata(parseJar(file.name), {
-        version: VERSION, changelog: body.changelog, projectId: ids.MODRINTH_ID,
-      }));
-      records.push({ platform: "modrinth", body });
-      return new Response(modrinthFailure ? "test rejection" : "{}", { status: modrinthFailure ? 400 : 200 });
-    }
     if (url === "https://minecraft.curseforge.com/api/game/versions") {
       return Response.json([{ id: 1, name: "Client" }, { id: 2, name: "Server" },
         ...GAMES.map((game) => ({ id: CF_GAME_IDS[game], name: game }))]);
@@ -180,35 +163,36 @@ function mockTransport(records, { modrinthFailure = false, modernLookupFails = f
       assert.equal(body.releaseType, "beta");
       assert.deepEqual(body.relations, curseforgeRelations(release.loader, release.game));
       records.push({ platform: "curseforge", body });
-      return Response.json({ id: 42 });
+      return curseforgeFailure ? new Response("test rejection", { status: 400 }) : Response.json({ id: 42 });
     }
     throw new Error(`Unexpected network target ${url}`);
   };
 }
 
-test("actual upload sends one Modrinth version and one CurseForge file per jar", async (t) => {
+test("actual upload sends one CurseForge file per jar and never calls Modrinth", async (t) => {
   const records = [];
+  const urls = [];
+  const transport = mockTransport(records);
   await uploadPlatforms({ version: VERSION, jarDir: fixture(t), requireAllTargets: true }, {
-    env: tokens, fetchImpl: mockTransport(records), log: silent,
+    env: tokens, fetchImpl: (url, options) => (urls.push(url), transport(url, options)), log: silent,
   });
-  assert.equal(records.filter((r) => r.platform === "modrinth").length, TARGETS.length);
   assert.equal(records.filter((r) => r.platform === "curseforge").length, TARGETS.length);
+  assert.ok(urls.every((u) => !u.includes("modrinth")));
 });
 
-test("CurseForge-only needs no Modrinth token and retains legacy lookup fallback", async (t) => {
+test("CurseForge upload needs no Modrinth token and retains legacy lookup fallback", async (t) => {
   const records = [];
-  await uploadPlatforms({ version: VERSION, jarDir: fixture(t), curseforgeOnly: true }, {
+  await uploadPlatforms({ version: VERSION, jarDir: fixture(t) }, {
     env: { CURSEFORGE_ID: ids.CURSEFORGE_ID, CURSEFORGE_TOKEN: "mock-token", CURSEFORGE_API_KEY: "mock-key" },
     fetchImpl: mockTransport(records, { modernLookupFails: true }), log: silent,
   });
-  assert.equal(records.filter((r) => r.platform === "modrinth").length, 0);
   assert.equal(records.filter((r) => r.platform === "curseforge").length, TARGETS.length);
 });
 
 test("CurseForge uploads without a Core API key use the upload API's version list", async (t) => {
   const records = [];
   const { CURSEFORGE_API_KEY, ...env } = tokens;
-  await uploadPlatforms({ version: VERSION, jarDir: fixture(t), curseforgeOnly: true }, {
+  await uploadPlatforms({ version: VERSION, jarDir: fixture(t) }, {
     env, fetchImpl: mockTransport(records, { modernLookupFails: true }), log: silent,
   });
   assert.equal(records.filter((r) => r.platform === "curseforge").length, TARGETS.length);
@@ -217,16 +201,15 @@ test("CurseForge uploads without a Core API key use the upload API's version lis
 test("live mode without credentials or after an API rejection stops publication", async (t) => {
   const jarDir = fixture(t);
   let called = false;
-  // The project ids default to the published projects; the environment can override them.
-  assert.match(MODRINTH_ID, /^[A-Za-z0-9]{8}$/);
+  // The project id defaults to the published project; the environment can override it.
   assert.match(CURSEFORGE_ID, /^\d+$/);
   await assert.rejects(uploadPlatforms({ version: VERSION, jarDir }, {
     env: ids, fetchImpl: () => { called = true; }, log: silent,
-  }), /Set MODRINTH_TOKEN/);
+  }), /Set CURSEFORGE_TOKEN/);
   assert.equal(called, false);
   const records = [];
   await assert.rejects(uploadPlatforms({ version: VERSION, jarDir }, {
-    env: tokens, fetchImpl: mockTransport(records, { modrinthFailure: true }), log: silent,
-  }), /Modrinth 400/);
+    env: tokens, fetchImpl: mockTransport(records, { curseforgeFailure: true }), log: silent,
+  }), /CurseForge 400/);
   assert.equal(records.length, 1);
 });

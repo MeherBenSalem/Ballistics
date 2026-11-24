@@ -1,8 +1,8 @@
 import path from "node:path";
 
-// Store project IDs. Fill these in once the Modrinth and CurseForge projects exist, or provide MODRINTH_ID /
-// CURSEFORGE_ID in the environment (the publish workflow passes the repository variables of the same names).
-export const MODRINTH_ID = "17zx2MIo";
+// CurseForge project ID, or CURSEFORGE_ID in the environment (the publish workflow passes the repository variable of
+// the same name). NightBeam publishes to CurseForge only (since 24 Nov 2026); the existing Modrinth project stays up
+// as it is but gets no new versions.
 export const CURSEFORGE_ID = "1759493";
 export const MOD_ID = "remnants_ballistics";
 export const MOD_TITLE = "Remnants: Ballistics";
@@ -21,7 +21,7 @@ export const GAMES = Object.freeze(Object.keys(GAME_LOADERS));
 /** Every [loader, game] pair a release ships. */
 export const TARGETS = Object.freeze(GAMES.flatMap((game) => GAME_LOADERS[game].map((loader) => Object.freeze([loader, game]))));
 
-// Runtime requirements besides the loader and Minecraft, per loader: mod id -> Modrinth project id and CurseForge slug.
+// Runtime requirements besides the loader and Minecraft, per loader: mod id -> CurseForge slug.
 // Keep in sync with <game>/forge/src/main/resources/META-INF/mods.toml and
 // <game>/neoforge/src/main/resources/META-INF/neoforge.mods.toml (none) and
 // <game>/fabric/src/main/resources/fabric.mod.json (Fabric API, Forge Config API Port); the tests compare them.
@@ -29,8 +29,8 @@ export const DEPENDENCY_PROJECTS = Object.freeze({
   forge: Object.freeze({}),
   neoforge: Object.freeze({}),
   fabric: Object.freeze({
-    "fabric-api": Object.freeze({ modrinth: "P7dR8mSH", curseforge: "fabric-api" }),
-    forgeconfigapiport: Object.freeze({ modrinth: "ohNO6lps", curseforge: "forge-config-api-port" }),
+    "fabric-api": Object.freeze({ curseforge: "fabric-api" }),
+    forgeconfigapiport: Object.freeze({ curseforge: "forge-config-api-port" }),
   }),
 });
 
@@ -56,21 +56,15 @@ export function releaseType(version) {
   return version.startsWith("0.") || version.includes("-") ? "beta" : "release";
 }
 
-export function modrinthDependencies(loader, game) {
+export function assertTarget(loader, game) {
   if (!SUPPORTED_TARGETS.has(`${loader}:${game}`)) {
     throw new Error(`Unsupported release target ${loader} ${game}`);
   }
-  return Object.values(DEPENDENCY_PROJECTS[loader]).map((project) => ({
-    project_id: project.modrinth,
-    version_id: null,
-    file_name: null,
-    dependency_type: "required",
-  }));
 }
 
 /** CurseForge relations, or undefined when there are none: the upload API rejects an empty project list. */
 export function curseforgeRelations(loader, game) {
-  modrinthDependencies(loader, game); // Fail closed on unsupported targets.
+  assertTarget(loader, game); // Fail closed on unsupported targets.
   const projects = Object.values(DEPENDENCY_PROJECTS[loader])
     .map((project) => ({ slug: project.curseforge, type: "requiredDependency" }));
   return projects.length ? { projects } : undefined;
@@ -83,28 +77,9 @@ export function parseJar(jar, expectedVersion) {
   );
   if (!match) throw new Error(`Cannot parse release jar ${name}`);
   const [, loader, game, version] = match;
-  modrinthDependencies(loader, game); // Fail closed instead of guessing a target.
+  assertTarget(loader, game); // Fail closed instead of guessing a target.
   if (expectedVersion && version !== normalizeVersion(expectedVersion)) {
     throw new Error(`Jar version ${version} does not match ${expectedVersion}: ${name}`);
   }
   return { jar, name, loader, game, version };
-}
-
-export function modrinthMetadata(release, { version, changelog, projectId = MODRINTH_ID }) {
-  version = normalizeVersion(version);
-  if (release.version !== version) throw new Error(`Jar version does not match ${version}`);
-  return {
-    name: `${version} · ${release.loader} · ${release.game}`,
-    version_number: `${version}+${release.loader}-${release.game}`,
-    changelog,
-    dependencies: modrinthDependencies(release.loader, release.game),
-    game_versions: [release.game],
-    version_type: releaseType(version),
-    loaders: [release.loader],
-    featured: false,
-    status: "listed",
-    project_id: projectId,
-    file_parts: ["file_0"],
-    primary_file: "file_0",
-  };
 }

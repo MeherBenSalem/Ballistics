@@ -1,18 +1,16 @@
 # Marketing assets
 
-Listing copy and artwork for CurseForge and Modrinth. Nothing here ships in the mod jar.
+Listing copy and artwork for CurseForge (NightBeam publishes to CurseForge only). Nothing here ships in the mod jar.
 
 ## Listing
 
 | File | Use |
 | --- | --- |
-| [`curseforge/description.md`](curseforge/description.md) | Full project description (Markdown; also works on Modrinth) |
+| [`curseforge/description.md`](curseforge/description.md) | Full project description (Markdown) |
 | [`curseforge/summary.txt`](curseforge/summary.txt) | Short project summary (151 characters) |
-| [`modrinth/description.md`](modrinth/description.md) | The Modrinth description, made from the CurseForge copy by `python3 tools/make_modrinth_md.py .` (the screenshots go in the project's Gallery tab instead) |
-| [`modrinth/summary.txt`](modrinth/summary.txt) | The Modrinth summary (the same text) |
 | [`../patchnotes/`](../patchnotes/) | File changelog: the publish workflow uploads `patchnotes/<version>.md` with every file |
 
-The supported Minecraft versions and loaders (the NightBeam convention's 8 targets: 1.20.1 Fabric + Forge; 1.21.1, 26.2 and 26.3 Fabric + NeoForge) are named in three places only: `VERSIONS` / `LOADERS` at the top of `source/render.cjs` (the banner), the Downloads & Compatibility table and the FAQ in `curseforge/description.md`. Keep the three the same. After editing `curseforge/description.md` or `curseforge/summary.txt`, run `python3 tools/make_modrinth_md.py .` to refresh the Modrinth copy. Neither site's description is updated by the publish workflow: paste them by hand.
+The supported Minecraft versions and loaders (the NightBeam convention's 8 targets: 1.20.1 Fabric + Forge; 1.21.1, 26.2 and 26.3 Fabric + NeoForge) are named in three places only: `VERSIONS` / `LOADERS` at the top of `source/render.cjs` (the banner), the Downloads & Compatibility table and the FAQ in `curseforge/description.md`. Keep the three the same. The CurseForge description is not updated by the publish workflow: paste it by hand.
 
 Image links in the description point at `raw.githubusercontent.com/MeherBenSalem/Ballistics/main/marketing/images/...`, so they work once this folder is on `main`. To host the images on CurseForge instead, upload them to the project gallery and replace each URL.
 

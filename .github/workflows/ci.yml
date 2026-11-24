@@ -8,7 +8,7 @@
 #             tests, GameTests on headless servers, a client smoke test and the packaged-jar audit;
 #   jars      exactly the 8 convention jars, and a token-free dry run of scripts/upload_platforms.mjs on them;
 #   dev-build a GitHub prerelease named dev-build with those jars, for testing only.
-# It never uploads anything to Modrinth or CurseForge; that is publish.yml.
+# It never uploads anything to CurseForge; that is publish.yml.
 
 name: CI
 
